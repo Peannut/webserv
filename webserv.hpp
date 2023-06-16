@@ -1,21 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/16 19:14:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/16 19:44:07 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/06/16 19:44:15 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/06/16 19:44:40 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef _WEBSERV_HPP_
+# define _WEBSERV_HPP_
 
-int main(int ac, char **av)
-{
-	if (ac  == 2)
-	{
+#include <iostream>
 
-	}
-	return (0);
-}
+#endif 

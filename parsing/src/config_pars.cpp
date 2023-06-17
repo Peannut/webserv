@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 08:42:48 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/17 08:57:45 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/06/17 11:08:49 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,17 @@ int line_empty(const std::string& line)
 	return (1);
 }
 
+void Webserver::setupListen(std::string& line, server_block& server)
+{
+	std::string val = line.substr(8, line.size() - 8);
+	if (line_empty(val))
+		throw std::runtime_error("Error: listen does not have a value");
+	// std::vector<std::string> port = split(val, ':');
+	// if (port.size() != 2)
+	// 	throw std::runtime_error("Error: invalid listen");
+	
+}
+
 void Webserver::setupServer(std::ifstream& file)
 {
 	server_block server;
@@ -29,8 +40,8 @@ void Webserver::setupServer(std::ifstream& file)
 	{
 		if (line_empty(line))
 			continue ;
-		if (!line.compare(0,7,"server:"))
-			break ;
+		if (!line.compare(0,8,"\tlisten"))
+			;
 		else
 			throw std::runtime_error("Error: invalid server directive");
 	}

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 08:33:43 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/17 08:53:39 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/06/17 09:26:47 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ class Webserver
 		Webserver(/* args */);
 		~Webserver();
 
+		void setupListen(std::string& line, server_block& server);
 		void setupconfig(const std::string& filename);
 		void setupServer(std::ifstream& file);
-
 
 };
 

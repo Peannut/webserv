@@ -1,33 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   server_block.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/16 19:14:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/17 08:46:18 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/06/17 08:22:42 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/06/17 08:30:29 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#ifndef _SERVER_BLOCK_HPP_
+# define _SERVER_BLOCK_HPP_
 
-int main(int ac, char **av)
+#include "../../webserv.hpp"
+
+struct server_block
 {
-	if (ac  != 2)
-	{
-		std::cerr << "check ur arguments" << std::endl;
-		return (1);
-	}
-	Webserver web;
-	try
-	{
-		
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-	return (0);
-}
+	std::pair<int, short> listen;
+	std::vector<std::string> server_names;
+	std::map<std::string, location_block> locations;
+
+};
+
+#endif // !_SERVER_BLOCK_HPP_

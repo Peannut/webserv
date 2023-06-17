@@ -1,33 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   location_block.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/16 19:14:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/17 08:46:18 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/06/17 08:25:53 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/06/17 08:30:21 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#ifndef _LOCATION_BLOCK_HPP_
+# define _LOCATION_BLOCK_HPP_
 
-int main(int ac, char **av)
+#include "../../webserv.hpp"
+
+struct location_block
 {
-	if (ac  != 2)
-	{
-		std::cerr << "check ur arguments" << std::endl;
-		return (1);
-	}
-	Webserver web;
-	try
-	{
-		
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-	return (0);
-}
+	std::string root;
+	bool autoindex;
+	std::vector<std::string> index;
+};
+
+#endif

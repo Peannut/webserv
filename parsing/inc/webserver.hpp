@@ -1,33 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   webserver.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/16 19:14:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/17 08:46:18 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/06/17 08:33:43 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/06/17 08:53:39 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
+#ifndef _WEBSERVER_HPP_
+#define _WEBSERVER_HPP_
 
-int main(int ac, char **av)
+#include "../../webserv.hpp"
+
+
+class Webserver
 {
-	if (ac  != 2)
-	{
-		std::cerr << "check ur arguments" << std::endl;
-		return (1);
-	}
-	Webserver web;
-	try
-	{
-		
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-	return (0);
+	private:
+	std::vector<server_block> config;
+		/* data */
+	public:
+		Webserver(/* args */);
+		~Webserver();
+
+		void setupconfig(const std::string& filename);
+		void setupServer(std::ifstream& file);
+
+
+};
+
+Webserver::Webserver(/* args */)
+{
 }
+
+Webserver::~Webserver()
+{
+}
+
+
+
+#endif // !_WEBSERVER_HPP_

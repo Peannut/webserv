@@ -1,41 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserver.hpp                                      :+:      :+:    :+:   */
+/*   web.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/17 08:33:43 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/17 09:26:47 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/06/20 11:05:16 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/06/20 11:08:01 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _WEBSERVER_HPP_
 #define _WEBSERVER_HPP_
-
-#include "../../webserv.hpp"
-
-
-class Webserver
+#include "webserv.hpp"
+class Web
 {
 	private:
 	std::vector<server_block> config;
-		/* data */
-	public:
-		Webserver(/* args */);
-		~Webserver();
 
-		void setupListen(std::string& line, server_block& server);
+	public:
+		Web();
+		~Web();
+
 		void setupconfig(const std::string& filename);
+		void setup_host(std::string& host, server_block& server);
+		void setup_listen(std::string& line, server_block& server);
 		void setupServer(std::ifstream& file);
 
 };
 
-Webserver::Webserver(/* args */)
+Web::Web()
 {
 }
 
-Webserver::~Webserver()
+Web::~Web()
 {
 }
 

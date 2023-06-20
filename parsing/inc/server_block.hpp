@@ -6,14 +6,13 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 08:22:42 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/17 08:30:29 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/06/20 11:09:17 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _SERVER_BLOCK_HPP_
 # define _SERVER_BLOCK_HPP_
-
-#include "../../webserv.hpp"
+#include "webserv.hpp"
 
 struct server_block
 {

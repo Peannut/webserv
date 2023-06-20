@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 19:44:15 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/17 09:39:33 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/06/20 11:06:34 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,14 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "./parsing/inc/location_block.hpp"
-#include "./parsing/inc/server_block.hpp"
-#include "./parsing/inc/webserver.hpp"
 
+#include "server_block.hpp"
+#include "location_block.hpp"
+#include "web.hpp"
+
+
+int line_empty(const std::string& line);
+std::vector<std::string> split(const std::string& str, char lim);
 
 
 #endif 

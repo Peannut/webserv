@@ -20,12 +20,12 @@
 
 #include "prototypes.hpp"
 
-#include "Connection/Request.hpp"
-#include "Connection/Response.hpp"
-#include "Connection/Connection.hpp"
-#include "Config/Location.hpp"
-#include "Config/Server.hpp"
-#include "Config/Config.hpp"
-#include "WebServ.hpp"
+#include "classes/Connection/Request.hpp"
+#include "classes/Connection/Response.hpp"
+#include "classes/Connection/Connection.hpp"
+#include "classes/Config/Location.hpp"
+#include "classes/Config/Server.hpp"
+#include "classes/Config/Config.hpp"
+#include "classes/WebServ.hpp"
 
 #endif // HEADER_HPP

@@ -1,31 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Connection.hpp                                     :+:      :+:    :+:   */
+/*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/23 17:44:20 by zwina             #+#    #+#             */
-/*   Updated: 2023/06/24 01:34:18 by zwina            ###   ########.fr       */
+/*   Created: 2023/06/24 15:03:17 by zwina             #+#    #+#             */
+/*   Updated: 2023/06/24 15:03:18 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONNECTION_HPP
-#define CONNECTION_HPP
+#include "includes.hpp"
 
-#include "prototypes.hpp"
-
-struct Connection
+size_t Response::subtract(const size_t & number_of_bytes)
 {
-    bool _isListen;
-    SOCKET _socket;
-    Request *_req;
-    Response *_res;
+    if (number_of_bytes + offset >= _res_raw.size()) offset = _res_raw.size();
+    else offset += number_of_bytes;
 
-    Connection(const bool & isListen, const int & fdsock);
-    ~Connection();
-    Request & get_req(void);
-    Response & get_res(void);
-};
+    return (_res_raw.size() - offset);
+}
 
-#endif // CONNECTION_HPP
+std::string & Response::get_res_raw(void)
+{
+    return (_res_raw);
+}
+
+const char * Response::get_res_raw_shifted(void)
+{
+    return (_res_raw.data() + offset);
+}

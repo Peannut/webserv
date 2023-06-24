@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/06/17 10:05:06 by zwina             #+#    #+#              #
-#    Updated: 2023/06/17 10:27:30 by zwina            ###   ########.fr        #
+#    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
+#    Updated: 2023/06/24 02:51:25 by zwina            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,12 +32,24 @@ ANSI_CYAN           := \\033[38;5;44m
 
 # compilation
 DEBUG   := -fsanitize=address -g
-CCWI    := c++ -Wall -Wextra -Werror -Iincludes
+CCWI    := g++-13 -Wall -Wextra -Werror -Iincludes -std=c++98
 # directories
-SRCSDIR := srcs
-OBJSDIR := objs
+OBJSDIR 		:= objs
+SRCSDIR 		:= srcs
+CLASSESDIR 		:= classes
+CONFIGDIR 		:= Config
+CONNECTIONDIR	:= Connection
 # sources
-CFILES  := main.cpp
+CFILES  :=\
+	$(CLASSESDIR)/$(CONFIGDIR)/Config.cpp \
+	$(CLASSESDIR)/$(CONFIGDIR)/Location.cpp \
+	$(CLASSESDIR)/$(CONFIGDIR)/Server.cpp \
+	$(CLASSESDIR)/$(CONNECTIONDIR)/Connection.cpp \
+	$(CLASSESDIR)/$(CONNECTIONDIR)/Request.cpp \
+	$(CLASSESDIR)/$(CONNECTIONDIR)/Response.cpp \
+	$(CLASSESDIR)/WebServ.cpp \
+	main.cpp \
+	our_functions.cpp
 SRCS    := $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 # objects
 OBJS    := $(patsubst $(SRCSDIR)/%.cpp,$(OBJSDIR)/%.o,$(SRCS))
@@ -62,9 +74,15 @@ $(NAME) : $(OBJSDIR) $(OBJS)
 
 $(OBJSDIR) :
 	@mkdir $(OBJSDIR)
+	@mkdir $(OBJSDIR)/$(CLASSESDIR)
+	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONFIGDIR)
+	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONNECTIONDIR)
 
 $(OBJS) : $(OBJSDIR)/%.o : $(SRCSDIR)/%.cpp
 	@$(CCWI) -c $< -o $@
+# @printf "$(ANSI_CYAN)"
+# @printf $@"\n"
+# @printf "$(ANSI_RESET)"
 
 clean :
 	@rm -rf $(OBJSDIR)

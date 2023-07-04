@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 19:14:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/20 11:05:42 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/04 17:57:23 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int main(int ac, char **av)
 	try
 	{
 		web.setupconfig(av[1]);
-
 	}
 	catch(const std::exception& e)
 	{

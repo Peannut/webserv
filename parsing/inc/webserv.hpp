@@ -6,12 +6,14 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 19:44:15 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/06/20 11:06:34 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/04 18:19:05 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _WEBSERV_HPP_
 # define _WEBSERV_HPP_
+
+
 
 #include <iostream>
 #include <string>
@@ -22,12 +24,13 @@
 #include <sstream>
 #include <algorithm>
 
-#include "server_block.hpp"
+
 #include "location_block.hpp"
+#include "server_block.hpp"
 #include "web.hpp"
 
-
 int line_empty(const std::string& line);
+ssize_t stringToLong(const std::string& str);
 std::vector<std::string> split(const std::string& str, char lim);
 
 

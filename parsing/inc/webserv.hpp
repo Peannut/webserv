@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 19:44:15 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/04 18:19:05 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/04 23:24:21 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-
+#include <iterator> 
 
 #include "location_block.hpp"
 #include "server_block.hpp"

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/04 16:18:07 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/04 16:28:48 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/04 23:07:38 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@ class Web
 		void setup_host(std::string& host, server_block& server);
 		void setup_listen(std::string& line, server_block& server);
 		void setupServer(std::ifstream& file);
+		void setup_servername(std::string& line, server_block& server);
+		void setupClientbodySize(std::string& line, server_block& server);
+		void setupErrorPage(std::string& line, server_block& server);
 
 };
 

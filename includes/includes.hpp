@@ -6,23 +6,21 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/06/23 17:45:15 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/05 19:27:59 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HEADER_HPP
 #define HEADER_HPP
 
+// Includes
 #include <iostream>
-#include <iomanip>
-#include <unistd.h>
-
 #include <string>
+#include <sstream>
 #include <vector>
-#include <list>
-
 #include <cstring>
 #include <cerrno>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -32,6 +30,7 @@
 
 #include "prototypes.hpp"
 
+// Classes Definitions
 #include "classes/Connection/Request.hpp"
 #include "classes/Connection/Response.hpp"
 #include "classes/Connection/Connection.hpp"

@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:03 by zwina             #+#    #+#             */
-/*   Updated: 2023/06/24 15:07:52 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/06 14:59:44 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,20 +46,25 @@ void start_multiplexing(WebServ & webserv)
     while (1337 & 42)
     {
         our_poll(webserv._sockets);
-        for (size_t sz = webserv._sockets.size(), i = 0; i < sz; ++i)
+        for (size_t sz = webserv._number_of_connections, i = 0; i < sz; ++i)
         {
-            SOCKET & socket = webserv._sockets[i];
-            if (socket.revents & (POLLIN/*|POLLRDNORM|POLLRDBAND*/))
+            Connection & conn = webserv.get_connection(i);
+            // std::cout << "fd["<<i<<"]" << conn._socket->fd << std::endl;
+            if (conn.can_read())
             {
-                if (webserv.is_listen_connection(i))
+                if (conn._isListen)
                     accepting(webserv, i);
                 else
                     receiving(webserv, i);
             }
-            else if (socket.revents & (POLLOUT/*|POLLWRBAND*/))
+            else if (conn.can_write())
                 sending(webserv, i);
-            else if (socket.revents & (/*POLLERR|POLLHUP|*/POLLNVAL))
+            else if (conn.is_error())
                 webserv.remove_connection(i);
+            else if (!conn._isListen && conn._isMustServeNow)
+                serving(webserv, i);
+            else
+                conn._isMustServeNow = true;
         }
     }
 }

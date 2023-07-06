@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:37 by zwina             #+#    #+#             */
-/*   Updated: 2023/06/24 15:08:11 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/06 14:47:09 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 // Defines
 #define UNUSED(x) (void)(x) // unused variable
-#define SOCKET struct pollfd
+#define SOCKET_POLL struct pollfd
 #define SOCKET_FD int
 #define LISTEN_ENABLE true // the type of connection, is it a server socket (aka. listen) or a client socket
-#define POLL_TIME 100 // the time that poll() waits in milliseconds
+#define POLL_TIME 0 // the time that poll() waits in milliseconds
 #define BACK_LOG 10 // one socket can handle BACK_LOG number of connection
 #define BUFFER_SIZE (size_t)512 // the size of the receiving the sending buffer
 
@@ -49,9 +49,10 @@ SOCKET_FD           our_socket          (const int &domain, const int &type, con
 void                our_listen          (const SOCKET_FD &fdsock);
 void                setup_webserv       (WebServ & webserv);
 void                start_multiplexing  (WebServ & webserv);
-void                our_poll            (std::vector<SOCKET> & sockets);
+void                our_poll            (std::vector<SOCKET_POLL> & sockets);
 void                accepting           (WebServ & webserv, const size_t & index);
 void                receiving           (WebServ & webserv, const size_t & index);
 void                sending             (WebServ & webserv, const size_t & index);
+void                serving             (WebServ & webserv, const size_t & index);
 
 #endif // PROTOTYPES_HPP

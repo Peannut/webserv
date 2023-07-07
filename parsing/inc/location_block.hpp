@@ -20,6 +20,14 @@ struct location_block
 	std::string root;
 	bool autoindex;
 	std::vector<std::string> index;
+	std::set<std::string> methods;
+	std::pair<std::string, std::string> CGI;
+	std::string upload_path;
+	std::pair<short,std::string> redirect; // code and url
+
+	
+	location_block() : autoindex(0) {}
+	
 };
 
 #endif

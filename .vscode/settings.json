@@ -108,6 +108,19 @@
     "tuple": "cpp",
     "type_traits": "cpp",
     "typeinfo": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "__errc": "cpp",
+    "__hash_table": "cpp",
+    "__mutex_base": "cpp",
+    "__threading_support": "cpp",
+    "array": "cpp",
+    "cmath": "cpp",
+    "complex": "cpp",
+    "cstdarg": "cpp",
+    "ctime": "cpp",
+    "deque": "cpp",
+    "ratio": "cpp",
+    "set": "cpp",
+    "unordered_map": "cpp"
   }
 }

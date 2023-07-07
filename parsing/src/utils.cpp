@@ -27,13 +27,13 @@ std::vector<std::string> split(const std::string& str, char lim)
 }
 
 
-ssize_t stringToLong(const std::string& str)
+long int ft_stringtolong(const std::string& str)
 {
-    std::istringstream iss(str);
     long int result;
-    char remainder;
-    if (!(iss >> result) || (iss >> remainder)) {
-        throw (std::invalid_argument("stringTolong: invalid argument"));
+    std::istringstream iss(str);
+
+    if (!(iss >> result) || !iss.eof()) {
+        throw std::invalid_argument("ft_stringtoolong: invalid argument");
     }
     return result;
 }

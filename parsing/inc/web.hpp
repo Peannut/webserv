@@ -31,7 +31,12 @@ class Web
 		void setup_servername(std::string& line, server_block& server);
 		void setupClientbodySize(std::string& line, server_block& server);
 		void setupErrorPage(std::string& line, server_block& server);
-
+		void setupLocation(std::ifstream& file, std::string& line, server_block& server);
+		void setuproot(std::string line, location_block& location);
+		void setupindex(std::string line, location_block& location);
+		void setupmethods(std::string line, location_block& location);
+		void setupredirect(std::string line, location_block& location);
+		void setupautoindex(std::string line, location_block& location);
 };
 
 #endif 

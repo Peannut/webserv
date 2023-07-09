@@ -20,7 +20,7 @@ struct metaRequest {
     std::string _path;
     std::string _version;
     std::string _body;
-    std::vector<std::pair<std::string, std::string>> _headers;
+    std::vector<std::pair<std::string, std::string> > _headers;
 };
 
 struct metaResponse {
@@ -29,6 +29,7 @@ struct metaResponse {
     std::string contentType;
     std::string content;
 
+    metaResponse() {}
     metaResponse(int code, const std::string& message, const std::string& type, const std::string& body)
         : statusCode(code), statusMessage(message), contentType(type), content(body) {}
 };

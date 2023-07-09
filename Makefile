@@ -32,15 +32,15 @@ ANSI_CYAN           := \\033[38;5;44m
 
 # compilation
 DEBUG   := -fsanitize=address -g
-CCWI    := c++ -Wall -Wextra -Werror -Iincludes
+CCWI    := c++ -Wall -Wextra -Werror #-Iincludes
 # directories
-SRCSDIR := srcs
-OBJSDIR := objs
+# SRCSDIR := srcs
+# OBJSDIR := objs
 # sources
 CFILES  := main.cpp
-SRCS    := $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
+# SRCS    := $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 # objects
-OBJS    := $(patsubst $(SRCSDIR)/%.cpp,$(OBJSDIR)/%.o,$(SRCS))
+# OBJS    := $(patsubst $(SRCSDIR)/%.cpp,$(OBJSDIR)/%.o,$(SRCS))
 # program name
 NAME    := webserv
 
@@ -51,7 +51,7 @@ bonus : all
 debug : CCWI += $(DEBUG)
 debug : all
 
-$(NAME) : $(OBJSDIR) $(OBJS)
+$(NAME) : $(OBJS) #$(OBJSDIR)
 	@$(CCWI) $(OBJS) -o $(NAME)
 	@printf "$(ANSI_CYAN)"
 	@printf "|----------------------|\n"
@@ -60,10 +60,10 @@ $(NAME) : $(OBJSDIR) $(OBJS)
 	@printf "|----------------------|\n"
 	@printf "$(ANSI_RESET)"
 
-$(OBJSDIR) :
-	@mkdir $(OBJSDIR)
+# $(OBJSDIR) :
+# 	@mkdir $(OBJSDIR)
 
-$(OBJS) : $(OBJSDIR)/%.o : $(SRCSDIR)/%.cpp
+$(OBJS) : $(OBJSDIR)/%.o : #$(SRCSDIR)/%.cpp
 	@$(CCWI) -c $< -o $@
 
 clean :

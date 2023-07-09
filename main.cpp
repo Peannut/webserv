@@ -1,24 +1,56 @@
 #include "header.hpp"
 
-metaResponse handleResponse(const metaRequest &request) {
-    metaResponse response(200, "OK", "text/plain", "Hello, World!");
 
-    //reponse handling methods
-    return response;
+bool pathValid (const std::string &path) {
+	std::ifstream file(path.c_str());
+	return file.good();
 }
+
+// resourceExists function
+
+// getContenttype function
+
+// readResource function
+
+metaResponse generateResponse(const metaRequest &request) {
+	metaResponse response;
+
+	if (request._method = "GET") {
+		if (pathValid(request._path)) {
+			if (resourceExists(request._path)) {
+				response.contenType = getContentType(request._path);
+				response.content = readResource(request._path);
+				//generate response
+			}
+			else {
+				//resource not found
+				response.statusCode = 404;
+				response.statusMessage = "Not Found";
+			}
+		}
+		else {
+			//path not valid
+			response.statusCode = 400;
+			response.statusMessage = "Bad Request";
+		}
+	}
+	return response;
+}
+
 
 int main (int ac, char **av) {
 
 	metaRequest parsedreq;
 
 	parsedreq._method = "GET";
-	parsedreq._url = "/path";
+	parsedreq._path = "path";
     parsedreq._version = "HTTP/1.1";
     parsedreq._headers.push_back(std::make_pair("contet-Type", "application/json"));
-	std::string _req_raw = "raw req li ba9i ma3arefch lach msifetha liya zakaria";
     parsedreq._body = "Request body";
 
-	metaResponse response = handleResponse(parsedreq);
+	metaResponse response = generateResponse(parsedreq);
+
+	//serve the request;
 
 	return 0;
 }

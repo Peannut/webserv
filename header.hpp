@@ -12,13 +12,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <iostream>
+#include <vector>
+#include <fstream>
 
 struct metaRequest {
     std::string _method;
     std::string _path;
     std::string _version;
     std::string _body;
-    std::string _req_raw;
     std::vector<std::pair<std::string, std::string>> _headers;
 };
 

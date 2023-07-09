@@ -116,6 +116,7 @@ void Web::setupErrorPage(std::string& line, server_block& server)
 	}
 	
 }
+
 void Web::setuproot(std::string line, location_block& location)
 {
 	if (!location.root.empty())

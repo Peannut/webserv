@@ -1,23 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   web.cpp                                            :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/04 16:28:50 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/04 16:48:18 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/06/17 08:22:42 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/07/10 20:12:21 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/webserv.hpp"
 
-Web::Web()
-{
-	std::cout << "Web created" << std::endl;
-}
+#include "includes.hpp"
 
-Web::~Web()
-{
-	std::cout << "Web destroyed" << std::endl;
-}
+Server::Server(): client_body_size(0)
+{}

@@ -1,28 +1,20 @@
-/*                                                                            */
 /* ************************************************************************** */
+/*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config_pars.cpp                                    :+:      :+:    :+:   */
+/*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/17 08:42:48 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/05 14:32:04 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/07/10 20:12:13 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/webserv.hpp"
 
-int line_empty(const std::string& line)
-{
-	for (size_t i = 0; i < line.size(); i++)
-	{
-		if (!std::isspace(line[i]))
-			return (0);
-	}
-	return (1);
-}
 
-void Web::setup_host(std::string& host, server_block& server)
+#include "includes.hpp"
+
+void Config::setup_host(std::string& host, Server& server)
 {
 	size_t ip = 0;
 
@@ -46,7 +38,7 @@ void Web::setup_host(std::string& host, server_block& server)
 
 }
 
-void Web::setup_listen(std::string& line, server_block& server)
+void Config::setup_listen(std::string& line, Server& server)
 {
 	std::string val = line.substr(8, line.size() - 8);
 	if (line_empty(val))
@@ -60,7 +52,7 @@ void Web::setup_listen(std::string& line, server_block& server)
 	std::cout << "port "<< server.listen.second << std::endl;
 }
 
-void Web::setup_servername(std::string& line, server_block& server)
+void Config::setup_servername(std::string& line, Server& server)
 {
 	std::string val = line.substr(14, line.size() - 14);
 	if (line_empty(val))
@@ -72,7 +64,7 @@ void Web::setup_servername(std::string& line, server_block& server)
 	std::cout << "server name: " << server.server_names[0] << std::endl;
 }
 
-void Web::setupClientbodySize(std::string& line, server_block& server)
+void Config::setupClientbodySize(std::string& line, Server& server)
 {
 	// std::cout << "made it to client body size here" << std::endl;
 	std::string val = line.substr(18, line.size() - 18);
@@ -87,7 +79,7 @@ void Web::setupClientbodySize(std::string& line, server_block& server)
 	server.client_body_size = std::stoi(size[0]);
 }
 
-void Web::setupErrorPage(std::string& line, server_block& server)
+void Config::setupErrorPage(std::string& line, Server& server)
 {
 	std::cout << "made it here" << std::endl;
 	std::string val = line.substr(12, line.size() - 12);
@@ -117,7 +109,7 @@ void Web::setupErrorPage(std::string& line, server_block& server)
 	
 }
 
-void Web::setuproot(std::string line, location_block& location)
+void Config::setuproot(std::string line, Location& location)
 {
 	if (!location.root.empty())
 		throw std::runtime_error("Error: root already set");
@@ -135,7 +127,7 @@ void Web::setuproot(std::string line, location_block& location)
 	
 }
 
-void Web::setupindex(std::string line, location_block& location)
+void Config::setupindex(std::string line, Location& location)
 {
 	if (!location.index.empty())
 		throw std::runtime_error("Error: index already set");
@@ -153,7 +145,7 @@ void Web::setupindex(std::string line, location_block& location)
 
 }
 
-void Web::setupmethods(std::string line, location_block& location)
+void Config::setupmethods(std::string line, Location& location)
 {
 	if (!location.methods.empty())
 		throw std::runtime_error("Error: methods already set");
@@ -183,7 +175,7 @@ void Web::setupmethods(std::string line, location_block& location)
 	std::cout << std::endl;
 }
 
-void	Web::setupredirect(std::string line, location_block& location)
+void	Config::setupredirect(std::string line, Location& location)
 {
 	std::string val = line.substr(9, line.size() - 9);
 	if (line_empty(val))
@@ -204,7 +196,7 @@ void	Web::setupredirect(std::string line, location_block& location)
 	std::cout << "redirect: " << location.redirect.first << " " << location.redirect.second << std::endl;
 }
 
-void Web::setupautoindex(std::string line, location_block& location)
+void Config::setupautoindex(std::string line, Location& location)
 {
 	std::string val = line.substr(12, line.size() - 12);
 	if (line_empty(val))
@@ -223,7 +215,7 @@ void Web::setupautoindex(std::string line, location_block& location)
 
 }
 
-void Web::setupLocation(std::ifstream& file, std::string& line, server_block& server)
+void Config::setupLocation(std::ifstream& file, std::string& line, Server& server)
 {
 	std::string val = line.substr(10, line.size() - 10);
 	if (line_empty(val))
@@ -231,7 +223,7 @@ void Web::setupLocation(std::ifstream& file, std::string& line, server_block& se
 	std::vector<std::string> uri = split(val, ' ');
 	if (uri.size() != 1)
 		throw std::runtime_error("Error: invalid location uri");
-	std::pair<std::string, location_block> location;
+	std::pair<std::string, Location> location;
 	location.first = uri[0];
 	// std::string linee;
 	while (std::getline(file, line))
@@ -263,9 +255,9 @@ void Web::setupLocation(std::ifstream& file, std::string& line, server_block& se
 
 }
 
-void Web::setupServer(std::ifstream& file)
+void Config::setupServer(std::ifstream& file)
 {
-	server_block server;
+	Server server;
 	for (std::string line; std::getline(file, line);)
 	{
 		if (line_empty(line))
@@ -291,7 +283,7 @@ void Web::setupServer(std::ifstream& file)
 	
 }
 
-void	Web::setupconfig(const std::string& filename)
+void	Config::setupconfig(const std::string& filename)
 {
 	std::ifstream file(filename);
 

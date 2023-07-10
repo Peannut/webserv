@@ -1,33 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   location_block.hpp                                 :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/17 08:25:53 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/04 16:20:57 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/07/10 20:11:24 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/07/10 20:11:25 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _LOCATION_BLOCK_HPP_
-# define _LOCATION_BLOCK_HPP_
 
-#include "webserv.hpp"
 
-struct location_block
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
+#include "prototypes.hpp"
+
+struct Server
 {
-	std::string root;
-	bool autoindex;
-	std::vector<std::string> index;
-	std::set<std::string> methods;
-	std::pair<std::string, std::string> CGI;
-	std::string upload_path;
-	std::pair<short,std::string> redirect; // code and url
+	std::pair<int, short> listen;
+	std::vector<std::string> server_names;
+	std::map<std::string, Location> locations;
+	size_t client_body_size;
+	std::map<short, std::string> error_pages;
 
-	
-	location_block() : autoindex(0) {}
-	
+	Server();
 };
 
-#endif
+#endif // SERVER_HPP

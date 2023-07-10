@@ -6,11 +6,21 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 09:40:39 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/04 21:54:34 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/10 20:12:28 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/webserv.hpp"
+#include "includes.hpp"
+
+int line_empty(const std::string& line)
+{
+	for (size_t i = 0; i < line.size(); i++)
+	{
+		if (!std::isspace(line[i]))
+			return (0);
+	}
+	return (1);
+}
 
 std::vector<std::string> split(const std::string& str, char lim)
 {

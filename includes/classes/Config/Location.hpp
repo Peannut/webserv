@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/16 19:14:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/05 11:36:28 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/07/10 20:11:27 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/07/10 20:11:29 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/webserv.hpp"
 
-int main(int ac, char **av)
+
+#ifndef LOCATION_HPP
+#define LOCATION_HPP
+
+#include "prototypes.hpp"
+
+struct Location
 {
-	Web web;
-	if (ac  != 2)
-	{
-		std::cerr << "check ur arguments" << std::endl;
-		return (1);
-	}
-	try
-	{
-		web.setupconfig(av[1]);
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-	return (0);
-}
+	std::string root;
+	bool autoindex;
+	std::vector<std::string> index;
+	std::set<std::string> methods;
+	std::pair<std::string, std::string> CGI;
+	std::string upload_path;
+	std::pair<short,std::string> redirect; // code and url
+
+	Location();
+};
+
+#endif // LOCATION_HPP

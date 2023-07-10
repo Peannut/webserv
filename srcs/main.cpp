@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:03 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/06 14:59:44 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/10 10:31:15 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ char buffer[BUFFER_SIZE];
 const std::string response
 (
     "HTTP/1.1 200 OK\r\n"
-    "Content-length: 2\r\n"
-    "Content-Type: text/plain\r\n"
+    "Content-length: 14\r\n"
+    "Content-Type: text/html\r\n"
     "Connection: close\r\n\r\n"
+    "<h1>hello</h1>"
 );
 
 void setup_webserv(WebServ & webserv)
@@ -63,16 +64,15 @@ void start_multiplexing(WebServ & webserv)
                 webserv.remove_connection(i);
             else if (!conn._isListen && conn._isMustServeNow)
                 serving(webserv, i);
-            else
-                conn._isMustServeNow = true;
         }
     }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **argv, char **envp)
 {
     UNUSED(argc);
     UNUSED(argv);
+    UNUSED(envp);
 
     WebServ webserv;
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   our_functions.cpp                                  :+:      :+:    :+:   */
+/*   multiplexing.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:02:48 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/05 20:45:17 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/09 15:29:56 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 struct addrinfo *our_getaddrinfo(const char *hostname, const char *servname)
 {
-    struct addrinfo *records;
-    struct addrinfo hints;
+    addrinfo *records;
+    addrinfo hints;
 
     bzero(&hints, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
@@ -31,7 +31,7 @@ struct addrinfo *our_getaddrinfo(const char *hostname, const char *servname)
         std::cout << "\t-> port:\t" << \
         (((unsigned int)(unsigned char)tmp->ai_addr->sa_data[0] << 8) | (unsigned int)(unsigned char)tmp->ai_addr->sa_data[1]) << std::endl;
         std::cout << "\t-> address:\t";
-        for (sa_family_t i = 2; i < tmp->ai_addr->sa_len; ++i) {
+        for (sa_family_t i = 2; i < 14; ++i) {
             if (i != 2) std::cout << '.';
             std::cout << (unsigned int)(unsigned char)tmp->ai_addr->sa_data[i];
         }
@@ -90,13 +90,13 @@ void our_poll(std::vector<SOCKET_POLL> & sockets)
 
 void accepting(WebServ & webserv, const size_t & index)
 {
+    std::cout << ANSI_GREEN;
     std::cout << "... accepting ..." << std::endl;
+    std::cout << ANSI_RESET;
 
     SOCKET_POLL & socket_server = webserv.get_socket(index);
-    struct sockaddr_storage client_address;
-    socklen_t client_len = sizeof(client_address);
 
-    SOCKET_FD fdsock_client = accept(socket_server.fd, (struct sockaddr *)&client_address, &client_len);
+    SOCKET_FD fdsock_client = accept(socket_server.fd, NULL, NULL);
     if (fdsock_client == -1) throw ("accept");
 
     err = fcntl(fdsock_client, F_SETFL, O_NONBLOCK);
@@ -107,29 +107,32 @@ void accepting(WebServ & webserv, const size_t & index)
 
     webserv.add_connection(!LISTEN_ENABLE, fdsock_client);
 
-    char address_buffer[100];
-    getnameinfo((struct sockaddr *)&client_address, client_len, address_buffer, sizeof(address_buffer), 0, 0, NI_NUMERICHOST);
-    std::cout << "-----------------------------------------------------------------------------------" << std::endl;
-    std::cout << "New connection from " << address_buffer << std::endl;
 }
 
 void receiving(WebServ & webserv, const size_t & index)
 {
+    std::cout << ANSI_GREEN;
     std::cout << "... receiving ..." << std::endl;
+    std::cout << ANSI_RESET;
 
     const SOCKET_POLL & socket_client = webserv.get_socket(index);
-    Request & req = webserv.get_connection(index).get_req();
+    Connection & conn = webserv.get_connection(index);
 
     int number_of_bytes = recv(socket_client.fd, buffer, BUFFER_SIZE, 0);
     if (number_of_bytes == -1) throw ("recv");
 
     if (number_of_bytes == 0) webserv.remove_connection(index);
-    else req.concatenate(std::string(buffer, number_of_bytes));
+    else {
+        if (conn.get_req().concatenate(std::string(buffer, number_of_bytes)))
+            conn._isMustServeNow = true;
+    }
 }
 
 void sending(WebServ & webserv, const size_t & index)
 {
+    std::cout << ANSI_GREEN;
     std::cout << "... sending ..." << std::endl;
+    std::cout << ANSI_RESET;
 
     const SOCKET_POLL & socket_client = webserv.get_socket(index);
     Response & res = webserv.get_connection(index).get_res();
@@ -146,7 +149,9 @@ void sending(WebServ & webserv, const size_t & index)
 
 void serving(WebServ & webserv, const size_t & index)
 {
+    std::cout << ANSI_GREEN;
     std::cout << "... serving ..." << std::endl;
+    std::cout << ANSI_RESET;
 
     Connection & conn = webserv.get_connection(index);
 

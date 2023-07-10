@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/05 19:27:59 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/09 14:54:26 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 
 // Includes
 #include <iostream>
+#include <locale>
 #include <string>
 #include <sstream>
 #include <vector>
+#include <map>
 #include <cstring>
 #include <cerrno>
 #include <unistd.h>

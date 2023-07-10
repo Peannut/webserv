@@ -6,7 +6,7 @@
 #    By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
-#    Updated: 2023/07/05 19:27:46 by zwina            ###   ########.fr        #
+#    Updated: 2023/07/10 10:56:42 by zwina            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ ANSI_ULINE          := \\033[4m
 ANSI_ULINE_RESET    := \\033[24m
 ANSI_ITALIC         := \\033[3m
 ANSI_ITALIC_RESET   := \\033[23m
+ANSI_RED			:= \\033[31m
 ANSI_GREEN          := \\033[32m
 ANSI_YELLOW			:= \\033[33m
 
@@ -30,6 +31,7 @@ SRCSDIR 		:= srcs
 CLASSESDIR 		:= classes
 CONFIGDIR 		:= Config
 CONNECTIONDIR	:= Connection
+REQUESTDIR		:= Request
 # sources
 CFILES  :=\
 	$(CLASSESDIR)/$(CONFIGDIR)/Config.cpp \
@@ -39,8 +41,12 @@ CFILES  :=\
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Request.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Response.cpp \
 	$(CLASSESDIR)/WebServ.cpp \
+	$(REQUESTDIR)/body.cpp \
+	$(REQUESTDIR)/fields.cpp \
+	$(REQUESTDIR)/request_line.cpp \
+	$(REQUESTDIR)/utils.cpp \
 	main.cpp \
-	our_functions.cpp
+	multiplexing.cpp
 SRCS    := $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
 # objects
 OBJS    := $(patsubst $(SRCSDIR)/%.cpp,$(OBJSDIR)/%.o,$(SRCS))
@@ -53,10 +59,16 @@ bonus : all
 
 debug : CCWI += $(DEBUG)
 debug : all
+	@printf "$(ANSI_RED)$(ANSI_BOLD)"
+	@printf "[Debuging Mode]\n\n"
+	@printf "$(ANSI_RESET)"
 
 $(NAME) : $(OBJSDIR) $(OBJS)
+	@printf "$(ANSI_GREEN)$(ANSI_BOLD)\n\n"
+	@printf "Linking WebServ ... "
+	@printf "$(ANSI_RESET)\n"
 	@$(CCWI) $(OBJS) -o $(NAME)
-	@printf "$(ANSI_GREEN)$(ANSI_BOLD)\n"
+	@printf "$(ANSI_GREEN)$(ANSI_BOLD)"
 	@printf "██╗    ██╗███████╗██████╗ ███████╗███████╗██████╗ ██╗   ██╗\n"
 	@printf "██║    ██║██╔════╝██╔══██╗██╔════╝██╔════╝██╔══██╗██║   ██║\n"
 	@printf "██║ █╗ ██║█████╗  ██████╔╝███████╗█████╗  ██████╔╝██║   ██║\n"
@@ -68,6 +80,7 @@ $(NAME) : $(OBJSDIR) $(OBJS)
 $(OBJSDIR) :
 	@mkdir $(OBJSDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)
+	@mkdir $(OBJSDIR)/$(REQUESTDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONNECTIONDIR)
 

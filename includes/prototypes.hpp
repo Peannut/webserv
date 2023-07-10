@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:37 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/06 14:47:09 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/10 10:45:07 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,15 @@
 #define LISTEN_ENABLE true // the type of connection, is it a server socket (aka. listen) or a client socket
 #define POLL_TIME 0 // the time that poll() waits in milliseconds
 #define BACK_LOG 10 // one socket can handle BACK_LOG number of connection
-#define BUFFER_SIZE (size_t)512 // the size of the receiving the sending buffer
+#define BUFFER_SIZE (size_t)1024 // the size of the receiving the sending buffer
 
-#define ANSI_RESET        "\033[0m"
-#define ANSI_BOLD         "\033[1m"
-#define ANSI_ULINE        "\033[4m"
-#define ANSI_ITALIC       "\033[3m"
-#define ANSI_RED          "\033[31m"
+#define ANSI_RESET      "\033[0m"
+#define ANSI_BOLD       "\033[1m"
+#define ANSI_ULINE      "\033[4m"
+#define ANSI_ITALIC     "\033[3m"
+#define ANSI_RED        "\033[31m"
+#define ANSI_GREEN      "\033[32m"
+#define ANSI_YELLOW	    "\033[33m"
 
 // This is the declaration, the definition is in the main.cpp file
 extern int err;
@@ -43,6 +45,11 @@ struct Request;
 struct Response;
 
 // The declarations of the functions
+
+// <-- main.cpp -->
+void setup_webserv(WebServ & webserv);
+void start_multiplexing(WebServ & webserv);
+// <-- multiplexing.cpp -->
 struct addrinfo *   our_getaddrinfo     (const char *hostname, const char *servname);
 SOCKET_FD           our_bind            (struct addrinfo *records);
 SOCKET_FD           our_socket          (const int &domain, const int &type, const int &protocol);
@@ -54,5 +61,19 @@ void                accepting           (WebServ & webserv, const size_t & index
 void                receiving           (WebServ & webserv, const size_t & index);
 void                sending             (WebServ & webserv, const size_t & index);
 void                serving             (WebServ & webserv, const size_t & index);
+// <-- Request/utils.cpp -->
+bool isUnreserved(const char & c);
+bool isReserved(const char & c);
+bool isOWS(const char & c);
+bool isVchar(const char & c);
+bool isTchar(const char & c);
+bool isMethodChar(const char & c);
+bool isPathChar(const char & c);
+bool isQueryChar(const char & c);
+void toupperFieldKey(std::string & field_key);
+void trimFieldVal(std::string & field_val);
+bool isContentLengthValValid(const std::string & val);
+bool isTransferEncodingValValid(const std::string & val);
+
 
 #endif // PROTOTYPES_HPP

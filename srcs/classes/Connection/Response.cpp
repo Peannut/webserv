@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:17 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/06 15:06:10 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/08 09:29:02 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@ const char * Response::get_res_raw_shifted(void)
 
 void Response::serving()
 {
-    _res_raw.assign(response + "HH");
+    _res_raw.assign(response);
     std::cout << "RESPONSE = ["<<_res_raw<<']' << std::endl;
 }

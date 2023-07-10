@@ -131,6 +131,26 @@ metaResponse generateResponse(const metaRequest &request) {
 		}
 	}
 	// else if (request._method == "POST")
+	else { //method == "DELETE"
+		    if (resourceExists(request._path)) { // resource exists | now should check if it is a file or directory
+				if (isDirectory(request._path)) { //resource is directory
+					if(!hasSlashEnd(request._path)) { //not slash at the end
+						response.statusCode = 409;
+						response.statusMessage = "Conflict";
+					}
+					else {
+
+					}
+				}
+				else {//resource is a file
+
+				}
+			}
+			else { //requestedRerousce does not exist
+				response.statusCode = 404;
+				response.statusMessage = "Not Found";
+			}
+	} 
 	return response;
 }
 

@@ -1,18 +1,34 @@
 #include "header.hpp"
 
 
-bool pathValid (const std::string &path) {
-	if (path.substr(0, 7) != "http://") {
-		std::cerr << "bad protocol" << std::endl;
+// bool pathValid (const std::string &path) {
+// 	if (path.substr(0, 7) != "http://") {
+// 		std::cerr << "bad protocol" << std::endl;
+// 		return false;
+// 	}
+// 	size_t slashpos = path.find('/', 7);
+// 	if (slashpos == std::string::npos) {
+// 		std::cerr << "no slash at the end of host" << std::endl;
+// 		return false;
+// 	}
+// 	std::string host = path.substr(7, slashpos - 7);
+// 	if (host.find('.')  == std::string::npos) {
+// 		return false;
+// 	}
+// 	return true;
+// }
+
+bool isDirectory(const std::string &path) {
+	struct stat pathStat;
+	if (stat(path.c_str(), &pathStat) != 0) {
+		std::cerr << "stat() error!" << std::endl;
 		return false;
-	}
-	size_t slashpos = path.find('/', 7);
-	if (slashpos == std::string::npos) {
-		std::cerr << "no slash at the end of host" << std::endl;
-		return false;
-	}
-	std::string host = path.substr(7, slashpos - 7);
-	if (host.find('.')  == std::string::npos) {
+	} 
+	return S_ISDIR(pathStat.st_mode);
+}
+
+bool hasSlashEnd(const std::string &path) {
+	if(path.at(path.length() - 1) != '/') {
 		return false;
 	}
 	return true;
@@ -23,12 +39,13 @@ bool resourceExists (const std::string &path) {
 	return file.good();
 }
 
-std::string getContentType(const std::string path) {
+std::string getContentType(const std::string &path) {
 	std::string conType;
 
 	size_t lastSlash = path.find_last_of('.');
 	conType = path.substr(lastSlash+ 1, path.length() - lastSlash);
-	if (conType == "html" || conType == "htm") {
+
+	if (conType == "htm" || conType == "html") {
 		return "text/html";
 	}
 	else if (conType == "css") {
@@ -66,30 +83,56 @@ std::string getContentType(const std::string path) {
 	}
 }
 
-// readResource function
+std::string readResource(const std::string &path) {
+	std::string content;
+	std::ifstream file(path.c_str(), std::ios::in | std::ios::binary);
 
-// metaResponse generateResponse(const metaRequest &request) {
-// 	metaResponse response;
+	if(file) {
+		file.seekg(0, std::ios::end);
+		std::streampos lenght = file.tellg();
+		file.seekg(0, std::ios::beg);
+		
+		content.resize(static_cast<size_t>(lenght));
+		file.read(&content[0], lenght);
 
-// 	if (request._method == "GET") {
-// 		if (pathValid(request._path)) {
-// 			if (resourceExists(request._path)) {
-// 				response.contentType = getContentType(request._path);
-// 				response.content = readResource(request._path);
-// 				//generate response
-// 			}
-// 			else {
-// 				response.statusCode = 404;
-// 				response.statusMessage = "Not Found";
-// 			}
-// 		}
-// 		else {
-// 			response.statusCode = 400;
-// 			response.statusMessage = "Bad Request";
-// 		}
-// 	}
-// 	return response;
-// }
+		file.close();
+	}
+	return content;
+}
+
+metaResponse generateResponse(const metaRequest &request) {
+	metaResponse response;
+
+	if (request._method == "GET") {
+		//check if client requested a dir or file
+		if (isDirectory(request._path)) { // a directory is requested
+			if (hasSlashEnd(request._path)) { //dir has '/' at the end
+				//check if directory has indexfile (search for "index.html" in the dir) | if found serve it
+				//if directory has no indexfile | check if autoindex is on
+					// if on return autoindex of directory
+					// else (autoindex off) return 403 Forbidden;
+			}
+			else { //dir does not have '/' at the end
+				response.statusCode = 301;
+				response.statusMessage = "Moved Pemanently";
+			}
+		}
+		else { // a file is requested
+			if (resourceExists(request._path)) {
+				response.statusCode = 200;
+				response.statusMessage = "OK";
+				response.contentType = getContentType(request._path);
+				response.content = readResource(request._path);
+			}
+			else {
+				response.statusCode = 404;
+				response.statusMessage = "Not Found";
+			}
+		}
+	}
+	// else if (request._method == "POST")
+	return response;
+}
 
 
 int main (int ac, char **av) {
@@ -97,15 +140,16 @@ int main (int ac, char **av) {
 	metaRequest parsedreq;
 
 	parsedreq._method = "GET";
-	parsedreq._path = "http://friw.com/file.chi haja";
+	parsedreq._path = "http://friw.com/file.html";
     parsedreq._version = "HTTP/1.1";
     parsedreq._headers.push_back(std::make_pair("contet-Type", "application/json"));
     parsedreq._body = "Request body";
 
-	getContentType(parsedreq._path);
-	// metaResponse response = generateResponse(parsedreq);
+	// std::cout << getContentType(parsedreq._path)<< std::endl;
+	// std::cout << readResource("Makefile") << std::endl;
+	metaResponse response = generateResponse(parsedreq);
 
-	//serve the request;
+	//serve the response;
 
 	return 0;
 }

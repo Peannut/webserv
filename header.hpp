@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -28,6 +29,7 @@ struct metaResponse {
     std::string statusMessage;
     std::string contentType;
     std::string content;
+    // std::string headers;
 
     metaResponse() {}
     metaResponse(int code, const std::string& message, const std::string& type, const std::string& body)

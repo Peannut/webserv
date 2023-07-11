@@ -1,5 +1,5 @@
-#ifndef HEADER_HPP
-# define HEADER_HPP
+#ifndef RESPONSE_HPP
+# define RESPONSE_HPP
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -15,14 +15,6 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-
-struct metaRequest {
-    std::string _method;
-    std::string _path;
-    std::string _version;
-    std::string _body;
-    std::vector<std::pair<std::string, std::string> > _headers;
-};
 
 struct metaResponse {
     int statusCode;

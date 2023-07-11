@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   body.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/09 11:26:06 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/10 10:21:02 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 void Request::body_content_mode(const char & c)
@@ -42,7 +30,7 @@ void Request::body_length_CRLF_mode(const char & c)
         setError(code_400_e);
     else
     {
-        _transfer_content_len = std::stoull(__tmp1, 0, 16);
+        _transfer_content_len = std::strtoull(__tmp1.data(), 0, 16);
         _transfer_chunk_len = _transfer_content_len;
         __tmp1.clear();
         _mode = body_chunk_m;

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   WebServ.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/24 15:03:12 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/09 15:29:10 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 WebServ::WebServ()
@@ -30,7 +18,11 @@ void WebServ::add_connection(const bool & isListen, const int & fdsock)
 {
     std::cout << ANSI_YELLOW;
     std::cout << "{[(---------------------------------------Adding";
-    _sockets.push_back((SOCKET_POLL){.fd=fdsock});
+    _sockets.push_back((SOCKET_POLL){\
+    .fd=fdsock,\
+    .events=0,\
+    .revents=0\
+    });
     _conns.push_back(new Connection(isListen, _sockets.back()));
     ++_number_of_connections;
     for (size_t i = 0; i < _number_of_connections; ++i)

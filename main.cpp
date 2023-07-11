@@ -1,23 +1,5 @@
 #include "header.hpp"
 
-
-// bool pathValid (const std::string &path) {
-// 	if (path.substr(0, 7) != "http://") {
-// 		std::cerr << "bad protocol" << std::endl;
-// 		return false;
-// 	}
-// 	size_t slashpos = path.find('/', 7);
-// 	if (slashpos == std::string::npos) {
-// 		std::cerr << "no slash at the end of host" << std::endl;
-// 		return false;
-// 	}
-// 	std::string host = path.substr(7, slashpos - 7);
-// 	if (host.find('.')  == std::string::npos) {
-// 		return false;
-// 	}
-// 	return true;
-// }
-
 bool isDirectory(const std::string &path) {
 	struct stat pathStat;
 	if (stat(path.c_str(), &pathStat) != 0) {
@@ -138,12 +120,43 @@ metaResponse generateResponse(const metaRequest &request) {
 						response.statusCode = 409;
 						response.statusMessage = "Conflict";
 					}
-					else {
-
+					else { //has slash so we should check if it has cgi
+						if ( /*has cgi*/1 ) {
+							if (/*no index files*/1) {
+								response.statusCode = 403;
+								response.statusMessage = "Forbidden";
+							}
+							else /*has index files*/ {
+								//si7r dyal cgi
+							}
+						}
+						else /* no cgi */ { //delete all folder content
+							if (/*delete was not succesfull*/1) {
+								if( /*no write access on folder*/ 1) {
+									response.statusCode = 403;
+									response.statusMessage = "Forbidden";
+								}
+								else /*have write access*/ {
+									response.statusCode = 500;
+									response.statusMessage = "Internal Server Error";
+								}
+							}
+							else /*delete succes*/ {
+								response.statusCode = 204;
+								response.statusMessage = "No Content";
+							}
+						}
 					}
 				}
 				else {//resource is a file
-
+					if (/*no cgi*/ 1) {
+						//delete file function
+						response.statusCode = 204;
+						response.statusMessage = "No Content";
+					}
+					else /*has cgi*/ {
+						//dak si7r dyal cgi
+					}
 				}
 			}
 			else { //requestedRerousce does not exist

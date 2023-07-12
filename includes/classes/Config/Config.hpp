@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:11:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/10 20:11:16 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/12 07:32:36 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ struct Config
 {
 	std::vector<Server> config;
 
+	Server &get_server(const size_t & index);
 	void setupconfig(const std::string& filename);
 	void setup_host(std::string& host, Server& server);
 	void setup_listen(std::string& line, Server& server);
@@ -34,6 +35,7 @@ struct Config
 	void setupmethods(std::string line, Location& location);
 	void setupredirect(std::string line, Location& location);
 	void setupautoindex(std::string line, Location& location);
+	void setupcgibin(std::string line, Location& location);
+	void setupuploadpass(std::string line, Location& location);
 };
 
-#endif // CONFIG_HPP

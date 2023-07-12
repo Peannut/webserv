@@ -6,13 +6,16 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/10 20:12:13 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/12 07:27:07 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #include "includes.hpp"
+
+Server &Config::get_server(const size_t & index)
+{
+	return config[index];
+}
 
 void Config::setup_host(std::string& host, Server& server)
 {
@@ -27,6 +30,7 @@ void Config::setup_host(std::string& host, Server& server)
 		int var = std::stoi(ip_split[i]);
 		if (var < 0 || var > 255)
 			throw std::runtime_error("Error: invalid ip address");
+			
 		ip <<= 8;
 		ip += var;
 		i++;
@@ -34,8 +38,6 @@ void Config::setup_host(std::string& host, Server& server)
 	if (server.listen.first > 0)
 		throw std::runtime_error("Error: listen already set");
 	server.listen.first = ip;
-	std::cout << "ip "<< server.listen.first << std::endl;
-
 }
 
 void Config::setup_listen(std::string& line, Server& server)
@@ -49,7 +51,11 @@ void Config::setup_listen(std::string& line, Server& server)
 	setup_host(hostport[0], server);
 	size_t port = std::stoi(hostport[1]);
 	server.listen.second = port;
-	std::cout << "port "<< server.listen.second << std::endl;
+	std::cout << "port function" << convertPortToString(server.listen.second) <<std::endl;
+	// std::cout << "port "<< server.listen.second << std::endl;
+	// print listen
+	// std::cout << "listen: " << server.listen.first << ":" << server.listen.second << std::endl;
+	// std::cout << "IP address: " << convertToIPAddress(server.listen.first) << std::endl;
 }
 
 void Config::setup_servername(std::string& line, Server& server)
@@ -81,7 +87,6 @@ void Config::setupClientbodySize(std::string& line, Server& server)
 
 void Config::setupErrorPage(std::string& line, Server& server)
 {
-	std::cout << "made it here" << std::endl;
 	std::string val = line.substr(12, line.size() - 12);
 	if (line_empty(val))
 		throw std::runtime_error("Error: error_page does not have a value");
@@ -99,11 +104,14 @@ void Config::setupErrorPage(std::string& line, Server& server)
 	page.second = error[1];
 	server.error_pages.insert(page);
 
+
+	// print size of error pages
+	std::cout << "size of error pages: " << server.error_pages.size() << std::endl;
 	// print error pages
 	std::map<short, std::string>::iterator it = server.error_pages.begin();
 	while (it != server.error_pages.end())
 	{
-		std::cout << it->first << "=>" << it->second << std::endl;
+		std::cout << it->first << " here =>" << it->second << std::endl;
 		it++;
 	}
 	
@@ -215,6 +223,40 @@ void Config::setupautoindex(std::string line, Location& location)
 
 }
 
+void Config::setupcgibin(std::string line, Location& location)
+{
+	if (!location.cgi_bin.first.empty())
+		throw (std::runtime_error("Error: cgi_bin duplication in value"));
+	std::string val = line.substr(10, line.size() - 10);
+	if (line_empty(val))
+		throw std::runtime_error("Error: cgi_bin does not have a value");
+	std::vector<std::string> cgi_bin = split(val, ' ');
+	if (cgi_bin.size() != 2)
+		throw std::runtime_error("Error: invalid cgi_bin value");
+	location.cgi_bin.first = cgi_bin[0];
+	location.cgi_bin.second = cgi_bin[1];
+	if (location.cgi_bin.first != ".php" && location.cgi_bin.first != ".py")
+		throw std::runtime_error("Error: invalid cgi_bin extension");
+	// print cgi_bin
+	std::cout << "cgi_bin: " << location.cgi_bin.first << " " << location.cgi_bin.second << std::endl;
+}
+
+void Config::setupuploadpass(std::string line, Location& location)
+{
+	std::string val = line.substr(14, line.size() - 14);
+	if (line_empty(val))
+		throw std::runtime_error("Error: upload_pass does not have a value");
+	std::vector<std::string> upload_pass = split(val, ' ');
+	if (upload_pass.size() != 1)
+		throw std::runtime_error("Error: invalid upload_pass value");
+	if(!location.upload_pass.empty())
+		throw std::runtime_error("Error: upload_pass already set");
+	location.upload_pass = upload_pass[0];
+	// print upload_pass
+	std::cout << "upload_pass: " << location.upload_pass << std::endl;
+
+}
+
 void Config::setupLocation(std::ifstream& file, std::string& line, Server& server)
 {
 	std::string val = line.substr(10, line.size() - 10);
@@ -236,10 +278,10 @@ void Config::setupLocation(std::ifstream& file, std::string& line, Server& serve
 			setupindex(line, location.second);
 		else if (!line.compare(0, 10, "\t\tmethods:"))
 			setupmethods(line, location.second);
-		else if (!line.compare(0, 13, "\t\tcgi:"))
-			;
-		else if (!line.compare(0, 13, "\t\tupload:"))
-			;
+		else if (!line.compare(0, 10, "\t\tcgi-bin:"))
+			setupcgibin(line, location.second);
+		else if (!line.compare(0, 14, "\t\tupload_pass:"))
+			setupuploadpass(line, location.second);
 		else if (!line.compare(0,12,"\t\tautoindex:"))
 			setupautoindex(line, location.second);
 		else if (!line.compare(0,9,"\t\treturn:"))
@@ -285,7 +327,10 @@ void Config::setupServer(std::ifstream& file)
 
 void	Config::setupconfig(const std::string& filename)
 {
-	std::ifstream file(filename);
+	// check file extension must be .conf
+	if (filename.substr(filename.find_last_of(".") + 1) != "conf")
+		throw std::runtime_error("Error: invalid config file extension must be .conf");
+	std::ifstream file(filename.c_str());
 
 	if (!file.is_open())
 		throw std::runtime_error("Error: cannot open config file");
@@ -299,4 +344,5 @@ void	Config::setupconfig(const std::string& filename)
 			throw std::runtime_error("Error: invalid directive");
 		
 	}
+	file.close();
 }

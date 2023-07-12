@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 09:40:39 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/10 20:12:28 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/12 07:25:01 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,27 @@ long int ft_stringtolong(const std::string& str)
         throw std::invalid_argument("ft_stringtoolong: invalid argument");
     }
     return result;
+}
+
+std::string convertToIPAddress(size_t ip)
+{
+    std::string ipAddress;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        int octet = (ip >> (8 * (3 - i))) & 255;
+        ipAddress += std::to_string(octet);
+
+        if (i != 3)
+            ipAddress += ".";
+    }
+
+    return ipAddress;
+}
+
+std::string convertPortToString(short port)
+{
+    std::stringstream ss;
+    ss << port;
+    return ss.str();
 }

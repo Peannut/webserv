@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+         #
+#    By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
-#    Updated: 2023/07/10 10:56:42 by zwina            ###   ########.fr        #
+#    Updated: 2023/07/11 00:04:45 by zoukaddo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,9 @@ ANSI_YELLOW			:= \\033[33m
 
 # compilation
 DEBUG   := -fsanitize=address -g
-CCWI    := g++ -Wall -Wextra -Werror -Iincludes -std=c++98
+CCWI    := c++ -Iincludes 
+# CCWI    := g++ -Wall -Wextra -Werror -Iincludes -std=c++98
+
 # directories
 OBJSDIR 		:= objs
 SRCSDIR 		:= srcs

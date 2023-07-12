@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prototypes.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:37 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/10 10:45:07 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/12 07:25:29 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ void                serving             (WebServ & webserv, const size_t & index
 int line_empty(const std::string& line);
 ssize_t stringToLong(const std::string& str);
 std::vector<std::string> split(const std::string& str, char lim);
+std::string convertToIPAddress(size_t ip);
+std::string convertPortToString(short port);
 // <-- Request/utils.cpp -->
 bool isUnreserved(const char & c);
 bool isReserved(const char & c);

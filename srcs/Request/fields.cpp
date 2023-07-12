@@ -9,12 +9,14 @@ void Request::field_CRLF_mode(const char & c)
         _mode = field_key_m;
         if (!__tmp1.empty() && !__tmp2.empty())
         {
-            if (__tmp1 == "CONTENT-LENGTH")
+            toupperFieldKey(__tmp1);
+            trimFieldVal(__tmp2);
+            if (_method == post_method && __tmp1 == "CONTENT-LENGTH")
             {
                 if (!isContentLengthValValid(__tmp2)) setError(code_400_e);
                 else setTransferContent();
             }
-            else if (__tmp1 == "TRANSFER-ENCODING")
+            else if (_method == post_method && __tmp1 == "TRANSFER-ENCODING")
             {
                 if (__tmp2 != "chunked") setError(code_501_e);
                 else setTransferChunk();
@@ -71,8 +73,6 @@ void Request::field_val_mode(const char & c)
 {
     if (c == '\r')
     {
-        toupperFieldKey(__tmp1);
-        trimFieldVal(__tmp2);
         if (__tmp2.empty()) setError(code_400_e);
         else _mode = field_CRLF_m;
     }
@@ -91,11 +91,12 @@ void Request::field_last_CRLF_mode(const char & c)
     {
         if (_fields.find("HOST") == _fields.end())
             setError(code_400_e);
-        if (_transfer == none_tr)
-            setError(code_411_e); // HNA FIN SAALIIITT
+        if (_method == post_method && _transfer == none_tr)
+            setError(code_411_e);
         else
         {
-            if (_transfer == content_tr && _transfer_content_len == 0) _mode = success_m;
+            if (_method != post_method) _mode = success_m;
+            else if (_transfer == content_tr && _transfer_content_len == 0) _mode = success_m;
             else if (_transfer == content_tr) _mode = body_content_m;
             else if (_transfer == chunk_tr) _mode = body_length_m;
         }

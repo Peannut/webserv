@@ -20,7 +20,7 @@ void WebServ::add_connection(const bool & isListen, const int & fdsock)
     std::cout << "{[(---------------------------------------Adding";
     _sockets.push_back((SOCKET_POLL){\
     .fd=fdsock,\
-    .events=0,\
+    .events=POLLIN|POLLERR|POLLHUP|POLLNVAL,\
     .revents=0\
     });
     _conns.push_back(new Connection(isListen, _sockets.back()));

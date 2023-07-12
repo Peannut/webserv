@@ -50,7 +50,7 @@ bool Request::concatenate(const std::string & buffer)
     else if (_mode == error_m)
     {
         std::cout << ANSI_BOLD;
-        std::cout << "==>error_m<==" << std::endl;
+        std::cout << "==>error_m<== n:" << _error << std::endl;
         std::cout << ANSI_RESET;
         return true;
     }

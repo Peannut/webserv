@@ -18,6 +18,7 @@ struct Response {
     std::string statusMessage;
     std::string contentType;
     std::string content;
+    std::string responseHeaders;
 
     Response() {}
     Response(int code, const std::string& message, const std::string& type, const std::string& body)

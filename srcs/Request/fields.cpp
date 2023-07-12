@@ -11,15 +11,18 @@ void Request::field_CRLF_mode(const char & c)
         {
             toupperFieldKey(__tmp1);
             trimFieldVal(__tmp2);
-            if (_method == post_method && __tmp1 == "CONTENT-LENGTH")
+            if (_method == post_method)
             {
-                if (!isContentLengthValValid(__tmp2)) setError(code_400_e);
-                else setTransferContent();
-            }
-            else if (_method == post_method && __tmp1 == "TRANSFER-ENCODING")
-            {
-                if (__tmp2 != "chunked") setError(code_501_e);
-                else setTransferChunk();
+                if (__tmp1 == "CONTENT-LENGTH")
+                {
+                    if (!isContentLengthValValid(__tmp2)) setError(code_400_e);
+                    else setTransferContent();
+                }
+                else if (__tmp1 == "TRANSFER-ENCODING")
+                {
+                    if (__tmp2 != "chunked") setError(code_501_e);
+                    else setTransferChunk();
+                }
             }
             if (_mode != error_m) _fields[__tmp1] = __tmp2;
             __tmp1.clear();
@@ -93,6 +96,8 @@ void Request::field_last_CRLF_mode(const char & c)
             setError(code_400_e);
         if (_method == post_method && _transfer == none_tr)
             setError(code_411_e);
+        if (_method == post_method && _fields.find("CONTENT-TYPE") == _fields.end())
+            setError(code_415_e);
         else
         {
             if (_method != post_method) _mode = success_m;

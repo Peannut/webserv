@@ -30,6 +30,7 @@ enum Errors {
     code_405_e,     // Method Not Allowed
     code_505_e,     // HTTP Version Not Supported
     code_411_e,     // Length Required
+    code_415_e,     // Unsupported Media Type
     code_501_e,     // Not Implemented
     code_404_e,     // Not Found
     none_e,

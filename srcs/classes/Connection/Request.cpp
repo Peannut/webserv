@@ -13,7 +13,7 @@ bool Request::concatenate(const std::string & buffer)
 {
     for (size_t sz = buffer.size(), i = 0; i < sz; ++i) {
         const char & c = buffer[i];
-        if (_mode == success_m) _mode = error_m;
+        if (_mode == success_m) setError(code_400_e);
         switch (_mode)
         {
             // request_line
@@ -57,8 +57,30 @@ bool Request::concatenate(const std::string & buffer)
     return false;
 }
 
-void Request::serving(void)
+void Request::serving(Connection & conn)
 {
+    typedef std::map<std::string, Location> map_locations_t;
+
+    if (_mode != error_m)
+    {
+        const Server & srv = conn.get_srv();
+	    const map_locations_t & locations = srv.locations;
+
+        size_t maxLenMatched = 0;
+
+        for (map_locations_t::const_iterator it = locations.cbegin(); it != locations.cend(); ++it)
+        {
+            size_t lenMatched = matching_location(this->_path, it->first);
+            if (lenMatched != 0 && maxLenMatched < lenMatched)
+            {
+                conn.set_loc(it->first, it->second);
+                maxLenMatched = lenMatched;
+            }
+        }
+
+        if (maxLenMatched == 0) setError(code_404_e);
+    }
+
     std::cout << "REQUEST = [" << std::endl;
     std::cout << "message => |" << _message << '|' << std::endl;
     std::cout << "method =>\t\t|";
@@ -68,6 +90,7 @@ void Request::serving(void)
     std::cout << '|' << std::endl;
     std::cout << "uri =>\t\t\t|" << _uri << '|' << std::endl;
     std::cout << "path =>\t\t\t|" << _path << '|' << std::endl;
+    std::cout << "query =>\t\t|" << _query << '|' << std::endl;
     std::cout << "number_of_queries => |" << _queries.size() << '|' << std::endl;
     for (size_t sz = _queries.size(), i = 0; i < sz; ++i)
         std::cout << "query =>\t\t|" << _queries[i].first << "->" << _queries[i].second << '|' << std::endl;

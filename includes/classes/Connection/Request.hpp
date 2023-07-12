@@ -31,6 +31,7 @@ enum Errors {
     code_505_e,     // HTTP Version Not Supported
     code_411_e,     // Length Required
     code_501_e,     // Not Implemented
+    code_404_e,     // Not Found
     none_e,
 };
 
@@ -58,6 +59,7 @@ struct Request
     Methods _method;
     std::string _uri;
     std::string _path;
+    std::string _query;
     std::vector<std::pair<std::string, std::string> > _queries;
     std::string _version;
     std::map<std::string, std::string> _fields;
@@ -69,8 +71,9 @@ struct Request
     std::string __tmp2;
 
     Request();
+
     bool concatenate(const std::string & buffer);
-    void serving();
+    void serving(Connection & conn);
 
     void method_mode(const char & c);
     void path_mode(const char & c);

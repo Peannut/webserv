@@ -16,16 +16,20 @@ const std::string response
 
 void setup_webserv(WebServ & webserv)
 {
+    Config & config = webserv._conf;
+
     struct addrinfo *records;
     SOCKET_FD fdsock_server;
 
     // for (size_t sz = webserv._conf._srvs.size(), i = 0; i < sz; ++i) {
-    for (size_t sz = 1, i = 0; i < sz; ++i)
+    for (size_t sz = config.config.size(), i = 0; i < sz; ++i)
     {
-        records = our_getaddrinfo("127.0.0.1", "8080");
+        Server & server = config.get_server(i);
+
+        records = our_getaddrinfo(server.get_host().data(), server.get_port().data());
         fdsock_server = our_bind(records);
         our_listen(fdsock_server);
-        webserv.add_connection(LISTEN_ENABLE, fdsock_server);
+        webserv.add_connection(LISTEN_ENABLE, fdsock_server, server);
         freeaddrinfo(records);
     }
 }
@@ -56,16 +60,19 @@ void start_multiplexing(WebServ & webserv)
     }
 }
 
-int main(int argc, char **argv, char **envp)
+int main(int ac, char **av, char **envp)
 {
-    UNUSED(argc);
-    UNUSED(argv);
     UNUSED(envp);
 
     WebServ webserv;
 
+	if (ac  != 2)
+	{
+		std::cerr << "check ur arguments" << std::endl;
+		return (1);
+	}
     try {
-        // read_configfile(webserv);
+        webserv._conf.setupconfig(av[1]);
         setup_webserv(webserv);
         start_multiplexing(webserv);
     }
@@ -83,5 +90,10 @@ int main(int argc, char **argv, char **envp)
         std::cerr << ANSI_RESET;
         return 1;
     }
+    catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+        return 1;
+	}
     return 0;
 }

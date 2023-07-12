@@ -94,3 +94,21 @@ bool isTransferEncodingValValid(const std::string & val)
             return false;
     return true;
 }
+size_t matching_location(const std::string & path, const std::string & location_path)
+{
+    size_t lenMatched = (size_t)0;
+    size_t lenPath = path.length();
+    size_t lenLocationPath = location_path.length();
+
+    if (lenLocationPath < lenPath)
+        return (size_t)0;
+
+    while (lenMatched < lenPath && lenMatched < lenLocationPath)
+    {
+        if (path[lenMatched] != location_path[lenMatched])
+            break;
+        ++lenMatched;
+    }
+    
+    return lenMatched;
+}

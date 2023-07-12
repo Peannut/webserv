@@ -8,7 +8,8 @@ void Request::method_mode(const char & c)
         if (__tmp1 == "GET") _method = get_method;
         else if (__tmp1 == "POST") _method = post_method;
         else if (__tmp1 == "DELETE") _method = delete_method;
-        else _mode = error_m;
+        else setError(code_405_e);
+        __tmp1.clear();
     }
     else
     {
@@ -45,6 +46,7 @@ void Request::query_key_mode(const char & c)
     if (c == '=')
     {
         _uri.push_back(c);
+        _query.push_back(c);
         if (_queries.back().first.empty()) setError(code_400_e);
         else _mode = query_val_m;
     }
@@ -55,6 +57,7 @@ void Request::query_key_mode(const char & c)
         {
             _queries.back().first.push_back(c);
             _uri.push_back(c);
+            _query.push_back(c);
         }
     }
 }
@@ -68,6 +71,7 @@ void Request::query_val_mode(const char & c)
     else if (c == '&')
     {
         _uri.push_back(c);
+        _query.push_back(c);
         _queries.push_back(make_pair(std::string(), std::string()));
         _mode = query_key_m;
     }
@@ -78,6 +82,7 @@ void Request::query_val_mode(const char & c)
         {
             _queries.back().second.push_back(c);
             _uri.push_back(c);
+            _query.push_back(c);
         }
     }
 }

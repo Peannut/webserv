@@ -11,9 +11,9 @@ struct WebServ
     std::vector<SOCKET_POLL> _sockets;
 
     WebServ();
+
     Connection & get_connection(const size_t & index);
-    SOCKET_POLL & get_socket(const size_t & index);
-    void add_connection(const bool & isListen, const int & fdsock);
+    void add_connection(const bool & isListen, const int & fdsock, const Server & server);
     void remove_connection(const size_t & index);
 };
 

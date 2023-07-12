@@ -18,12 +18,11 @@ struct Response {
     std::string statusMessage;
     std::string contentType;
     std::string content;
-    std::string responseHeaders;
+    std::string Headers;
 
     Response() {}
     Response(int code, const std::string& message, const std::string& type, const std::string& body)
         : statusCode(code), statusMessage(message), contentType(type), content(body) {}
-    
 };
 
 #endif

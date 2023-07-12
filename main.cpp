@@ -2,14 +2,16 @@
 
 int main (int ac, char **av) {
 
-	Request parsedreq;
 	Response response;
 
 	if (checkRequestError(parsedreq)) {
-		ResponseHeaders = buildErrorResponse(parsedreq);
+		response.Headers = buildErrorResponseH(parsedreq);
+		response.content = buildErrorResponseB(parsedreq);
 		return 1;
 	}
-	Response response = generateResponse(parsedreq);
+	response = generateResponse(parsedreq);
+	//nbuildi response l3adya ila makan 7ta error;
+	// Response response = generateResponse(parsedreq);
 
 	//serve the response;
 

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:11:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/12 07:32:36 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/12 07:57:53 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,3 +39,4 @@ struct Config
 	void setupuploadpass(std::string line, Location& location);
 };
 
+#endif // CONFIG_HPP

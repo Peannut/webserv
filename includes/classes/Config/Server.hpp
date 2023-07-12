@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:11:24 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/12 07:31:14 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/12 07:58:18 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,3 +30,4 @@ struct Server
 	std::string get_port();
 };
 
+#endif // SERVER_HPP

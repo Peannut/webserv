@@ -1,7 +1,7 @@
 #include "includes.hpp"
 
 bool checkRequestError(const Request &request) {
-	return 
+	return request.Modes.Errors;
 }
 
 bool isDirectory(const std::string &path) {

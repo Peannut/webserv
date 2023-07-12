@@ -1,5 +1,9 @@
 #include "includes.hpp"
 
+bool checkRequestError(const Request &request) {
+	return 
+}
+
 bool isDirectory(const std::string &path) {
 	struct stat pathStat;
 	if (stat(path.c_str(), &pathStat) != 0) {

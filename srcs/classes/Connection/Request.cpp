@@ -1,10 +1,11 @@
 #include "includes.hpp"
 
 Request::Request()
-: _mode(method_m)
-, _error(none_e)
-, _transfer(none_tr)
+: _error(none_e)
 , _method(none_method)
+, _mode(method_m)
+, _transfer(none_tr)
+, _transfer_content_max_len()
 , _transfer_content_len()
 , _transfer_chunk_len()
 {}
@@ -13,7 +14,7 @@ bool Request::concatenate(const std::string & buffer)
 {
     for (size_t sz = buffer.size(), i = 0; i < sz; ++i) {
         const char & c = buffer[i];
-        if (_mode == success_m) setError(code_400_e);
+        if (_mode == success_m) set_error(code_400_e);
         switch (_mode)
         {
             // request_line
@@ -68,7 +69,7 @@ void Request::serving(Connection & conn)
 
         size_t maxLenMatched = 0;
 
-        for (map_locations_t::const_iterator it = locations.cbegin(); it != locations.cend(); ++it)
+        for (map_locations_t::const_iterator it = locations.begin(); it != locations.end(); ++it)
         {
             size_t lenMatched = matching_location(this->_path, it->first);
             if (lenMatched != 0 && maxLenMatched < lenMatched)
@@ -78,15 +79,15 @@ void Request::serving(Connection & conn)
             }
         }
 
-        if (maxLenMatched == 0) setError(code_404_e);
+        if (maxLenMatched == 0) set_error(code_404_e);
     }
 
     std::cout << "REQUEST = [" << std::endl;
     std::cout << "message => |" << _message << '|' << std::endl;
     std::cout << "method =>\t\t|";
-    if (_method == get_method) std::cout << "GET";
-    if (_method == post_method) std::cout << "POST";
-    if (_method == delete_method) std::cout << "DELETE";
+    if (_method == GET_method) std::cout << "GET";
+    if (_method == POST_method) std::cout << "POST";
+    if (_method == DELETE_method) std::cout << "DELETE";
     std::cout << '|' << std::endl;
     std::cout << "uri =>\t\t\t|" << _uri << '|' << std::endl;
     std::cout << "path =>\t\t\t|" << _path << '|' << std::endl;
@@ -102,8 +103,54 @@ void Request::serving(Connection & conn)
     std::cout << ']' << std::endl;
 }
 
-void Request::setError(const Errors & e)
+void Request::set_transfer(const Transfers & tr)
+{
+    if (_transfer == tr)
+        set_error(code_400_e);
+    else
+        _transfer = tr;
+}
+
+void Request::set_error(const Errors & e)
 {
     _mode = error_m;
     _error = e;
+}
+
+void Request::set_max_len(const size_t & n)
+{
+    _transfer_content_max_len = n;
+}
+
+const Methods & Request::get_method()
+{
+    return _method;
+}
+const std::string & Request::get_uri()
+{
+    return _uri;
+}
+const std::string & Request::get_path()
+{
+    return _path;
+}
+const std::string & Request::get_queries()
+{
+    return _query;
+}
+const std::pair<std::string, std::string> & Request::get_query(const size_t & index)
+{
+    return _queries[index];
+}
+const std::string & Request::get_version()
+{
+    return _version;
+}
+const std::pair<std::string, std::string> Request::get_fields(const std::string & str)
+{
+    return *_fields.find(str);
+}
+const std::string & Request::get_body()
+{
+    return _body;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 09:40:39 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/12 07:25:01 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/13 19:50:59 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,18 +50,19 @@ long int ft_stringtolong(const std::string& str)
 
 std::string convertToIPAddress(size_t ip)
 {
-    std::string ipAddress;
+    std::string str;
+    std::stringstream ss;
 
+    std::cout << "HELLO 1" << std::endl;
     for (int i = 0; i < 4; ++i)
     {
         int octet = (ip >> (8 * (3 - i))) & 255;
-        ipAddress += std::to_string(octet);
-
-        if (i != 3)
-            ipAddress += ".";
+        ss << octet << '.';
     }
+    str.assign(ss.str());
+    str.erase(str.end() - 1);
 
-    return ipAddress;
+    return str;
 }
 
 std::string convertPortToString(short port)

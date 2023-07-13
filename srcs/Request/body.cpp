@@ -2,15 +2,10 @@
 
 void Request::body_content_mode(const char & c)
 {
+    _body.push_back(c);
+    --_transfer_content_len;
     if (_transfer_content_len == 0)
-        setError(code_400_e);
-    else
-    {
-        _body.push_back(c);
-        --_transfer_content_len;
-        if (_transfer_content_len == 0)
-            _mode = success_m;
-    }
+        _mode = success_m;
 }
 
 void Request::body_length_mode(const char & c)
@@ -19,7 +14,7 @@ void Request::body_length_mode(const char & c)
         _mode = body_length_CRLF_m;
     else
     {
-        if (!std::isalnum(c)) setError(code_400_e);
+        if (!std::isalnum(c)) set_error(code_400_e);
         else __tmp1.push_back(c);
     }
 }
@@ -27,7 +22,7 @@ void Request::body_length_mode(const char & c)
 void Request::body_length_CRLF_mode(const char & c)
 {
     if (c != '\n')
-        setError(code_400_e);
+        set_error(code_400_e);
     else
     {
         _transfer_content_len = std::strtoull(__tmp1.data(), 0, 16);
@@ -46,15 +41,24 @@ void Request::body_chunk_mode(const char & c)
     }
     else
     {
-        _body.push_back(c);
-        --_transfer_chunk_len;
+        if (_body.size() == _transfer_content_max_len)
+            set_error(code_400_e);
+        else
+        {
+            try {
+                _body.push_back(c);
+                --_transfer_chunk_len;
+            } catch (const std::exception & e) {
+                set_error(code_413_e);
+            }
+        }
     }
 }
 
 void Request::body_chunk_CRLF_mode(const char & c)
 {
     if (c != '\n')
-        setError(code_400_e);
+        set_error(code_400_e);
     else
     {
         if (_transfer_content_len == 0) _mode = success_m;

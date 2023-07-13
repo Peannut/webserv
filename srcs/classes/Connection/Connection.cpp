@@ -48,6 +48,7 @@ Response & Connection::get_res(void)
 void Connection::set_srv(const Server & srv)
 {
     _srv = &srv;
+    if (_req) _req->set_max_len(srv.client_max_body_size);
 }
 void Connection::set_loc(const std::string & loc_path, const Location & loc_obj)
 {

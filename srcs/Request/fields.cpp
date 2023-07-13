@@ -3,7 +3,7 @@
 void Request::field_CRLF_mode(const char & c)
 {
     if (c != '\n')
-        setError(code_400_e);
+        set_error(code_400_e);
     else
     {
         _mode = field_key_m;
@@ -11,17 +11,18 @@ void Request::field_CRLF_mode(const char & c)
         {
             toupperFieldKey(__tmp1);
             trimFieldVal(__tmp2);
-            if (_method == post_method)
+            if (_method == POST_method)
             {
                 if (__tmp1 == "CONTENT-LENGTH")
                 {
-                    if (!isContentLengthValValid(__tmp2)) setError(code_400_e);
-                    else setTransferContent();
+                    _transfer_content_len = std::strtoull(__tmp2.data(), 0, 10);
+                    if (!isContentLengthValValid(__tmp2)) set_error(code_400_e);
+                    else set_transfer(content_tr);
                 }
                 else if (__tmp1 == "TRANSFER-ENCODING")
                 {
-                    if (__tmp2 != "chunked") setError(code_501_e);
-                    else setTransferChunk();
+                    if (__tmp2 != "chunked") set_error(code_501_e);
+                    else set_transfer(chunk_tr);
                 }
             }
             if (_mode != error_m) _fields[__tmp1] = __tmp2;
@@ -29,29 +30,6 @@ void Request::field_CRLF_mode(const char & c)
             __tmp2.clear();
         }
     }
-}
-
-void Request::setTransferContent()
-{
-    if (_transfer == none_tr)
-    {
-        _transfer = content_tr;
-        _transfer_content_len = std::strtoull(__tmp2.data(), 0, 10);
-        std::cout << "_content_length => |" << _transfer_content_len << '|' << std::endl;
-    }
-    else
-        setError(code_400_e);
-}
-
-void Request::setTransferChunk()
-{
-    if (_transfer == none_tr)
-    {
-        _transfer = chunk_tr;
-        std::cout << "_transfer_encoding => |chunked|" << std::endl;
-    }
-    else
-        setError(code_501_e);
 }
 
 void Request::field_key_mode(const char & c)
@@ -62,12 +40,12 @@ void Request::field_key_mode(const char & c)
     }
     else if (c == ':')
     {
-        if (__tmp1.empty()) setError(code_400_e);
+        if (__tmp1.empty()) set_error(code_400_e);
         else _mode = field_val_m;
     }
     else
     {
-        if (!isTchar(c)) setError(code_400_e);
+        if (!isTchar(c)) set_error(code_400_e);
         else __tmp1.push_back(c);
     }
 }
@@ -76,12 +54,12 @@ void Request::field_val_mode(const char & c)
 {
     if (c == '\r')
     {
-        if (__tmp2.empty()) setError(code_400_e);
+        if (__tmp2.empty()) set_error(code_400_e);
         else _mode = field_CRLF_m;
     }
     else
     {
-        if (!isVchar(c)) setError(code_400_e);
+        if (!isVchar(c)) set_error(code_400_e);
         else __tmp2.push_back(c);
     }
 }
@@ -89,20 +67,30 @@ void Request::field_val_mode(const char & c)
 void Request::field_last_CRLF_mode(const char & c)
 {
     if (c != '\n')
-        setError(code_400_e);
+        set_error(code_400_e);
     else
     {
         if (_fields.find("HOST") == _fields.end())
-            setError(code_400_e);
-        if (_method == post_method && _transfer == none_tr)
-            setError(code_411_e);
-        if (_method == post_method && _fields.find("CONTENT-TYPE") == _fields.end())
-            setError(code_415_e);
+            set_error(code_400_e);
+        if (_method == POST_method && _transfer == none_tr)
+            set_error(code_411_e);
+        if (_method == POST_method && _fields.find("CONTENT-TYPE") == _fields.end())
+            set_error(code_415_e);
         else
         {
-            if (_method != post_method) _mode = success_m;
+            if (_method != POST_method) _mode = success_m;
             else if (_transfer == content_tr && _transfer_content_len == 0) _mode = success_m;
-            else if (_transfer == content_tr) _mode = body_content_m;
+            else if (_transfer == content_tr)
+            {
+                _mode = body_content_m;
+                if (_transfer_content_max_len < _transfer_content_len)
+                    set_error(code_413_e);
+                try {
+                    _body.reserve(_transfer_content_len);
+                } catch (const std::exception & e) {
+                    set_error(code_413_e);
+                }
+            }
             else if (_transfer == chunk_tr) _mode = body_length_m;
         }
     }

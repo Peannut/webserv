@@ -17,11 +17,11 @@ const std::string response
 void setup_webserv(WebServ & webserv)
 {
     Config & config = webserv._conf;
-
     struct addrinfo *records;
     SOCKET_FD fdsock_server;
 
     // for (size_t sz = webserv._conf._srvs.size(), i = 0; i < sz; ++i) {
+    std::cout << "number_of_server_block = " << config.config.size() << std::endl;
     for (size_t sz = config.config.size(), i = 0; i < sz; ++i)
     {
         Server & server = config.get_server(i);

@@ -20,8 +20,6 @@ void setup_webserv(WebServ & webserv)
     struct addrinfo *records;
     SOCKET_FD fdsock_server;
 
-    // for (size_t sz = webserv._conf._srvs.size(), i = 0; i < sz; ++i) {
-    std::cout << "number_of_server_block = " << config.config.size() << std::endl;
     for (size_t sz = config.config.size(), i = 0; i < sz; ++i)
     {
         Server & server = config.get_server(i);
@@ -42,7 +40,6 @@ void start_multiplexing(WebServ & webserv)
         for (size_t i = 0; i < webserv._number_of_connections; ++i)
         {
             Connection & conn = webserv.get_connection(i);
-            // std::cout << "fd["<<i<<"]" << conn._socket->fd << std::endl;
             if (conn.can_read())
             {
                 if (conn._isListen)

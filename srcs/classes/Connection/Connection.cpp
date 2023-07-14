@@ -17,7 +17,7 @@ Connection::Connection(const bool & isListen, SOCKET_POLL & socket)
 , _isMustServeNow(false)
 , _socket(&socket)
 , _req((isListen) ? NULL : (new Request()))
-, _res((isListen) ? NULL : (new Response()))
+, _res((isListen) ? NULL : (new Response(_req)))
 {
     _socket->events = POLLIN|POLLERR|POLLHUP|POLLNVAL;
     _socket->revents = (short)0;

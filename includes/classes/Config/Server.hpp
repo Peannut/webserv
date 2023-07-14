@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:11:24 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/12 07:58:18 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/14 10:04:40 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ struct Server
 	std::pair<int, short> listen; // port on 32bit format and the port
 	std::vector<std::string> server_names; // vector of server names
 	std::map<std::string, Location> locations; // path location | location
-	size_t client_body_size; // client boy max size
+	size_t client_max_body_size; // client boy max size
 	std::map<short, std::string> error_pages; // status code and it filepath
 
 	Server();

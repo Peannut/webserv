@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:03 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/10 20:12:41 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/14 10:21:42 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,20 @@ const std::string response
 
 void setup_webserv(WebServ & webserv)
 {
+    Config & config = webserv._conf;
     struct addrinfo *records;
     SOCKET_FD fdsock_server;
 
     // for (size_t sz = webserv._conf._srvs.size(), i = 0; i < sz; ++i) {
-    for (size_t sz = 1, i = 0; i < sz; ++i)
+    std::cout << "number_of_server_block = " << config.config.size() << std::endl;
+    for (size_t sz = config.config.size(), i = 0; i < sz; ++i)
     {
-        records = our_getaddrinfo("127.0.0.1", "8080");
+        Server & server = config.get_server(i);
+
+        records = our_getaddrinfo(server.get_host().data(), server.get_port().data());
         fdsock_server = our_bind(records);
         our_listen(fdsock_server);
-        webserv.add_connection(LISTEN_ENABLE, fdsock_server);
+        webserv.add_connection(LISTEN_ENABLE, fdsock_server, server);
         freeaddrinfo(records);
     }
 }
@@ -79,7 +83,6 @@ int main(int ac, char **av, char **envp)
 		std::cerr << "check ur arguments" << std::endl;
 		return (1);
 	}
-
     try {
         webserv._conf.setupconfig(av[1]);
         setup_webserv(webserv);

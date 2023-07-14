@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   multiplexing.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/24 15:02:48 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/09 15:29:56 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 struct addrinfo *our_getaddrinfo(const char *hostname, const char *servname)
@@ -94,7 +82,8 @@ void accepting(WebServ & webserv, const size_t & index)
     std::cout << "... accepting ..." << std::endl;
     std::cout << ANSI_RESET;
 
-    SOCKET_POLL & socket_server = webserv.get_socket(index);
+    Connection & conn = webserv.get_connection(index);
+    const SOCKET_POLL & socket_server = conn.get_socket();
 
     SOCKET_FD fdsock_client = accept(socket_server.fd, NULL, NULL);
     if (fdsock_client == -1) throw ("accept");
@@ -105,8 +94,7 @@ void accepting(WebServ & webserv, const size_t & index)
     err = setsockopt(fdsock_client, SOL_SOCKET, SO_REUSEADDR, &err, sizeof(err));
     if (err == -1) throw ("setsockopt");
 
-    webserv.add_connection(!LISTEN_ENABLE, fdsock_client);
-
+    webserv.add_connection(!LISTEN_ENABLE, fdsock_client, conn.get_srv());
 }
 
 void receiving(WebServ & webserv, const size_t & index)
@@ -115,8 +103,8 @@ void receiving(WebServ & webserv, const size_t & index)
     std::cout << "... receiving ..." << std::endl;
     std::cout << ANSI_RESET;
 
-    const SOCKET_POLL & socket_client = webserv.get_socket(index);
     Connection & conn = webserv.get_connection(index);
+    const SOCKET_POLL & socket_client = conn.get_socket();
 
     int number_of_bytes = recv(socket_client.fd, buffer, BUFFER_SIZE, 0);
     if (number_of_bytes == -1) throw ("recv");
@@ -134,7 +122,9 @@ void sending(WebServ & webserv, const size_t & index)
     std::cout << "... sending ..." << std::endl;
     std::cout << ANSI_RESET;
 
-    const SOCKET_POLL & socket_client = webserv.get_socket(index);
+    Connection & conn = webserv.get_connection(index);
+    const SOCKET_POLL & socket_client = conn.get_socket();
+
     Response & res = webserv.get_connection(index).get_res();
 
     const char * response_chunked = res.get_res_raw_shifted();

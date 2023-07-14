@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/12 07:27:07 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/14 10:12:52 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void Config::setup_host(std::string& host, Server& server)
 	int i = 0;
 	while(i < 4)
 	{
-		int var = std::stoi(ip_split[i]);
+		int var = std::atoi(ip_split[i].data());
 		if (var < 0 || var > 255)
 			throw std::runtime_error("Error: invalid ip address");
 			
@@ -49,7 +49,7 @@ void Config::setup_listen(std::string& line, Server& server)
 	if (hostport.size() != 2)
 		throw std::runtime_error("Error: invalid listen value");
 	setup_host(hostport[0], server);
-	size_t port = std::stoi(hostport[1]);
+	size_t port = std::atoi(hostport[1].data());
 	server.listen.second = port;
 	std::cout << "port function" << convertPortToString(server.listen.second) <<std::endl;
 	// std::cout << "port "<< server.listen.second << std::endl;
@@ -73,16 +73,16 @@ void Config::setup_servername(std::string& line, Server& server)
 void Config::setupClientbodySize(std::string& line, Server& server)
 {
 	// std::cout << "made it to client body size here" << std::endl;
-	std::string val = line.substr(18, line.size() - 18);
+	std::string val = line.substr(22, line.size() - 22);
 	if (line_empty(val))
-		throw(std::runtime_error("Error: client_body_size does not have a value"));
+		throw(std::runtime_error("Error: client_max_body_size does not have a value"));
 
-	if (server.client_body_size)
-		throw(std::runtime_error("Error: client_body_size already set"));
+	if (server.client_max_body_size)
+		throw(std::runtime_error("Error: client_max_body_size already set"));
 	std::vector<std::string> size = split(val, ':');
 	if (size.size() != 1 || size[0][0] == '-')
-		throw(std::runtime_error("Error: invalid client_body_size value"));
-	server.client_body_size = std::stoi(size[0]);
+		throw(std::runtime_error("Error: invalid client_max_body_size value"));
+	server.client_max_body_size = std::atoi(size[0].data());
 }
 
 void Config::setupErrorPage(std::string& line, Server& server)
@@ -95,7 +95,7 @@ void Config::setupErrorPage(std::string& line, Server& server)
 		throw std::runtime_error("Error: invalid error_page value");
 
 	std::pair<short, std::string> page;
-	page.first = std::stoi(error[0]);
+	page.first = std::atoi(error[0].data());
 	if (page.first < 100 || page.first > 599)
 		throw std::runtime_error("Error: invalid error_page status");
 	else if (server.error_pages.find(page.first) != server.error_pages.end())
@@ -193,7 +193,7 @@ void	Config::setupredirect(std::string line, Location& location)
 		throw std::runtime_error("Error: invalid redirect value");
 
 	
-	int status = std::stoi(redirect[0]);
+	int status = std::atoi(redirect[0].data());
 	// idk status code range
 	if (status < 300 || status > 600)
 		throw std::runtime_error("Error: invalid redirect status");
@@ -308,7 +308,7 @@ void Config::setupServer(std::ifstream& file)
 			setup_listen(line, server);
 		else if (!line.compare(0, 13, "\tserver_name:"))
 			setup_servername(line, server);
-		else if (!line.compare(0, 18, "\tclient_body_size:"))
+		else if (!line.compare(0, 22, "\tclient_max_body_size:"))
 			setupClientbodySize(line, server);
 		else if (!line.compare(0, 12,"\terror_page:"))
 			setupErrorPage(line, server);

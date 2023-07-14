@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   characters.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/08 17:08:08 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/10 10:36:33 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 bool isUnreserved(const char & c)
@@ -84,11 +72,12 @@ void toupperFieldKey(std::string & field_key)
 void trimFieldVal(std::string & field_val)
 {
     std::string::iterator it = field_val.begin();
-    while (isOWS(field_val.back()))
-        field_val.pop_back();
-    while (isOWS(*it))
+    while (!field_val.empty() && isOWS(*(field_val.end() - 1)))
+        field_val.erase(field_val.end() - 1);
+    while (!field_val.empty() && it != field_val.end() && isOWS(*it))
         ++it;
-    field_val.erase(field_val.begin(), it);
+    if (!field_val.empty())
+        field_val.erase(field_val.begin(), it);
 }
 
 bool isContentLengthValValid(const std::string & val)
@@ -104,4 +93,22 @@ bool isTransferEncodingValValid(const std::string & val)
         if (!std::islower(val[i]))
             return false;
     return true;
+}
+size_t matching_location(const std::string & path, const std::string & location_path)
+{
+    size_t lenMatched = (size_t)0;
+    size_t lenPath = path.length();
+    size_t lenLocationPath = location_path.length();
+
+    if (lenLocationPath < lenPath)
+        return (size_t)0;
+
+    while (lenMatched < lenPath && lenMatched < lenLocationPath)
+    {
+        if (path[lenMatched] != location_path[lenMatched])
+            break;
+        ++lenMatched;
+    }
+    
+    return lenMatched;
 }

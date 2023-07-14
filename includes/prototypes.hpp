@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:37 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/12 07:25:29 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/14 10:10:14 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void toupperFieldKey(std::string & field_key);
 void trimFieldVal(std::string & field_val);
 bool isContentLengthValValid(const std::string & val);
 bool isTransferEncodingValValid(const std::string & val);
+size_t matching_location(const std::string & path, const std::string & location_path);
 
 
 #endif // PROTOTYPES_HPP

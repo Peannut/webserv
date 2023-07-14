@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/09 14:54:26 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/14 10:09:21 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,22 @@
 
 // Includes
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <locale>
+#include <utility>
 
 #include <algorithm>
 #include <iterator>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <vector>
 #include <map>
 #include <set>
 
-#include <utility>
+#include <cstdlib>
 #include <cstring>
 #include <cerrno>
+
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>

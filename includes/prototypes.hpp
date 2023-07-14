@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:37 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/14 10:10:14 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/14 12:47:31 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ struct Location;
 struct Connection;
 struct Request;
 struct Response;
-
+struct Cgi;
 // The declarations of the functions
 
 // <-- main.cpp -->

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/14 10:09:21 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/14 12:30:35 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@
 #include "classes/Config/Location.hpp"
 #include "classes/Config/Server.hpp"
 #include "classes/Config/Config.hpp"
+#include "classes/Config/Cgi.hpp"
 #include "classes/WebServ.hpp"
 
 #endif // HEADER_HPP

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/12 13:34:36 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/14 13:04:59 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 struct Cgi{
 
 	pid_t pid;
-	
+	char **env;
+	std::string pathinfo;
 };
 #endif // ! CGI_HPP

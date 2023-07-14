@@ -14,6 +14,8 @@ Connection::Connection(const bool & isListen, SOCKET_POLL & socket)
 Connection::~Connection()
 {
     close(_socket->fd);
+    if (_req) delete _req;
+    if (_res) delete _res;
 }
 
 SOCKET_POLL & Connection::get_socket()

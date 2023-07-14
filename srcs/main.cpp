@@ -39,7 +39,7 @@ void start_multiplexing(WebServ & webserv)
     while (1337 & 42)
     {
         our_poll(webserv._sockets);
-        for (size_t sz = webserv._number_of_connections, i = 0; i < sz; ++i)
+        for (size_t i = 0; i < webserv._number_of_connections; ++i)
         {
             Connection & conn = webserv.get_connection(i);
             // std::cout << "fd["<<i<<"]" << conn._socket->fd << std::endl;

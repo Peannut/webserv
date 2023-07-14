@@ -24,7 +24,7 @@ struct Response {
     Response(const Request *req) : request(req){}
     Response(int code, const std::string& message, const std::string& type, const std::string& body)
         : statusCode(code), statusMessage(message), contentType(type), content(body) {}
-    void serving(const Server &server, const Location &loc, const std::string &loc_Path)
+    void serving(const Server &server, const Location *loc, const std::string &loc_Path)
 };
 
 #endif

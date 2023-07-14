@@ -37,6 +37,7 @@ CFILES  :=\
 	$(CLASSESDIR)/$(CONFIGDIR)/Config.cpp \
 	$(CLASSESDIR)/$(CONFIGDIR)/Location.cpp \
 	$(CLASSESDIR)/$(CONFIGDIR)/Server.cpp \
+	$(CONFIGDIR)/utils.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Connection.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Request.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Response.cpp \
@@ -80,9 +81,10 @@ $(NAME) : $(OBJSDIR) $(OBJS)
 $(OBJSDIR) :
 	@mkdir $(OBJSDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)
-	@mkdir $(OBJSDIR)/$(REQUESTDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONNECTIONDIR)
+	@mkdir $(OBJSDIR)/$(REQUESTDIR)
+	@mkdir $(OBJSDIR)/$(CONFIGDIR)
 
 $(OBJS) : $(OBJSDIR)/%.o : $(SRCSDIR)/%.cpp
 	@printf "$(ANSI_YELLOW)$(ANSI_BOLD)\n"

@@ -61,6 +61,12 @@ void                accepting           (WebServ & webserv, const size_t & index
 void                receiving           (WebServ & webserv, const size_t & index);
 void                sending             (WebServ & webserv, const size_t & index);
 void                serving             (WebServ & webserv, const size_t & index);
+// <-- Config/utils.cpp -->
+int line_empty(const std::string& line);
+ssize_t stringToLong(const std::string& str);
+std::vector<std::string> split(const std::string& str, char lim);
+std::string convertToIPAddress(size_t ip);
+std::string convertPortToString(short port);
 // <-- Request/utils.cpp -->
 bool isUnreserved(const char & c);
 bool isReserved(const char & c);
@@ -74,14 +80,14 @@ void toupperFieldKey(std::string & field_key);
 void trimFieldVal(std::string & field_val);
 bool isContentLengthValValid(const std::string & val);
 bool isTransferEncodingValValid(const std::string & val);
-
+size_t matching_location(const std::string & path, const std::string & location_path);
 // </--Response/utils.cpp-->
-
 bool isDirectory(const std::string &path);
 bool hasSlashEnd(const std::string &path);
 bool resourceExists (const std::string &path);
 std::string getContentType(const std::string &path);
 std::string readResource(const std::string &path);
 Response generateResponse(const Request &request);
+
 
 #endif // PROTOTYPES_HPP

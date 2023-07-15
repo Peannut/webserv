@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:17 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/14 10:16:14 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/15 16:02:07 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,14 @@ size_t Response::subtract(const size_t & number_of_bytes)
     return (_res_raw.size() - _offset);
 }
 
-std::string & Response::get_res_raw(void)
-{
-    return (_res_raw);
-}
+#include "includes.hpp"
 
-const char * Response::get_res_raw_shifted(void)
-{
-    return (_res_raw.data() + _offset);
-}
+void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
+        Response response();
+        if (checkRequestError(response.request)) {
+        response.Headers = buildErrorResponseH(req);
+        response.content = buildErrorResponseB(req);
+        return 1;
+	}
 
-void Response::serving()
-{
-    _res_raw.assign(response);
-    std::cout << "RESPONSE = ["<<_res_raw<<']' << std::endl;
 }

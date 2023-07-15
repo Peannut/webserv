@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:37 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/14 12:47:31 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/15 16:01:21 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,13 @@ void trimFieldVal(std::string & field_val);
 bool isContentLengthValValid(const std::string & val);
 bool isTransferEncodingValValid(const std::string & val);
 size_t matching_location(const std::string & path, const std::string & location_path);
+// </--Response/utils.cpp-->
+bool isDirectory(const std::string &path);
+bool hasSlashEnd(const std::string &path);
+bool resourceExists (const std::string &path);
+std::string getContentType(const std::string &path);
+std::string readResource(const std::string &path);
+Response generateResponse(const Request &request);
 
 
 #endif // PROTOTYPES_HPP

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Connection.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/24 15:03:26 by zwina             #+#    #+#             */
+/*   Updated: 2023/07/06 14:50:36 by zwina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes.hpp"
 
 Connection::Connection(const bool & isListen, SOCKET_POLL & socket)
@@ -8,7 +20,7 @@ Connection::Connection(const bool & isListen, SOCKET_POLL & socket)
 , _loc_path(NULL)
 , _loc_obj(NULL)
 , _req((isListen) ? NULL : (new Request()))
-, _res((isListen) ? NULL : (new Response()))
+, _res((isListen) ? NULL : (new Response(_req)))
 {}
 
 Connection::~Connection()
@@ -78,5 +90,5 @@ void Connection::flip_flag(const short & flag)
 void Connection::serving()
 {
     _req->serving(*this);
-    _res->serving();
+    _res->serving(*this->_srv, this->_loc_obj, *this->_loc_path);
 }

@@ -90,5 +90,5 @@ void Connection::flip_flag(const short & flag)
 void Connection::serving()
 {
     _req->serving(*this);
-    _res->serving();
+    _res->serving(*this->_srv, this->_loc_obj, *this->_loc_path);
 }

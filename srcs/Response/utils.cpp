@@ -1,7 +1,7 @@
 #include "includes.hpp"
 
-bool checkRequestError(const Request &request) {
-	return request._mode._error != none_e;
+bool checkRequestError(const Response &response) {
+	return response.request->_error != none_e;
 }
 
 bool isDirectory(const std::string &path) {
@@ -87,9 +87,9 @@ std::string readResource(const std::string &path) {
 }
 
 Response generateResponse(const Request &request) {
-	Response response;
+	Response response(&request);
 
-	if (request._method == get_method) {
+	if (request._method == GET_method) {
 		//check if client requested a dir or file
 		if (isDirectory(request._path)) { // a directory is requested
 			if (hasSlashEnd(request._path)) { //dir has '/' at the end
@@ -116,7 +116,9 @@ Response generateResponse(const Request &request) {
 			}
 		}
 	}
-	// else if (request._method == "POST")
+	else if (request._method == POST_method) {
+
+	}
 	else { //method == "DELETE"
 		    if (resourceExists(request._path)) { // resource exists | now should check if it is a file or directory
 				if (isDirectory(request._path)) { //resource is directory

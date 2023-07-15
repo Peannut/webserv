@@ -12,6 +12,12 @@
 
 #include "includes.hpp"
 
-Response::Response(int code, const std::string& message, const std::string& type, const std::string& body)
-        : statusCode(code), statusMessage(message), contentType(type), content(body) {}
+void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
+        Response response();
+        if (checkRequestError(response.request)) {
+        response.Headers = buildErrorResponseH(req);
+        response.content = buildErrorResponseB(req);
+        return 1;
+	}
 
+}

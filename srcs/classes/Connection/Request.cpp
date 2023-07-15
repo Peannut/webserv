@@ -13,10 +13,10 @@
 #include "includes.hpp"
 
 Request::Request()
-: _mode(method_m)
-, _error(none_e)
-, _transfer(none_tr)
+ _error(none_e)
 , _method(none_method)
+, _mode(method_m)
+, _transfer(none_tr)
 , _transfer_content_len()
 , _transfer_chunk_len()
 {}

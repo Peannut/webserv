@@ -1,10 +1,10 @@
 #include "includes.hpp"
 
-std::string findErrorPage(const Request &response,Server &srv) {
+std::string findErrorPage(const Response &response,const Server &srv) {
 	std::string response_Body;
-
-	std::map<short, std::string>::iterator it = srv.error_pages.find(response._error);
-	if (it != srv.error_pages.end()) {
+	Server tmp = srv;
+	std::map<short, std::string>::iterator it = tmp.error_pages.find(response.request->_error);
+	if (it != tmp.error_pages.end()) {
 		response_Body = it->second;
 	}
 	else {

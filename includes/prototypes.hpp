@@ -90,5 +90,6 @@ std::string getContentType(const std::string &path);
 std::string readResource(const std::string &path);
 Response generateResponse(const Request &request);
 std::string buildErrorResponseH(const Response &response);
+std::string findErrorPage(const Response &response,const Server &srv);
 
 #endif // PROTOTYPES_HPP

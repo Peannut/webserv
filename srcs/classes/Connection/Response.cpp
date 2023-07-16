@@ -17,9 +17,8 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         Response response(&req);
 
         if (checkRequestError(response)) {
-        response.Headers = buildErrorResponseH(response);
-        response.content = findErrorPage(req, server);
-        return 1;
-	}
-
+                response.Headers = buildErrorResponseH(response);
+                response.content = findErrorPage(response, server);
+                return;
+        }
 }

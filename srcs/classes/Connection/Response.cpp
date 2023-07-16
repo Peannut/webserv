@@ -13,10 +13,12 @@
 #include "includes.hpp"
 
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
-        Response response();
-        if (checkRequestError(response.request)) {
-        response.Headers = buildErrorResponseH(req);
-        response.content = buildErrorResponseB(req);
+        Request req;
+        Response response(&req);
+
+        if (checkRequestError(response)) {
+        response.Headers = buildErrorResponseH(response);
+        response.content = findErrorPage(req, server);
         return 1;
 	}
 

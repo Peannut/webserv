@@ -66,5 +66,6 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <sstream>
 
 #endif // HEADER_HPP

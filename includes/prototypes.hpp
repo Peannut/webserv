@@ -91,5 +91,7 @@ std::string readResource(const std::string &path);
 Response generateResponse(const Request &request);
 std::string buildErrorResponseH(const Response &response);
 std::string findErrorPage(const Response &response,const Server &srv);
+std::string buildResponseHeaders(const Response &response, const Server srv, const Location *loc, const std::string &loc_Path);
+std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path);
 
 #endif // PROTOTYPES_HPP

@@ -1,7 +1,7 @@
 #include "includes.hpp"
 
 Request::Request()
-: _error(none_e)
+: _error()
 , _method(none_method)
 , _mode(method_m)
 , _transfer(none_tr)
@@ -14,7 +14,7 @@ bool Request::concatenate(const std::string & buffer)
 {
     for (size_t sz = buffer.size(), i = 0; i < sz; ++i) {
         const char & c = buffer[i];
-        if (_mode == success_m) set_error(code_400_e);
+        if (_mode == success_m) set_error(400);
         switch (_mode)
         {
             // request_line
@@ -79,7 +79,7 @@ void Request::serving(Connection & conn)
             }
         }
 
-        if (maxLenMatched == 0) set_error(code_404_e);
+        if (maxLenMatched == 0) set_error(404);
     }
 
     std::cout << "REQUEST = [" << std::endl;
@@ -106,12 +106,12 @@ void Request::serving(Connection & conn)
 void Request::set_transfer(const Transfers & tr)
 {
     if (_transfer == tr)
-        set_error(code_400_e);
+        set_error(400);
     else
         _transfer = tr;
 }
 
-void Request::set_error(const Errors & e)
+void Request::set_error(const short & e)
 {
     _mode = error_m;
     _error = e;

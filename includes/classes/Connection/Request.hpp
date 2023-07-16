@@ -25,17 +25,17 @@ enum Modes {
     success_m,          // 15
 };
 
-enum Errors {
-    code_400_e,     // Bad Request
-    code_501_e,     // Not Implemented
-    code_426_e,     // Upgrade Required
-    code_505_e,     // HTTP Version Not Supported
-    code_411_e,     // Length Required
-    code_415_e,     // Unsupported Media Type
-    code_413_e,     // Content Too Large
-    code_404_e,     // Not Found
-    none_e,
-};
+// enum Errors {
+//     400,     // Bad Request
+//     501,     // Not Implemented
+//     426,     // Upgrade Required
+//     505,     // HTTP Version Not Supported
+//     411,     // Length Required
+//     415,     // Unsupported Media Type
+//     413,     // Content Too Large
+//     404,     // Not Found
+//     0,       // NO ERROR
+// };
 
 enum Transfers {
     content_tr,
@@ -53,7 +53,7 @@ enum Methods {
 struct Request
 {
     public:
-    Errors _error;
+    short _error;
     Methods _method;
     std::string _uri;
     std::string _path;
@@ -103,7 +103,7 @@ struct Request
     void body_chunk_mode(const char & c);
     void body_chunk_CRLF_mode(const char & c);
     void set_transfer(const Transfers & tr);
-    void set_error(const Errors & e);
+    void set_error(const short & e);
 };
 
 #endif // REQUEST_HPP

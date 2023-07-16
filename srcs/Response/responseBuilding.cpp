@@ -2,15 +2,21 @@
 
 std::string findErrorPage(const Response &response,const Server &srv) {
 	std::string response_Body;
+	std::string errorPagePath;
+	std::ostringstream ss;
 	Server tmp = srv;
 	std::map<short, std::string>::iterator it = tmp.error_pages.find(response.request->_error);
-	if (it != tmp.error_pages.end()) {
-		response_Body = it->second;
+	if (it != tmp.error_pages.end()) { //error page path was found
+		errorPagePath = it->second;
+		std::ifstream file(errorPagePath.c_str());
+		if (file) { //was able to open the error page file.
+			ss << file.rdbuf();
+			response_Body = ss.str();
+		}
 	}
-	else {
-		//serve the not found page
-		//gotta get it's key from peanut
-	}
+	std::ifstream file("DefaultError"); //mal9inach error page li me7tajin so kanservi default
+	ss << file.rdbuf();
+	response_Body = ss.str();
 	return response_Body;
 }
 
@@ -34,4 +40,8 @@ std::string buildErrorResponseH(const Response &response) {
 	headers += "Connection: Close\r\n";
 	headers += "Content-lenght: \r\n\r\n";
 	return headers;
+}
+
+std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path) {
+	
 }

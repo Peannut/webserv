@@ -30,6 +30,10 @@ void Request::path_mode(const char & c)
     {
         _mode = version_m;
     }
+    else if (c == '%')
+    {
+        _mode = encoding_m;
+    }
     else
     {
         if (!isPathChar(c)) set_error(400);
@@ -38,6 +42,21 @@ void Request::path_mode(const char & c)
             _path.push_back(c);
             _uri.push_back(c);
         }
+    }
+}
+
+void Request::encoding_mode(const char & c)
+{
+    if (!isHEXDIG(c))
+        set_error(400);
+    __tmp1.push_back(c);
+    if (__tmp1.size() == 2)
+    {
+        char decoded = (char)std::strtoull(__tmp1.data(), NULL, 16);
+        __tmp1.clear();
+        _path.push_back(decoded);
+        _uri.push_back(decoded);
+        _mode = path_m;
     }
 }
 

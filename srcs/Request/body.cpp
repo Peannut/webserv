@@ -25,7 +25,7 @@ void Request::body_length_CRLF_mode(const char & c)
         set_error(400);
     else
     {
-        _transfer_content_len = std::strtoull(__tmp1.data(), 0, 16);
+        _transfer_content_len = std::strtoull(__tmp1.data(), NULL, 16);
         _transfer_chunk_len = _transfer_content_len;
         __tmp1.clear();
         _mode = body_chunk_m;
@@ -42,7 +42,7 @@ void Request::body_chunk_mode(const char & c)
     else
     {
         if (_body.size() == _transfer_content_max_len)
-            set_error(400);
+            set_error(413);
         else
         {
             try {

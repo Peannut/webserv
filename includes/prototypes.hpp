@@ -59,6 +59,7 @@ std::string convertPortToString(short port);
 bool isUnreserved(const char & c);
 bool isReserved(const char & c);
 bool isOWS(const char & c);
+bool isHEXDIG(const char & c);
 bool isVchar(const char & c);
 bool isTchar(const char & c);
 bool isMethodChar(const char & c);

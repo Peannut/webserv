@@ -6,23 +6,24 @@
 enum Modes {
     method_m,           // 0
     path_m,             // 1
-    query_key_m,        // 2
-    query_val_m,        // 3
-    version_m,          // 4
+    encoding_m,         // 2
+    query_key_m,        // 3
+    query_val_m,        // 4
+    version_m,          // 5
 
-    field_CRLF_m,       // 5
-    field_key_m,        // 6
-    field_val_m,        // 7
-    field_last_CRLF_m,  // 8
+    field_CRLF_m,       // 6
+    field_key_m,        // 7
+    field_val_m,        // 8
+    field_last_CRLF_m,  // 9
 
-    body_content_m,     // 9
-    body_length_m,      // 10
-    body_length_CRLF_m, // 11
-    body_chunk_m,       // 12
-    body_chunk_CRLF_m,  // 13
+    body_content_m,     // 10
+    body_length_m,      // 11
+    body_length_CRLF_m, // 12
+    body_chunk_m,       // 13
+    body_chunk_CRLF_m,  // 14
 
-    error_m,            // 14
-    success_m,          // 15
+    error_m,            // 15
+    success_m,          // 16
 };
 
 // enum Errors {
@@ -90,6 +91,7 @@ struct Request
     private:
     void method_mode(const char & c);
     void path_mode(const char & c);
+    void encoding_mode(const char & c);
     void query_key_mode(const char & c);
     void query_val_mode(const char & c);
     void version_mode(const char & c);

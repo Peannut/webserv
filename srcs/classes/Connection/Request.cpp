@@ -20,6 +20,7 @@ bool Request::concatenate(const std::string & buffer)
             // request_line
             case method_m:          method_mode(c); break;
             case path_m:            path_mode(c); break;
+            case encoding_m:        encoding_mode(c); break;
             case query_key_m:       query_key_mode(c); break;
             case query_val_m:       query_val_mode(c); break;
             case version_m:         version_mode(c); break;

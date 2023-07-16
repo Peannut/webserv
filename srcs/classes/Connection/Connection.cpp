@@ -8,7 +8,7 @@ Connection::Connection(const bool & isListen, SOCKET_POLL & socket)
 , _loc_path(NULL)
 , _loc_obj(NULL)
 , _req((isListen) ? NULL : (new Request()))
-, _res((isListen) ? NULL : (new Response()))
+, _res((isListen) ? NULL : (new Response(_req)))
 {}
 
 Connection::~Connection()

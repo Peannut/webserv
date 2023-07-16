@@ -5,12 +5,16 @@
 
 struct Response
 {
-    std::string _res_raw;
+    const Request *request;
+    std::string _message;
+    size_t _message_size;
     size_t _offset;
 
-    size_t subtract(const size_t & number_of_bytes);
-    std::string & get_res_raw(void);
-    const char * get_res_raw_shifted(void);
+    Response(const Request *req);
+
+    size_t extract();
+    void seek_back(const size_t & amount);
+    bool is_done();
     void serving();
 };
 

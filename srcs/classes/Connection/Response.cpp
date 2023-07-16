@@ -1,25 +1,38 @@
 #include "includes.hpp"
 
-size_t Response::subtract(const size_t & number_of_bytes)
-{
-    if (number_of_bytes + _offset >= _res_raw.size()) _offset = _res_raw.size();
-    else _offset += number_of_bytes;
+Response::Response(const Request *req)
+: request(req)
+, _message_size()
+, _offset()
+{}
 
-    return (_res_raw.size() - _offset);
+size_t Response::extract()
+{
+    size_t length = 0;
+    while (length < BUFFER_SIZE)
+    {
+        if (_offset < _message_size) // sending message (the status line and the fileds in short)
+            buffer[length] = _message[_offset++];
+        else break; // nothing to send
+        ++length;
+    }
+    return (length);
 }
 
-std::string & Response::get_res_raw(void)
+void Response::seek_back(const size_t & amount)
 {
-    return (_res_raw);
+    if (_offset < _message_size)
+        _offset -= amount;
 }
 
-const char * Response::get_res_raw_shifted(void)
+bool Response::is_done()
 {
-    return (_res_raw.data() + _offset);
+    return (_offset == _message_size/* && we read the hole body*/);
 }
 
 void Response::serving()
 {
-    _res_raw.assign(response);
-    std::cout << "RESPONSE = ["<<_res_raw<<']' << std::endl;
+    _message.assign(response);
+    std::cout << "RESPONSE = ["<<_message<<']' << std::endl;
+    _message_size = _message.length();
 }

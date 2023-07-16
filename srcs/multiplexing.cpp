@@ -127,14 +127,12 @@ void sending(WebServ & webserv, const size_t & index)
 
     Response & res = webserv.get_connection(index).get_res();
 
-    const char * response_chunked = res.get_res_raw_shifted();
-    const size_t response_chunked_len = std::min(res.get_res_raw().size() - res._offset, BUFFER_SIZE);
-
-    int number_of_bytes = send(socket_client.fd, response_chunked, response_chunked_len, 0);
+    size_t length = res.extract();
+    int number_of_bytes = send(socket_client.fd, buffer, length, 0);
     if (number_of_bytes == -1) throw ("send");
 
-    size_t remaining_bytes = res.subtract(number_of_bytes);
-    if (remaining_bytes == 0) webserv.remove_connection(index);
+    res.seek_back(length - number_of_bytes);
+    if (res.is_done()) webserv.remove_connection(index);
 }
 
 void serving(WebServ & webserv, const size_t & index)

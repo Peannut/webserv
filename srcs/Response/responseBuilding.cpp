@@ -42,6 +42,22 @@ std::string buildErrorResponseH(const Response &response) {
 	return headers;
 }
 
-std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path) {
-	
+void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path) {
+	std::string fullpath;
+	fullpath = resourceExists(response->request->_path);
+	if (!fullpath.empty()) { //file found
+		if (!isDirectory(fullpath)) { //resource is a file
+			if (!fileCgi(fullpath, loc)) {//file has no cgi => serve it;
+				//serve file OK 200;
+			}
+			else {//file has cgi
+				//peanut part
+			}
+		}
+		else { //resouce is a directory
+
+		}
+	}
+	else { //file not found serve the not found page 404;
+	}
 }

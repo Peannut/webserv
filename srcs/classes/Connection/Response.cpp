@@ -22,9 +22,9 @@ void Response::serving(const Server &server, const Location *loc, const std::str
                 //after building now the Response header and body should start sending chunk by chunk to multiplexing;
         }
         //if request has no errors
-        else if (response.request->_method == GET_method) {
-        //check if client requested a dir or file
-        // if (isDirectory(request._path)) { // a directory is requested
+        else if (response.request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
+                servingFileGet(&response ,server, loc, loc_Path);
+        // if (isDirectory(response.request->_path)) { // a directory is requested
         //         if (hasSlashEnd(request._path)) { //dir has '/' at the end
         //                 //check if directory has indexfile (search for "index.html" in the dir) | if found serve it
         //                 //if directory has no indexfile | check if autoindex is on

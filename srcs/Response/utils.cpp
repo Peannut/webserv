@@ -20,10 +20,55 @@ bool hasSlashEnd(const std::string &path) {
 	return true;
 }
 
-bool resourceExists (const std::string &path) {
-	std::ifstream file(path.c_str());
-	return file.good();
+std::string resourceExists (const std::string &path, const Server &srv, const Location *loc, const std::string &loc_path) {
+	std::string fullpath = loc->root;
+	fullpath += loc_path; //might be changed
+	fullpath += path;
+	std::ifstream file(fullpath.c_str());
+	if (file) {
+		file.close();
+		return fullpath;
+	}
+	return "";
 }
+
+// std::string searchFile(const std::string& requestedPath, const std::map<std::string, std::string>& locationRoots) {
+//     std::string filePath;
+
+//     // Iterate over the locationRoots map
+//     for (const auto& locationRoot : locationRoots) {
+//         const std::string& location = locationRoot.first;
+//         const std::string& root = locationRoot.second;
+
+//         // Check if the requested path matches the location
+//         if (requestedPath.find(location) == 0) {
+//             // Construct the full file path by concatenating the root and requested path
+//             filePath = root + requestedPath.substr(location.length());
+            
+//             std::ifstream file(filePath.c_str());
+//             if (file) {
+//                 // File exists
+//                 file.close();
+//                 break;
+//             }
+//         }
+//     }
+
+//     return filePath;
+// }
+
+bool	fileCgi(const std::string &fullpath, const Location *loc) {
+	if (!loc->cgi_bin.first.empty()) {
+		size_t lastdot = fullpath.find_last_of('.');
+		if (lastdot == std::string::npos) {
+			//la mal9ach l extention nchouf hna chnou ghandir
+		}
+		std::string conType = fullpath.substr(lastdot + 1, fullpath.length() - lastdot);
+		return conType == loc->cgi_bin.first;
+	}
+	return false;
+}
+
 
 std::string getContentType(const std::string &path) {
 	std::string conType;

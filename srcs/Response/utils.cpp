@@ -61,7 +61,8 @@ bool	fileCgi(const std::string &fullpath, const Location *loc) {
 	if (!loc->cgi_bin.first.empty()) {
 		size_t lastdot = fullpath.find_last_of('.');
 		if (lastdot == std::string::npos) {
-			//la mal9ach l extention nchouf hna chnou ghandir
+			//la mal9ach l extention nchouf hna chnou ghandir.
+			//probably default error page.
 		}
 		std::string conType = fullpath.substr(lastdot + 1, fullpath.length() - lastdot);
 		return conType == loc->cgi_bin.first;

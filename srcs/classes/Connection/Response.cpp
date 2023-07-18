@@ -12,6 +12,45 @@
 
 #include "includes.hpp"
 
+#include "includes.hpp"
+
+Response::Response(const Request *req)
+: request(req)
+, _message_size()
+, _offset()
+{}
+
+size_t Response::extract()
+{
+    size_t length = 0;
+    while (length < BUFFER_SIZE)
+    {
+        if (_offset < _message_size) // sending message (the status line and the fileds in short)
+            buffer[length] = _message[_offset];
+        // sending body in a file;
+        else if (!bodyFile.eof()) {
+            bodyFile >> buffer[length];
+        }
+        else break; // nothing to send
+        ++length;
+        ++_offset;
+    }
+    return (length);
+}
+
+void Response::seek_back(const size_t & amount)
+{
+    size_t pos = bodyFile.tellg();
+    bodyFile.seekg((pos <= amount)? 0 : pos - amount);
+    _offset -= amount;
+}
+
+bool Response::is_done()
+{
+    return (_offset < _message_size && bodyFile.eof());
+}
+
+
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
         Request req;
         Response response(&req);

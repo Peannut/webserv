@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/07/15 16:03:24 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/16 20:42:07 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ struct Response {
     int statusCode;
     const Request *request;
     Cgi _cgi;
+    Request *_req;
     std::string statusMessage;
     std::string contentType;
     std::string content;
@@ -26,6 +27,13 @@ struct Response {
     Response(int code, const std::string& message, const std::string& type, const std::string& body)
         : statusCode(code), statusMessage(message), contentType(type), content(body) {}
     void serving(const Server &server, const Location *loc, const std::string &loc_Path);
+
+
+    //peanut functions
+    void env_maker(void);
+    int handleCGI(void);
+    void cgiResponse(void);
+    void cgi_execve(void);
 };
 
 #endif

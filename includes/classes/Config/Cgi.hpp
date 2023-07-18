@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/14 13:04:59 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/16 20:28:44 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,13 @@
 #define CGI_HPP
 
 #include "prototypes.hpp"
+
 struct Cgi{
 
 	pid_t pid;
 	char **env;
 	std::string pathinfo;
+	int	fd[2];
+	int fd2[2];
 };
 #endif // ! CGI_HPP

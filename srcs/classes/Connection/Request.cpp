@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:22 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/10 11:09:33 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/15 16:10:30 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes.hpp"
 
 Request::Request()
- _error(none_e)
+:_error(none_e)
 , _method(none_method)
 , _mode(method_m)
 , _transfer(none_tr)

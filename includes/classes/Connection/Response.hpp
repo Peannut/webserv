@@ -33,7 +33,7 @@ struct Response {
     void setContentType(const std::string &ct);
     void setContentlength(const size_t &cl);
     void setResponsefields(const int &sc, const std::string &sm);
-    void fillBodyFile( void );
+    void fillBodyFile( const Server &server );
     size_t getbodySize( void );
     std::string getContentType( void );
     void serving(const Server &server, const Location *loc, const std::string &loc_Path);

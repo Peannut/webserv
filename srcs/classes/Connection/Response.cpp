@@ -119,31 +119,27 @@ void Response::setResponsefields(const int &sc, const std::string &sm) {
     setContentType(ct);
 }
 
-void Response::fillBodyFile( void ) {
-    std::ifstream rdfile(request->_path);
+void Response::fillBodyFile( const Server &server ) { //khas server maydouzch liya const
+    bodyFile.open(request->_path);
 
-    if (rdfile) {
-        char c;
-        while(rdfile.get(c)) {
-            bodyFile.put(c);
+    if (!bodyFile.is_open()) {
+        std::map<short, std::string>::const_iterator it = server.error_pages.find(500);
+        if(it == server.error_pages.end()) {
+            bodyFile.open("srcs/Response/DefaultError/index.html");
+            setResponsefields(500, "Internal Server Error");
+            return;
         }
+        bodyFile.open(it->second);
+        setResponsefields(500, "Internal Server Error");
     }
-    else {
-        std::cerr << "error opening files!" << std::endl;
-    }
-    rdfile.close();
+    setResponsefields(200, "OK");
 }
 
 size_t Response::getbodySize( void ) {
-    if (bodyFile.is_open()) {
-        bodyFile.seekg(0, std::ios::end);
-        std::streampos filesize = bodyFile.tellg();
-        bodyFile.seekg(0);
-        contentLength = static_cast<size_t>(filesize);
-    }
-    else{
-        std::cerr << "error opening file!" << std::endl;
-    }
+    bodyFile.seekg(0, std::ios::end);
+    std::streampos filesize = bodyFile.tellg();
+    bodyFile.seekg(0);
+    contentLength = static_cast<size_t>(filesize);
 }
 
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {

@@ -43,10 +43,10 @@ std::string buildErrorResponseH(const Response &response) {
 }
 
 void    buildResponseHeaders(Response *response) {
-	response->_message += " ";
+	response->_message += "HTTP/1.1 ";
 	response->_message += std::to_string(response->statusCode);
 	response->_message += " ";
-	response->_message += response->statusCode;
+	response->_message += response->statusMessage;
 	response->_message += "\r\nContent-Type: ";
 	response->_message += response->contentType;
 	response->_message += "\r\n Connection: Close\r\n Content-lenght : ";
@@ -58,9 +58,8 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	if (resourceExists(response->request->_path)) { //file does exists
 		if (!isDirectory(response->request->_path)) { //resource is a file
 			if (!fileCgi(response->request->_path, loc)) {//file has no cgi => serve it;
-				response->fillBodyFile();
+				response->fillBodyFile(server);
 				response->getbodySize();
-				response->setResponsefields(200, "OK"); // fill l body ou nsetti size
 				buildResponseHeaders(response);
 			}
 			else {//file has cgi
@@ -72,5 +71,6 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 		}
 	}
 	else { //file not found serve the not found page 404;
+		
 	}
 }

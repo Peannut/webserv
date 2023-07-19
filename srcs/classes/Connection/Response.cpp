@@ -11,28 +11,38 @@ size_t Response::extract()
     size_t length = 0;
     while (length < BUFFER_SIZE)
     {
-        if (_offset < _message_size) // sending message (the status line and the fileds in short)
-            buffer[length] = _message[_offset++];
-        else break; // nothing to send
+        if (_offset < _message_size)
+            buffer[length] = _message[_offset];
+        else if (bodyFile.is_open() && !bodyFile.eof()) {
+            bodyFile >> buffer[length];
+        }
+        else break;
         ++length;
+        ++_offset;
     }
     return (length);
 }
 
 void Response::seek_back(const size_t & amount)
 {
-    if (_offset < _message_size)
-        _offset -= amount;
+    if (bodyFile.is_open()) {
+        size_t pos = bodyFile.tellg();
+        bodyFile.seekg((pos <= amount)? 0 : pos - amount);
+    }
+    _offset -= amount;
 }
 
 bool Response::is_done()
 {
-    return (_offset == _message_size/* && we read the hole body*/);
+    return (_offset >= _message_size && (!bodyFile.is_open() || bodyFile.eof()));
 }
 
-void Response::serving()
+void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path)
 {
+    UNUSED(server);
+    UNUSED(loc);
+    UNUSED(loc_Path);
     _message.assign(response);
-    std::cout << "RESPONSE = ["<<_message<<']' << std::endl;
     _message_size = _message.length();
+    std::cout << "RESPONSE = ["<<_message<<']' << std::endl;
 }

@@ -8,7 +8,7 @@
 #define LISTEN_ENABLE true // the type of connection, is it a server socket (aka. listen) or a client socket
 #define POLL_TIME 0 // the time that poll() waits in milliseconds
 #define BACK_LOG 10 // one socket can handle BACK_LOG number of connection
-#define BUFFER_SIZE (size_t)1024 // the size of the receiving the sending buffer
+#define BUFFER_SIZE (size_t)32768 // the size of the receiving the sending buffer
 
 #define ANSI_RESET      "\033[0m"
 #define ANSI_BOLD       "\033[1m"
@@ -72,4 +72,12 @@ bool isTransferEncodingValValid(const std::string & val);
 size_t matching_location(const std::string & path, const std::string & location_path);
 
 
+/*
+    Thing To Do At The End :
+        1- remove the response global variable.
+        2- remove the all the :.
+        3- remove the checking of errno after send and recv.
+        4- remove the member variable _message in the Request.
+        5- check the allowed functions.
+*/
 #endif // PROTOTYPES_HPP

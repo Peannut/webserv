@@ -14,7 +14,7 @@ std::string findErrorPage(const Response &response,const Server &srv) {
 			response_Body = ss.str();
 		}
 	}
-	std::ifstream file("DefaultError"); //mal9inach error page li me7tajin so kanservi default
+	std::ifstream file("DefaultErrorPage"); //mal9inach error page li me7tajin so kanservi default
 	ss << file.rdbuf();
 	response_Body = ss.str();
 	return response_Body;
@@ -42,13 +42,26 @@ std::string buildErrorResponseH(const Response &response) {
 	return headers;
 }
 
+void    buildResponseHeaders(Response *response) {
+	response->_message += " ";
+	response->_message += std::to_string(response->statusCode);
+	response->_message += " ";
+	response->_message += response->statusCode;
+	response->_message += "\r\nContent-Type: ";
+	response->_message += response->contentType;
+	response->_message += "\r\n Connection: Close\r\n Content-lenght : ";
+	response->_message += std::to_string(response->contentLength);
+	response->_message += "\r\n\r\n";
+}
+
 void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path) {
-	std::string fullpath;
-	fullpath = resourceExists(response->request->_path);
-	if (!fullpath.empty()) { //file found
-		if (!isDirectory(fullpath)) { //resource is a file
-			if (!fileCgi(fullpath, loc)) {//file has no cgi => serve it;
-				//serve file OK 200;
+	if (resourceExists(response->request->_path)) { //file does exists
+		if (!isDirectory(response->request->_path)) { //resource is a file
+			if (!fileCgi(response->request->_path, loc)) {//file has no cgi => serve it;
+				response->fillBodyFile();
+				response->getbodySize();
+				response->setResponsefields(200, "OK"); // fill l body ou nsetti size
+				buildResponseHeaders(response);
 			}
 			else {//file has cgi
 				//peanut part

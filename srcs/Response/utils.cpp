@@ -20,16 +20,10 @@ bool hasSlashEnd(const std::string &path) {
 	return true;
 }
 
-std::string resourceExists (const std::string &path, const Server &srv, const Location *loc, const std::string &loc_path) {
-	std::string fullpath = loc->root;
-	fullpath += loc_path; //might be changed
-	fullpath += path;
-	std::ifstream file(fullpath.c_str());
-	if (file) {
-		file.close();
-		return fullpath;
-	}
-	return "";
+bool resourceExists (const std::string &path) {
+	struct stat buffer;
+
+    return stat(path.c_str(), &buffer) == 0;
 }
 
 // std::string searchFile(const std::string& requestedPath, const std::map<std::string, std::string>& locationRoots) {
@@ -68,51 +62,6 @@ bool	fileCgi(const std::string &fullpath, const Location *loc) {
 		return conType == loc->cgi_bin.first;
 	}
 	return false;
-}
-
-
-std::string getContentType(const std::string &path) {
-	std::string conType;
-
-	size_t lastSlash = path.find_last_of('.');
-	conType = path.substr(lastSlash+ 1, path.length() - lastSlash);
-
-	if (conType == "htm" || conType == "html") {
-		return "text/html";
-	}
-	else if (conType == "css") {
-		return "text/css";
-	}
-	else if (conType == "csv") {
-		return "text/csv";
-	}
-	else if (conType == "gif") {
-		return "image/gif";
-	}
-	else if (conType == "ico") {
-		return "image/x-icon";
-	}
-	else if (conType == "jpeg" || conType == "jpg") {
-		return "image/jpeg";
-	}
-	else if (conType == "js") {
-		return "application/javascript";
-	}
-	else if (conType == "json") {
-		return "application/json";
-	}
-	else if (conType == "png") {
-		return "image/png";
-	}
-	else if (conType == "pdf") {
-		return "application/pdf";
-	}
-	else if (conType == "svg") {
-		return "image/svg+xml";
-	}
-	else if (conType == "txt") {
-		return "text/plain";
-	}
 }
 
 std::string readResource(const std::string &path) {

@@ -86,7 +86,6 @@ bool isDirectory(const std::string &path);
 bool hasSlashEnd(const std::string &path);
 bool resourceExists (const std::string &path);
 bool checkRequestError(const Response &response);
-std::string getContentType(const std::string &path);
 std::string readResource(const std::string &path);
 Response generateResponse(const Request &request);
 std::string buildErrorResponseH(const Response &response);

@@ -56,10 +56,7 @@ std::string Response::getContentType( void ) {
 	size_t lastSlash = request->_path.find_last_of('.');
 	conType = request->_path.substr(lastSlash+ 1, request->_path.length() - lastSlash);
 
-	if (conType == "htm" || conType == "html") {
-		return "text/html";
-	}
-	else if (conType == "css") {
+    if (conType == "css") {
 		return "text/css";
 	}
 	else if (conType == "csv") {
@@ -92,6 +89,7 @@ std::string Response::getContentType( void ) {
 	else if (conType == "txt") {
 		return "text/plain";
 	}
+    return "text/html";
 }
 
 void Response::setStatusCode(const int &sc) {
@@ -119,14 +117,28 @@ void Response::setResponsefields(const int &sc, const std::string &sm) {
     setContentType(ct);
 }
 
+void    Response::serveDefaultErrorPage() {
+    bodyFile.open("srcs/Response/DefaultError/index.html");
+    setResponsefields(500, "Internal Server Error");
+}
+
+void	Response::serveErrorPage(const Server &srv, const short &errCode, const std::string &statMessage) {
+	std::map<short, std::string>::const_iterator it = srv.error_pages.find(errCode);
+        if(it == srv.error_pages.end()) {
+            serveDefaultErrorPage();
+            return;
+        }
+        bodyFile.open(it->second);
+        setResponsefields(errCode, statMessage);
+}
+
 void Response::fillBodyFile( const Server &server ) { //khas server maydouzch liya const
     bodyFile.open(request->_path);
 
     if (!bodyFile.is_open()) {
         std::map<short, std::string>::const_iterator it = server.error_pages.find(500);
         if(it == server.error_pages.end()) {
-            bodyFile.open("srcs/Response/DefaultError/index.html");
-            setResponsefields(500, "Internal Server Error");
+            serveDefaultErrorPage();
             return;
         }
         bodyFile.open(it->second);
@@ -151,31 +163,13 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         }
         //if request has no errors
         else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
-                servingFileGet(this ,server, loc, loc_Path);
-        // if (isDirectory(response.request->_path)) { // a directory is requested
-        //         if (hasSlashEnd(request._path)) { //dir has '/' at the end
-        //                 //check if directory has indexfile (search for "index.html" in the dir) | if found serve it
-        //                 //if directory has no indexfile | check if autoindex is on
-        //                         // if on return autoindex of directory
-        //                         // else (autoindex off) return 403 Forbidden;
-        //         }
-        //         else { //dir does not have '/' at the end
-        //                 response.statusCode = 301;
-        //                 response.statusMessage = "Moved Pemanently";
-        //         }
-        // }
-        // else { // a file is requested
-        //         if (resourceExists(request._path)) {
-        //                 response.statusCode = 200;
-        //                 response.statusMessage = "OK";
-        //                 response.contentType = getContentType(request._path);
-        //                 response.content = readResource(request._path);
-        //                 }
-        //         else {
-        //                 response.statusCode = 404;
-        //                 response.statusMessage = "Not Found";
-        //                 }
-        //         }
+            servingFileGet(this ,server, loc, loc_Path);
         }
-        this->_message = getResponseHeaders(response, server, loc, loc_Path);
+        // else if (this->request->_method == POST_method) {
+            
+        // }
+        // else if (this->request->_method == DELETE_method) {
+
+        // }
+        // else{}
 }

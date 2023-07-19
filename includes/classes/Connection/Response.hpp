@@ -34,6 +34,8 @@ struct Response {
     void setContentlength(const size_t &cl);
     void setResponsefields(const int &sc, const std::string &sm);
     void fillBodyFile( const Server &server );
+    void    serveErrorPage(const Server &srv, const short &errCode, const std::string &statMessage);
+    void    serveDefaultErrorPage( void );
     size_t getbodySize( void );
     std::string getContentType( void );
     void serving(const Server &server, const Location *loc, const std::string &loc_Path);

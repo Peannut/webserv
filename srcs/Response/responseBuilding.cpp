@@ -66,11 +66,17 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 				//peanut part
 			}
 		}
-		else { //resouce is a directory
-
+		else { //file is a directory
+			if (hasSlashEnd(response->request->_path)) {
+				if (hasAutoIndex()) // check autoindex
+			}
+			else { // uri with no slash at the end
+				response->serveErrorPage(server, 301, "Moved Permenantly");
+				//will add redirection to uri with / at the end.
+			}
 		}
 	}
 	else { //file not found serve the not found page 404;
-		
+
 	}
 }

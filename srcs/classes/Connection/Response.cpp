@@ -14,7 +14,7 @@
 
 #include "includes.hpp"
 
-Response::Response(const Request *req)
+Response::Response(Request *req)
 : request(req)
 , _message_size()
 , _offset()
@@ -152,6 +152,18 @@ size_t Response::getbodySize( void ) {
     std::streampos filesize = bodyFile.tellg();
     bodyFile.seekg(0);
     contentLength = static_cast<size_t>(filesize);
+}
+
+bool Response::hasAutoIndex( const Location *loc) {
+    for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
+        std::string fullpath = request->_path + *it;
+        std::ifstream indexFile(fullpath);
+        if (resourceExists(fullpath)) {
+            request->_path += *it;
+            return true;
+        }
+    }
+    return false;
 }
 
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {

@@ -63,12 +63,26 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 				buildResponseHeaders(response);
 			}
 			else {//file has cgi
-				//peanut part
+				///////////////CGI/////////////////
 			}
 		}
 		else { //file is a directory
 			if (hasSlashEnd(response->request->_path)) {
-				if (hasAutoIndex()) // check autoindex
+				if (response->hasAutoIndex(loc)) { // check autoindex
+					if (!fileCgi(response->request->_path, loc)) {
+						response->fillBodyFile(server);
+						response->getbodySize();
+						buildResponseHeaders(response);
+					}
+					else {//file has cgi
+						///////////////CGI/////////////////
+					}
+				}
+				else { //no index should check autoindex here
+					if (!loc->autoindex) {
+						response->serveErrorPage(server, 403, "Forbidden");
+					}
+				}
 			}
 			else { // uri with no slash at the end
 				response->serveErrorPage(server, 301, "Moved Permenantly");
@@ -77,6 +91,6 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 		}
 	}
 	else { //file not found serve the not found page 404;
-
+		response->serveErrorPage(server, 404, "Not Found");
 	}
 }

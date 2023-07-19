@@ -16,7 +16,7 @@
 struct Response {
     int statusCode;
     size_t contentLength;
-    const Request *request;
+    Request *request;
     std::string statusMessage;
     std::string contentType;
     std::string content;
@@ -25,7 +25,7 @@ struct Response {
     size_t _message_size;
     size_t _offset;
 
-    Response(const Request *req) : request(req){}
+    Response(Request *req) : request(req){}
     Response(int code, const std::string& message, const std::string& type, const std::string& body)
         : statusCode(code), statusMessage(message), contentType(type), content(body) {}
     void setStatusCode(const int &sc);
@@ -38,6 +38,7 @@ struct Response {
     void    serveDefaultErrorPage( void );
     size_t getbodySize( void );
     std::string getContentType( void );
+    bool hasAutoIndex(const Location *loc);
     void serving(const Server &server, const Location *loc, const std::string &loc_Path);
     size_t extract();
     void seek_back(const size_t & amount);

@@ -89,7 +89,10 @@ std::string Response::getContentType( void ) {
 	else if (conType == "txt") {
 		return "text/plain";
 	}
-    return "text/html";
+    else if (conType == "htm" || conType == "html") {
+        return "text/html";
+    }
+    return "";   
 }
 
 void Response::setStatusCode(const int &sc) {
@@ -154,7 +157,7 @@ size_t Response::getbodySize( void ) {
     contentLength = static_cast<size_t>(filesize);
 }
 
-bool Response::hasAutoIndex( const Location *loc) {
+bool Response::hasIndex( const Location *loc) {
     for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
         std::string fullpath = request->_path + *it;
         std::ifstream indexFile(fullpath);
@@ -172,6 +175,14 @@ void Response::removeFile(const Server &server) {
         return ;
     }
     serveErrorPage(server, 203, "No Content");
+}
+
+void    Response::deleteDirContent(const Server &server) {
+    //////////ghanmchi n9ra chwiya 3la opendir readir ect////////////
+    //delete content if succeded serve 204 no content;
+    //if failed check if the is write right => if yes 500 internal error;
+                                        //  => if no 403 forbidden
+    
 }
 
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {

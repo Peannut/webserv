@@ -68,7 +68,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 		}
 		else { //file is a directory
 			if (hasSlashEnd(response->request->_path)) {
-				if (response->hasAutoIndex(loc)) { // check autoindex
+				if (response->hasIndex(loc)) { // check autoindex
 					if (!fileCgi(response->request->_path, loc)) {
 						response->fillBodyFile(server);
 						response->getbodySize();
@@ -81,6 +81,9 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 				else { //no index should check autoindex here
 					if (!loc->autoindex) {
 						response->serveErrorPage(server, 403, "Forbidden");
+					}
+					else {
+						//autoindex on
 					}
 				}
 			}
@@ -107,7 +110,17 @@ void    deletingFile(Response *response, const Server &server, const Location *l
 		}
 		else {//directory
 			if (hasSlashEnd(response->request->_path)) {
-				//chi haja machi tal tem f schema;
+				if (!fileCgi(response->request->_path, loc)) {
+					response->deleteDirContent( server );
+				}
+				else { //has cgi
+					if (!response->hasIndex(loc)) { // has cgi but no indexfile
+						response->serveErrorPage(server, 402, "Forbidden");
+					}
+					else {//has cgi and indexfile
+						/////////////CGI//////////////
+					}
+				}
 			}
 			else { // makaynach slash
 				response->serveErrorPage(server, 409, "Conflict");
@@ -118,4 +131,3 @@ void    deletingFile(Response *response, const Server &server, const Location *l
 		response->serveErrorPage(server, 404, "Not Found");
 	}
 }
-

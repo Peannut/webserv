@@ -39,6 +39,7 @@ struct Response {
     size_t getbodySize( void );
     std::string getContentType( void );
     bool hasAutoIndex(const Location *loc);
+    void    removeFile(const Server &server);
     void serving(const Server &server, const Location *loc, const std::string &loc_Path);
     size_t extract();
     void seek_back(const size_t & amount);

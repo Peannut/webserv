@@ -95,6 +95,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 // std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path);
 bool resourceExists (const std::string &path);
 bool	fileCgi(const std::string &fullpath, const Location *loc);
+void    deletingFile(Response *res, const Server &server, const Location *loc);
 
 
 #endif // PROTOTYPES_HPP

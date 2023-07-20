@@ -94,3 +94,28 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 		response->serveErrorPage(server, 404, "Not Found");
 	}
 }
+
+void    deletingFile(Response *response, const Server &server, const Location *loc) {
+	if (resourceExists(response->request->_path)){
+		if (!isDirectory(response->request->_path)) {
+			if(!fileCgi(response->request->_path, loc)) {
+				response->removeFile(server);
+			}
+			else {
+				//////////////CGI//////////////
+			}
+		}
+		else {//directory
+			if (hasSlashEnd(response->request->_path)) {
+				//chi haja machi tal tem f schema;
+			}
+			else { // makaynach slash
+				response->serveErrorPage(server, 409, "Conflict");
+			}
+		}
+	}
+	else {
+		response->serveErrorPage(server, 404, "Not Found");
+	}
+}
+

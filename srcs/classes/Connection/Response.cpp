@@ -166,12 +166,20 @@ bool Response::hasAutoIndex( const Location *loc) {
     return false;
 }
 
+void Response::removeFile(const Server &server) {
+    if (std::remove(request->_path.c_str())){
+        serveDefaultErrorPage();
+        return ;
+    }
+    serveErrorPage(server, 203, "No Content");
+}
+
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
         if (checkRequestError(*this)) { //if request has an error;
-                this->_message = buildErrorResponseH(*this);
-                this->content = findErrorPage(*this, server);
-                //after building now the Response header and body should start sending chunk by chunk to multiplexing;
+            this->_message = buildErrorResponseH(*this);
+            this->content = findErrorPage(*this, server);
+            //after building now the Response header and body should start sending chunk by chunk to multiplexing;
         }
         //if request has no errors
         else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
@@ -180,8 +188,8 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         // else if (this->request->_method == POST_method) {
             
         // }
-        // else if (this->request->_method == DELETE_method) {
-
-        // }
+        else if (this->request->_method == DELETE_method) {
+            deletingFile(this, server, loc);
+        }
         // else{}
 }

@@ -38,4 +38,6 @@
 #include "classes/Config/Config.hpp"
 #include "classes/WebServ.hpp"
 
+#include <sys/stat.h> // remove this after
+
 #endif // HEADER_HPP

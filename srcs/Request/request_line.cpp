@@ -29,6 +29,7 @@ void Request::path_mode(const char & c)
     else if (c == ' ')
     {
         _mode = version_m;
+        if (_uri.length() > URI_LIMIT) set_error(414);
     }
     else if (c == '%')
     {
@@ -86,6 +87,7 @@ void Request::query_val_mode(const char & c)
     if (c == ' ')
     {
         _mode = version_m;
+        if (_uri.length() > URI_LIMIT) set_error(414);
     }
     else if (c == '&')
     {

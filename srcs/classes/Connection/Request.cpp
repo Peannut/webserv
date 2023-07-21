@@ -43,19 +43,9 @@ bool Request::concatenate(const std::string & buffer)
         _message.push_back(c);
     }
     if (_mode == success_m)
-    {
-        std::cout << ANSI_BOLD;
-        std::cout << "==>success_m<==" << std::endl;
-        std::cout << ANSI_RESET;
         return true;
-    }
     else if (_mode == error_m)
-    {
-        std::cout << ANSI_BOLD;
-        std::cout << "==>error_m<== n:" << _error << std::endl;
-        std::cout << ANSI_RESET;
         return true;
-    }
     return false;
 }
 
@@ -79,8 +69,8 @@ void Request::serving(Connection & conn)
                 maxLenMatched = lenMatched;
             }
         }
-
         if (maxLenMatched == 0) set_error(404);
+        else _path.assign(std::string(conn._loc_obj->root + _path).data());
     }
 
     std::cout << "REQUEST = [" << std::endl;
@@ -101,7 +91,19 @@ void Request::serving(Connection & conn)
     for (std::map<std::string, std::string>::iterator it = _fields.begin(); it != _fields.end(); ++it)
         std::cout << "field =>\t\t|" << it->first << "|:|" << it->second << '|' << std::endl;
     std::cout << "body =>\t\t\t|" << _body << '|' << std::endl;
-    std::cout << ']' << std::endl;
+    std::cout << ']';
+    if (_mode == success_m)
+    {
+        std::cout << ANSI_BOLD;
+        std::cout << "==>success_m<==" << std::endl;
+        std::cout << ANSI_RESET;
+    }
+    else if (_mode == error_m)
+    {
+        std::cout << ANSI_BOLD;
+        std::cout << "==>error_m<== n:" << _error << std::endl;
+        std::cout << ANSI_RESET;
+    }
 }
 
 void Request::set_transfer(const Transfers & tr)

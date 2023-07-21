@@ -34,6 +34,7 @@ enum Modes {
 //     411,     // Length Required
 //     415,     // Unsupported Media Type
 //     413,     // Content Too Large
+//     414,     // URI Too Large
 //     404,     // Not Found
 //     0,       // NO ERROR
 // };

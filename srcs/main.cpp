@@ -65,7 +65,9 @@ int main(int ac, char **av, char **envp)
 
 	if (ac  != 2)
 	{
-		std::cerr << "check ur arguments" << std::endl;
+        std::cerr << ANSI_BOLD << ANSI_RED << ANSI_ULINE;
+		std::cerr << "Required one argument." << std::endl;
+        std::cerr << ANSI_RESET;
 		return (1);
 	}
     try {

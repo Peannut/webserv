@@ -8,7 +8,8 @@
 #define LISTEN_ENABLE true // the type of connection, is it a server socket (aka. listen) or a client socket
 #define POLL_TIME 0 // the time that poll() waits in milliseconds
 #define BACK_LOG 10 // one socket can handle BACK_LOG number of connection
-#define BUFFER_SIZE (size_t)32768 // the size of the receiving the sending buffer
+#define BUFFER_SIZE (size_t)8 // the size of the receiving the sending buffer
+#define URI_LIMIT 8192 // the maximum size of the uri in the request
 
 #define ANSI_RESET      "\033[0m"
 #define ANSI_BOLD       "\033[1m"
@@ -70,6 +71,21 @@ void trimFieldVal(std::string & field_val);
 bool isContentLengthValValid(const std::string & val);
 bool isTransferEncodingValValid(const std::string & val);
 size_t matching_location(const std::string & path, const std::string & location_path);
+// </--Response/utils.cpp-->
+bool isDirectory(const std::string &path);
+bool hasSlashEnd(const std::string &path);
+bool resourceExists (const std::string &path);
+bool checkRequestError(const Response &response);
+std::string readResource(const std::string &path);
+Response generateResponse(const Request &request);
+std::string buildErrorResponseH(const Response &response);
+std::string findErrorPage(const Response &response,const Server &srv);
+// void    buildResponseHeaders(Response &response);
+void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path);
+// std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path);
+bool resourceExists (const std::string &path);
+bool	fileCgi(const std::string &fullpath, const Location *loc);
+void    deletingFile(Response *res, const Server &server, const Location *loc);
 
 
 /*

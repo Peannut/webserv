@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ynuiga <ynuiga@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:17 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/11 11:11:36 by ynuiga           ###   ########.fr       */
+/*   Updated: 2023/07/20 16:08:42 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,12 +131,12 @@ void	Response::serveErrorPage(const Server &srv, const short &errCode, const std
             serveDefaultErrorPage();
             return;
         }
-        bodyFile.open(it->second);
+        bodyFile.open(it->second.c_str());
         setResponsefields(errCode, statMessage);
 }
 
 void Response::fillBodyFile( const Server &server ) { //khas server maydouzch liya const
-    bodyFile.open(request->_path);
+    bodyFile.open(request->_path.c_str());
 
     if (!bodyFile.is_open()) {
         std::map<short, std::string>::const_iterator it = server.error_pages.find(500);
@@ -144,7 +144,7 @@ void Response::fillBodyFile( const Server &server ) { //khas server maydouzch li
             serveDefaultErrorPage();
             return;
         }
-        bodyFile.open(it->second);
+        bodyFile.open(it->second.c_str());
         setResponsefields(500, "Internal Server Error");
     }
     setResponsefields(200, "OK");
@@ -160,7 +160,7 @@ size_t Response::getbodySize( void ) {
 bool Response::hasIndex( const Location *loc) {
     for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
         std::string fullpath = request->_path + *it;
-        std::ifstream indexFile(fullpath);
+        std::ifstream indexFile(fullpath.c_str());
         if (resourceExists(fullpath)) {
             request->_path += *it;
             return true;

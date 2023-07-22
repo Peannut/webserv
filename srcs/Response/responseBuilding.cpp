@@ -33,14 +33,18 @@ void	buildErrorResponse(const Server &server, Response *response) {
 }
 
 void    buildResponseHeaders(Response *response) {
+	std::stringstream ss;
 	response->_message += "HTTP/1.1 ";
-	response->_message += std::to_string(response->statusCode);
+	ss << response->statusCode;
+	response->_message += ss.str();
 	response->_message += " ";
 	response->_message += response->statusMessage;
 	response->_message += "\r\nContent-Type: ";
 	response->_message += response->contentType;
 	response->_message += "\r\n Connection: Close\r\n Content-lenght : ";
-	response->_message += std::to_string(response->contentLength);
+	ss.clear();
+	ss << response->contentLength;
+	response->_message += ss.str();
 	response->_message += "\r\n\r\n";
 }
 

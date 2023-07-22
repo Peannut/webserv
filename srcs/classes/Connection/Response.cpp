@@ -187,13 +187,11 @@ void    Response::deleteDirContent(const Server &server) {
 
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
-        if (checkRequestError(*this)) { //if request has an error;
-            this->_message = buildErrorResponseH(*this);
-            this->content = findErrorPage(*this, server);
-            //after building now the Response header and body should start sending chunk by chunk to multiplexing;
-        }
-        //if request has no errors
-        else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
+    if (request->_error) { //if request has an error;
+        buildErrorResponse(server, this);
+    }
+    else { // no error detected in request
+        if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
             servingFileGet(this ,server, loc, loc_Path);
         }
         // else if (this->request->_method == POST_method) {
@@ -203,4 +201,5 @@ void Response::serving(const Server &server, const Location *loc, const std::str
             deletingFile(this, server, loc);
         }
         // else{}
+    }
 }

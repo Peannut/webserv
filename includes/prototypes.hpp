@@ -88,7 +88,7 @@ bool resourceExists (const std::string &path);
 bool checkRequestError(const Response &response);
 std::string readResource(const std::string &path);
 Response generateResponse(const Request &request);
-std::string buildErrorResponseH(const Response &response);
+void buildErrorResponse(const Server &server, Response *response);
 std::string findErrorPage(const Response &response,const Server &srv);
 // void    buildResponseHeaders(Response &response);
 void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path);

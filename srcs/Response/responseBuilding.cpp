@@ -14,41 +14,40 @@ std::string findErrorPage(const Response &response,const Server &srv) {
 			response_Body = ss.str();
 		}
 	}
-	std::ifstream file("DefaultErrorPage"); //mal9inach error page li me7tajin so kanservi default
+	std::ifstream file("src/Response/DefaultErrorPage/index.html"); //mal9inach error page li me7tajin so kanservi default
 	ss << file.rdbuf();
 	response_Body = ss.str();
 	return response_Body;
 }
 
 void	buildErrorResponse(const Server &server, Response *response) {
-	std::map<int,  std::string> errorCodes;
-
-	std::map<short, std::string>::const_iterator it = server.error_pages.find(response.request->_error);
+	std::map<short, std::string>::const_iterator it = server.error_pages.find(response->request->_error);
 	if (it != server.error_pages.end()) {
 		response->serveErrorPage(server, it->first, it->second);
+		return;
 	}
-	else {
-		response->serveDefaultErrorPage();
-	}
+	response->serveDefaultErrorPage();
 }
 
 void    buildResponseHeaders(Response *response) {
-	std::stringstream ss;
+	std::stringstream tmp;
 	response->_message += "HTTP/1.1 ";
-	ss << response->statusCode;
-	response->_message += ss.str();
+	tmp << response->statusCode;
+	response->_message += tmp.str();
 	response->_message += " ";
 	response->_message += response->statusMessage;
 	response->_message += "\r\nContent-Type: ";
 	response->_message += response->contentType;
-	response->_message += "\r\n Connection: Close\r\n Content-lenght : ";
-	ss.clear();
-	ss << response->contentLength;
-	response->_message += ss.str();
+	response->_message += "\r\nConnection: Close\r\nContent-lenght: ";
+	tmp.str("");
+	tmp << response->contentLength;
+	response->_message += tmp.str();
 	response->_message += "\r\n\r\n";
+	response->_message_size = response->_message.length();
 }
 
 void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path) {
+	UNUSED(loc_Path);
 	if (resourceExists(response->request->_path)) { //file does exists
 		if (!isDirectory(response->request->_path)) { //resource is a file
 			if (!fileCgi(response->request->_path, loc)) {//file has no cgi => serve it;
@@ -62,7 +61,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 		}
 		else { //file is a directory
 			if (hasSlashEnd(response->request->_path)) {
-				if (response->hasIndex(loc)) { // check autoindex
+				if (response->hasAutoIndex(loc)) { // check autoindex
 					if (!fileCgi(response->request->_path, loc)) {
 						response->fillBodyFile(server);
 						response->getbodySize();
@@ -75,9 +74,6 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 				else { //no index should check autoindex here
 					if (!loc->autoindex) {
 						response->serveErrorPage(server, 403, "Forbidden");
-					}
-					else {
-						//autoindex on
 					}
 				}
 			}
@@ -104,17 +100,7 @@ void    deletingFile(Response *response, const Server &server, const Location *l
 		}
 		else {//directory
 			if (hasSlashEnd(response->request->_path)) {
-				if (!fileCgi(response->request->_path, loc)) {
-					response->deleteDirContent( server );
-				}
-				else { //has cgi
-					if (!response->hasIndex(loc)) { // has cgi but no indexfile
-						response->serveErrorPage(server, 402, "Forbidden");
-					}
-					else {//has cgi and indexfile
-						/////////////CGI//////////////
-					}
-				}
+				//chi haja machi tal tem f schema;
 			}
 			else { // makaynach slash
 				response->serveErrorPage(server, 409, "Conflict");

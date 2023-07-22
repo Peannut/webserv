@@ -1,12 +1,11 @@
 #include "includes.hpp"
 
+bool checkRequestError(const Response &response) {
+	return response.request->_error;
+}
+
 bool isDirectory(const std::string &path) {
-	struct stat pathStat;
-	if (stat(path.c_str(), &pathStat) != 0) {
-		std::cerr << "stat() error!" << std::endl;
-		return false;
-	} 
-	return S_ISDIR(pathStat.st_mode);
+	return (access(path.c_str(), X_OK) != 0);
 }
 
 bool hasSlashEnd(const std::string &path) {
@@ -17,7 +16,7 @@ bool hasSlashEnd(const std::string &path) {
 }
 
 bool resourceExists (const std::string &path) {
-    return (access(path.c_str(), X_OK) == 0);
+	return(access(path.c_str(), F_OK) == 0);
 }
 
 // std::string searchFile(const std::string& requestedPath, const std::map<std::string, std::string>& locationRoots) {

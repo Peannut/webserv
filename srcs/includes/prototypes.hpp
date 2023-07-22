@@ -75,9 +75,10 @@ size_t matching_location(const std::string & path, const std::string & location_
 bool isDirectory(const std::string &path);
 bool hasSlashEnd(const std::string &path);
 bool resourceExists (const std::string &path);
+bool checkRequestError(const Response &response);
 std::string readResource(const std::string &path);
 Response generateResponse(const Request &request);
-void	buildErrorResponse(const Server &server, Response *response);
+std::string buildErrorResponseH(const Response &response);
 std::string findErrorPage(const Response &response,const Server &srv);
 // void    buildResponseHeaders(Response &response);
 void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path);

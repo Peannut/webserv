@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 09:40:39 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/13 19:50:59 by zwina            ###   ########.fr       */
+/*   Updated: 2023/07/14 15:10:20 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ std::string convertToIPAddress(size_t ip)
     std::string str;
     std::stringstream ss;
 
-    std::cout << "HELLO 1" << std::endl;
     for (int i = 0; i < 4; ++i)
     {
         int octet = (ip >> (8 * (3 - i))) & 255;

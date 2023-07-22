@@ -1,17 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Response.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/24 15:03:17 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/20 16:08:42 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "includes.hpp"
-
 #include "includes.hpp"
 
 Response::Response(Request *req)
@@ -25,29 +11,31 @@ size_t Response::extract()
     size_t length = 0;
     while (length < BUFFER_SIZE)
     {
-        if (_offset < _message_size) // sending message (the status line and the fileds in short)
-            buffer[length] = _message[_offset];
-        // sending body in a file;
-        else if (!bodyFile.eof()) {
-            bodyFile >> buffer[length];
+        if (_offset < _message_size)
+            buffer[length++] = _message[_offset++];
+        else if (bodyFile.is_open() && !bodyFile.eof())
+        {
+            char c = bodyFile.get();
+            if (!bodyFile.eof()) {
+                buffer[length++] = c;
+                ++_offset;
+            }
         }
-        else break; // nothing to send
-        ++length;
-        ++_offset;
+        else break;
     }
     return (length);
 }
 
 void Response::seek_back(const size_t & amount)
 {
-    size_t pos = bodyFile.tellg();
-    bodyFile.seekg((pos <= amount)? 0 : pos - amount);
+    if (bodyFile.is_open() && amount && _offset >= _message_size)
+        bodyFile.seekg(amount, bodyFile.cur); // We have to update this line
     _offset -= amount;
 }
 
 bool Response::is_done()
 {
-    return (_offset < _message_size && bodyFile.eof());
+    return (_offset >= _message_size && (!bodyFile.is_open() || bodyFile.eof()));
 }
 
 std::string Response::getContentType( void ) {
@@ -89,10 +77,7 @@ std::string Response::getContentType( void ) {
 	else if (conType == "txt") {
 		return "text/plain";
 	}
-    else if (conType == "htm" || conType == "html") {
-        return "text/html";
-    }
-    return "";   
+    return "text/html";
 }
 
 void Response::setStatusCode(const int &sc) {
@@ -131,12 +116,12 @@ void	Response::serveErrorPage(const Server &srv, const short &errCode, const std
             serveDefaultErrorPage();
             return;
         }
-        bodyFile.open(it->second.c_str());
+        bodyFile.open(it->second.data());
         setResponsefields(errCode, statMessage);
 }
 
 void Response::fillBodyFile( const Server &server ) { //khas server maydouzch liya const
-    bodyFile.open(request->_path.c_str());
+    bodyFile.open(request->_path.data());
 
     if (!bodyFile.is_open()) {
         std::map<short, std::string>::const_iterator it = server.error_pages.find(500);
@@ -144,23 +129,23 @@ void Response::fillBodyFile( const Server &server ) { //khas server maydouzch li
             serveDefaultErrorPage();
             return;
         }
-        bodyFile.open(it->second.c_str());
+        bodyFile.open(it->second.data());
         setResponsefields(500, "Internal Server Error");
     }
     setResponsefields(200, "OK");
 }
 
-size_t Response::getbodySize( void ) {
-    bodyFile.seekg(0, std::ios::end);
+void Response::getbodySize( void ) {
+    bodyFile.seekg(0, bodyFile.end);
     std::streampos filesize = bodyFile.tellg();
     bodyFile.seekg(0);
     contentLength = static_cast<size_t>(filesize);
 }
 
-bool Response::hasIndex( const Location *loc) {
+bool Response::hasAutoIndex( const Location *loc) {
     for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
         std::string fullpath = request->_path + *it;
-        std::ifstream indexFile(fullpath.c_str());
+        std::ifstream indexFile(fullpath.data());
         if (resourceExists(fullpath)) {
             request->_path += *it;
             return true;
@@ -177,25 +162,16 @@ void Response::removeFile(const Server &server) {
     serveErrorPage(server, 203, "No Content");
 }
 
-void    Response::deleteDirContent(const Server &server) {
-    //////////ghanmchi n9ra chwiya 3la opendir readir ect////////////
-    //delete content if succeded serve 204 no content;
-    //if failed check if the is write right => if yes 500 internal error;
-                                        //  => if no 403 forbidden
-    
-}
-
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
-    if (request->_error) { //if request has an error;
+    if (request->_error) {
         buildErrorResponse(server, this);
     }
-    else { // no error detected in request
+    else { //if request has no errors
         if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
             servingFileGet(this ,server, loc, loc_Path);
         }
         // else if (this->request->_method == POST_method) {
-            
         // }
         else if (this->request->_method == DELETE_method) {
             deletingFile(this, server, loc);

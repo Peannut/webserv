@@ -23,6 +23,14 @@ bool isOWS(const char & c)
 {
     return ( c == ' ' || c == 9 );
 }
+bool isHEXDIG(const char & c)
+{
+    return (\
+        std::isdigit(c) || \
+        c == 'a' || c == 'b' || c == 'c' || c == 'd' || c == 'e' || c == 'f' || \
+        c == 'A' || c == 'B' || c == 'C' || c == 'D' || c == 'E' || c == 'F'
+    );
+}
 // visible character
 bool isVchar(const char & c)
 {

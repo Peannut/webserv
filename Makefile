@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
-#    Updated: 2023/07/10 10:56:42 by zwina            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # styles
 ANSI_RESET          := \\033[0m
 ANSI_BOLD           := \\033[1m
@@ -32,20 +20,23 @@ CLASSESDIR 		:= classes
 CONFIGDIR 		:= Config
 CONNECTIONDIR	:= Connection
 REQUESTDIR		:= Request
+RESPONSEDIR		:= Response
 # sources
 CFILES  :=\
 	$(CLASSESDIR)/$(CONFIGDIR)/Config.cpp \
 	$(CLASSESDIR)/$(CONFIGDIR)/Location.cpp \
 	$(CLASSESDIR)/$(CONFIGDIR)/Server.cpp \
-	$(CONFIGDIR)/utils.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Connection.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Request.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Response.cpp \
 	$(CLASSESDIR)/WebServ.cpp \
+	$(CONFIGDIR)/utils.cpp \
 	$(REQUESTDIR)/body.cpp \
 	$(REQUESTDIR)/fields.cpp \
 	$(REQUESTDIR)/request_line.cpp \
 	$(REQUESTDIR)/utils.cpp \
+	$(RESPONSEDIR)/responseBuilding.cpp \
+	$(RESPONSEDIR)/utils.cpp \
 	main.cpp \
 	multiplexing.cpp
 SRCS    := $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
@@ -83,8 +74,9 @@ $(OBJSDIR) :
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONNECTIONDIR)
-	@mkdir $(OBJSDIR)/$(REQUESTDIR)
 	@mkdir $(OBJSDIR)/$(CONFIGDIR)
+	@mkdir $(OBJSDIR)/$(REQUESTDIR)
+	@mkdir $(OBJSDIR)/$(RESPONSEDIR)
 
 $(OBJS) : $(OBJSDIR)/%.o : $(SRCSDIR)/%.cpp
 	@printf "$(ANSI_YELLOW)$(ANSI_BOLD)\n"

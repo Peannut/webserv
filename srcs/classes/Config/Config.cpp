@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/14 10:12:52 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/23 15:20:48 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,6 @@ void Config::setup_listen(std::string& line, Server& server)
 	size_t port = std::atoi(hostport[1].data());
 	server.listen.second = port;
 	std::cout << "port function" << convertPortToString(server.listen.second) <<std::endl;
-	// std::cout << "port "<< server.listen.second << std::endl;
-	// print listen
-	// std::cout << "listen: " << server.listen.first << ":" << server.listen.second << std::endl;
-	// std::cout << "IP address: " << convertToIPAddress(server.listen.first) << std::endl;
 }
 
 void Config::setup_servername(std::string& line, Server& server)
@@ -72,7 +68,6 @@ void Config::setup_servername(std::string& line, Server& server)
 
 void Config::setupClientbodySize(std::string& line, Server& server)
 {
-	// std::cout << "made it to client body size here" << std::endl;
 	std::string val = line.substr(22, line.size() - 22);
 	if (line_empty(val))
 		throw(std::runtime_error("Error: client_max_body_size does not have a value"));

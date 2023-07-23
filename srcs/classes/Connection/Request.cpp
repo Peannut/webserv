@@ -1,22 +1,11 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Request.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/24 15:03:22 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/15 16:10:30 by zoukaddo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 Request::Request()
-:_error(none_e)
+: _error()
 , _method(none_method)
 , _mode(method_m)
 , _transfer(none_tr)
+, _transfer_content_max_len()
 , _transfer_content_len()
 , _transfer_chunk_len()
 {}
@@ -25,12 +14,13 @@ bool Request::concatenate(const std::string & buffer)
 {
     for (size_t sz = buffer.size(), i = 0; i < sz; ++i) {
         const char & c = buffer[i];
-        if (_mode == success_m) set_error(code_400_e);
+        if (_mode == success_m) set_error(400);
         switch (_mode)
         {
             // request_line
             case method_m:          method_mode(c); break;
             case path_m:            path_mode(c); break;
+            case encoding_m:        encoding_mode(c); break;
             case query_key_m:       query_key_mode(c); break;
             case query_val_m:       query_val_mode(c); break;
             case version_m:         version_mode(c); break;
@@ -53,19 +43,9 @@ bool Request::concatenate(const std::string & buffer)
         _message.push_back(c);
     }
     if (_mode == success_m)
-    {
-        std::cout << ANSI_BOLD;
-        std::cout << "==>success_m<==" << std::endl;
-        std::cout << ANSI_RESET;
         return true;
-    }
     else if (_mode == error_m)
-    {
-        std::cout << ANSI_BOLD;
-        std::cout << "==>error_m<== n:" << _error << std::endl;
-        std::cout << ANSI_RESET;
         return true;
-    }
     return false;
 }
 
@@ -89,8 +69,8 @@ void Request::serving(Connection & conn)
                 maxLenMatched = lenMatched;
             }
         }
-
-        if (maxLenMatched == 0) set_error(code_404_e);
+        if (maxLenMatched == 0) set_error(404);
+        else _path.assign(std::string(conn._loc_obj->root + _path).data());
     }
 
     std::cout << "REQUEST = [" << std::endl;
@@ -111,18 +91,30 @@ void Request::serving(Connection & conn)
     for (std::map<std::string, std::string>::iterator it = _fields.begin(); it != _fields.end(); ++it)
         std::cout << "field =>\t\t|" << it->first << "|:|" << it->second << '|' << std::endl;
     std::cout << "body =>\t\t\t|" << _body << '|' << std::endl;
-    std::cout << ']' << std::endl;
+    std::cout << ']';
+    if (_mode == success_m)
+    {
+        std::cout << ANSI_BOLD;
+        std::cout << "==>success_m<==" << std::endl;
+        std::cout << ANSI_RESET;
+    }
+    else if (_mode == error_m)
+    {
+        std::cout << ANSI_BOLD;
+        std::cout << "==>error_m<== n:" << _error << std::endl;
+        std::cout << ANSI_RESET;
+    }
 }
 
 void Request::set_transfer(const Transfers & tr)
 {
     if (_transfer == tr)
-        set_error(code_400_e);
+        set_error(400);
     else
         _transfer = tr;
 }
 
-void Request::set_error(const Errors & e)
+void Request::set_error(const short & e)
 {
     _mode = error_m;
     _error = e;

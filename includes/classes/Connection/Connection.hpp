@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:20 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/15 16:01:56 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/23 15:20:03 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ struct Connection
     bool can_write();
     bool is_error();
     void flip_flag(const short & flag);
+
     void serving();
 };
 

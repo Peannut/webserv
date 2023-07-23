@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Response.hpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/07/23 15:20:31 by zoukaddo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
@@ -46,13 +34,6 @@ struct Response
     void seek_back(const size_t & amount);
     bool is_done();
     void serving(const Server &server, const Location *loc, const std::string &loc_Path);
-
-
-    //peanut functions
-    void env_maker(void);
-    int handleCGI(void);
-    void cgiResponse(void);
-    void cgi_execve(void);
 };
 
 #endif // RESPONSE_HPP

@@ -1,16 +1,11 @@
 #include "includes.hpp"
 
 bool checkRequestError(const Response &response) {
-	return response.request->_error != none_e;
+	return response.request->_error;
 }
 
 bool isDirectory(const std::string &path) {
-	struct stat pathStat;
-	if (stat(path.c_str(), &pathStat) != 0) {
-		std::cerr << "stat() error!" << std::endl;
-		return false;
-	} 
-	return S_ISDIR(pathStat.st_mode);
+	return (access(path.c_str(), X_OK) != 0);
 }
 
 bool hasSlashEnd(const std::string &path) {
@@ -21,52 +16,44 @@ bool hasSlashEnd(const std::string &path) {
 }
 
 bool resourceExists (const std::string &path) {
-	std::ifstream file(path.c_str());
-	return file.good();
+	return(access(path.c_str(), F_OK) == 0);
 }
 
-std::string getContentType(const std::string &path) {
-	std::string conType;
+// std::string searchFile(const std::string& requestedPath, const std::map<std::string, std::string>& locationRoots) {
+//     std::string filePath;
 
-	size_t lastSlash = path.find_last_of('.');
-	conType = path.substr(lastSlash+ 1, path.length() - lastSlash);
+//     // Iterate over the locationRoots map
+//     for (const auto& locationRoot : locationRoots) {
+//         const std::string& location = locationRoot.first;
+//         const std::string& root = locationRoot.second;
 
-	if (conType == "htm" || conType == "html") {
-		return "text/html";
+//         // Check if the requested path matches the location
+//         if (requestedPath.find(location) == 0) {
+//             // Construct the full file path by concatenating the root and requested path
+//             filePath = root + requestedPath.substr(location.length());
+            
+//             std::ifstream file(filePath.c_str());
+//             if (file) {
+//                 // File exists
+//                 file.close();
+//                 break;
+//             }
+//         }
+//     }
+
+//     return filePath;
+// }
+
+bool	fileCgi(const std::string &fullpath, const Location *loc) {
+	if (!loc->cgi_bin.first.empty()) {
+		size_t lastdot = fullpath.find_last_of('.');
+		if (lastdot == std::string::npos) {
+			return false;
+		}
+		std::string conType = fullpath.substr(lastdot + 1, fullpath.length() - lastdot);
+		return conType == loc->cgi_bin.first;
 	}
-	else if (conType == "css") {
-		return "text/css";
-	}
-	else if (conType == "csv") {
-		return "text/csv";
-	}
-	else if (conType == "gif") {
-		return "image/gif";
-	}
-	else if (conType == "ico") {
-		return "image/x-icon";
-	}
-	else if (conType == "jpeg" || conType == "jpg") {
-		return "image/jpeg";
-	}
-	else if (conType == "js") {
-		return "application/javascript";
-	}
-	else if (conType == "json") {
-		return "application/json";
-	}
-	else if (conType == "png") {
-		return "image/png";
-	}
-	else if (conType == "pdf") {
-		return "application/pdf";
-	}
-	else if (conType == "svg") {
-		return "image/svg+xml";
-	}
-	else if (conType == "txt") {
-		return "text/plain";
-	}
+	return false;
 }
 
 std::string readResource(const std::string &path) {
@@ -84,91 +71,4 @@ std::string readResource(const std::string &path) {
 		file.close();
 	}
 	return content;
-}
-
-Response generateResponse(const Request &request) {
-	Response response(&request);
-
-	if (request._method == GET_method) {
-		//check if client requested a dir or file
-		if (isDirectory(request._path)) { // a directory is requested
-			if (hasSlashEnd(request._path)) { //dir has '/' at the end
-				//check if directory has indexfile (search for "index.html" in the dir) | if found serve it
-				//if directory has no indexfile | check if autoindex is on
-					// if on return autoindex of directory
-					// else (autoindex off) return 403 Forbidden;
-			}
-			else { //dir does not have '/' at the end
-				response.statusCode = 301;
-				response.statusMessage = "Moved Pemanently";
-			}
-		}
-		else { // a file is requested
-			if (resourceExists(request._path)) {
-				response.statusCode = 200;
-				response.statusMessage = "OK";
-				response.contentType = getContentType(request._path);
-				response.content = readResource(request._path);
-			}
-			else {
-				response.statusCode = 404;
-				response.statusMessage = "Not Found";
-			}
-		}
-	}
-	else if (request._method == POST_method) {
-
-	}
-	else { //method == "DELETE"
-		    if (resourceExists(request._path)) { // resource exists | now should check if it is a file or directory
-				if (isDirectory(request._path)) { //resource is directory
-					if(!hasSlashEnd(request._path)) { //not slash at the end
-						response.statusCode = 409;
-						response.statusMessage = "Conflict";
-					}
-					else { //has slash so we should check if it has cgi
-						if ( /*has cgi*/1 ) {
-							if (/*no index files*/1) {
-								response.statusCode = 403;
-								response.statusMessage = "Forbidden";
-							}
-							else /*has index files*/ {
-								//si7r dyal cgi
-							}
-						}
-						else /* no cgi */ { //delete all folder content
-							if (/*delete was not succesfull*/1) {
-								if( /*no write access on folder*/ 1) {
-									response.statusCode = 403;
-									response.statusMessage = "Forbidden";
-								}
-								else /*have write access*/ {
-									response.statusCode = 500;
-									response.statusMessage = "Internal Server Error";
-								}
-							}
-							else /*delete succes*/ {
-								response.statusCode = 204;
-								response.statusMessage = "No Content";
-							}
-						}
-					}
-				}
-				else {//resource is a file
-					if (/*no cgi*/ 1) {
-						//delete file function
-						response.statusCode = 204;
-						response.statusMessage = "No Content";
-					}
-					else /*has cgi*/ {
-						//dak si7r dyal cgi
-					}
-				}
-			}
-			else { //requestedRerousce does not exist
-				response.statusCode = 404;
-				response.statusMessage = "Not Found";
-			}
-	} 
-	return response;
 }

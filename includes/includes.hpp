@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/15 16:20:56 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/23 15:18:36 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,6 @@
 #include "classes/Config/Config.hpp"
 #include "classes/WebServ.hpp"
 
-//Might Have Dupplications
-
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <errno.h>
-#include <time.h>
-#include <string.h>
-#include <stdio.h>
-#include <iostream>
-#include <vector>
-#include <fstream>
+#include <sys/stat.h> // remove this after
 
 #endif // HEADER_HPP

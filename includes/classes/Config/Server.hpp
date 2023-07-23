@@ -5,12 +5,10 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/10 20:11:24 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/15 16:01:39 by zoukaddo         ###   ########.fr       */
+/*   Created: 2023/06/23 17:44:17 by zwina             #+#    #+#             */
+/*   Updated: 2023/07/23 15:19:05 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #ifndef SERVER_HPP
 #define SERVER_HPP

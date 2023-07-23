@@ -1,17 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   prototypes.hpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/23 15:19:59 by zoukaddo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
-
 #ifndef PROTOTYPES_HPP
 #define PROTOTYPES_HPP
 
@@ -45,8 +31,8 @@ struct Server;
 struct Location;
 struct Connection;
 struct Request;
-struct Cgi;
 struct Response;
+
 // The declarations of the functions
 
 // <-- main.cpp -->
@@ -89,9 +75,10 @@ size_t matching_location(const std::string & path, const std::string & location_
 bool isDirectory(const std::string &path);
 bool hasSlashEnd(const std::string &path);
 bool resourceExists (const std::string &path);
+bool checkRequestError(const Response &response);
 std::string readResource(const std::string &path);
 Response generateResponse(const Request &request);
-void	buildErrorResponse(const Server &server, Response *response);
+std::string buildErrorResponseH(const Response &response);
 std::string findErrorPage(const Response &response,const Server &srv);
 // void    buildResponseHeaders(Response &response);
 void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path);

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/07/23 15:20:31 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/23 15:39:56 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 struct Response
 {
     Request *request;
+    Cgi     _cgi;
     int statusCode;
     std::string statusMessage;
     std::string contentType;

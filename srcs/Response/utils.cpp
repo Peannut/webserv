@@ -5,7 +5,7 @@ bool checkRequestError(const Response &response) {
 }
 
 bool isDirectory(const std::string &path) {
-	return (access(path.c_str(), X_OK) != 0);
+	return (access(path.c_str(), X_OK) == 0);
 }
 
 bool hasSlashEnd(const std::string &path) {

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/18 15:49:16 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/23 15:40:55 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,14 @@
 // make function to setup the cgi environment
 void Response::env_maker()
 {
-	int size = _req->_fields.size();
+	
+    int size = request->_fields.size();
 	std::cout << "size " << size << std::endl;
 	_cgi.env = new char*[size+ 4]();
 	
 	int i = 0;
-    std::map<std::string, std::string>::iterator it = _req->_fields.begin();
-	while( it != _req->_fields.end())
+    std::map<std::string, std::string>::iterator it = request->_fields.begin();
+	while( it != request->_fields.end())
 	{
 		
         _cgi.env[i] = new char[it->first.size() + it->second.size() + 7];
@@ -37,6 +38,8 @@ void Response::env_maker()
     // ask about this
     // std::string val = static_cast<std::string>(_req->get_method());
     // _cgi.env[i++] = strdup(("REQUEST_METHOD="+ val).c_str());
+
+    // print env
 
 }
 

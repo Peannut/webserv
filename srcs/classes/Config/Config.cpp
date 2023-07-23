@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/23 15:20:48 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/23 21:34:00 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,9 +292,27 @@ void Config::setupLocation(std::ifstream& file, std::string& line, Server& serve
 
 }
 
+bool hasRootInServerfunc(const Server& server)
+{
+    if (!server.locations.empty())
+    {
+        const auto& lastLocationPair = *server.locations.rbegin();
+        const Location& lastLocation = lastLocationPair.second;
+        if (lastLocation.root.empty())
+        {
+            throw std::runtime_error("Error: Root not set for a location in the server");
+        }
+        return true;
+    }
+    return false;
+}
+
+
 void Config::setupServer(std::ifstream& file)
 {
 	Server server;
+	bool hasRootInServer = false; // Flag to check if the server has at least one location with root
+
 	for (std::string line; std::getline(file, line);)
 	{
 		if (line_empty(line))
@@ -308,9 +326,16 @@ void Config::setupServer(std::ifstream& file)
 		else if (!line.compare(0, 12,"\terror_page:"))
 			setupErrorPage(line, server);
 		else if (!line.compare(0,10,"\tlocation:"))
+		{
 			setupLocation(file, line, server);
+			hasRootInServer = hasRootInServerfunc(server);
+		}
 		else if (line == "close")
 		{
+			 if (!hasRootInServer)
+            {
+                throw std::runtime_error("Error: No location with root set in the server");
+            }
 			config.push_back(server);
 			break;
 		}
@@ -319,6 +344,7 @@ void Config::setupServer(std::ifstream& file)
 	}
 	
 }
+
 
 void	Config::setupconfig(const std::string& filename)
 {
@@ -334,7 +360,10 @@ void	Config::setupconfig(const std::string& filename)
 		if (line_empty(line))
 			continue ;
 		if (!line.compare(0,7,"server:"))
+		{
 			setupServer(file);
+			
+		}
 		else
 			throw std::runtime_error("Error: invalid directive");
 		

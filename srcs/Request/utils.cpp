@@ -109,6 +109,7 @@ size_t matching_location(const std::string & path, const std::string & location_
     size_t lenLocationPath = location_path.length();
 
     if (lenLocationPath < lenPath)
+    if (lenPath < lenLocationPath)
         return (size_t)0;
 
     while (lenMatched < lenPath && lenMatched < lenLocationPath)

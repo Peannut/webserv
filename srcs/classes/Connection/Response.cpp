@@ -178,4 +178,5 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         }
         // else{}
     }
+    std::cout << "RESPONSE = [" << _message << ']' << std::endl;
 }

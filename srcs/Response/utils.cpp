@@ -15,8 +15,12 @@ bool hasSlashEnd(const std::string &path) {
 	return true;
 }
 
-bool resourceExists (const std::string &path) {
+bool resourceExists(const std::string &path) {
 	return(access(path.c_str(), F_OK) == 0);
+}
+
+bool pathSupportUpload(Response *response, const Location *loc) {
+	return (response->request->_path == loc->upload_pass);
 }
 
 // std::string searchFile(const std::string& requestedPath, const std::map<std::string, std::string>& locationRoots) {

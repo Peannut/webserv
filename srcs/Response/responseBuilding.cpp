@@ -88,6 +88,17 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	}
 }
 
+void	postFile(Response	*response, const Server	&server, const Location	*loc) {
+	UNUSED(server);
+	if (pathSupportUpload(response, loc)) {
+		response->nameUploadFile();
+		std::cout << "file name: " << response->fileName << std::endl;
+		return;
+		response->uploadContent();
+	}
+	std::cout << "upload not supported!" << std::endl;
+}
+
 void    deletingFile(Response *response, const Server &server, const Location *loc) {
 	if (resourceExists(response->request->_path)){
 		if (!isDirectory(response->request->_path)) {

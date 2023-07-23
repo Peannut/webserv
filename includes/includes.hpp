@@ -27,6 +27,8 @@
 #include <fcntl.h>
 #include <poll.h>
 
+#include <ctime>
+
 #include "prototypes.hpp"
 
 // Classes Definitions
@@ -37,7 +39,5 @@
 #include "classes/Config/Server.hpp"
 #include "classes/Config/Config.hpp"
 #include "classes/WebServ.hpp"
-
-#include <sys/stat.h> // remove this after
 
 #endif // HEADER_HPP

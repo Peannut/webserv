@@ -5,12 +5,7 @@ bool checkRequestError(const Response &response) {
 }
 
 bool isDirectory(const std::string &path) {
-	struct stat pathStat;
-	if (stat(path.c_str(), &pathStat) != 0) {
-		std::cerr << "stat() error!" << std::endl;
-		return false;
-	} 
-	return S_ISDIR(pathStat.st_mode);
+	return (access(path.c_str(), X_OK) == 0);
 }
 
 bool hasSlashEnd(const std::string &path) {

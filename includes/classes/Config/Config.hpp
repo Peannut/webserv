@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:11:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/23 15:18:01 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/24 17:19:44 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ struct Config
 	void setupautoindex(std::string line, Location& location);
 	void setupcgibin(std::string line, Location& location);
 	void setupuploadpass(std::string line, Location& location);
+	void removeDuplicateServers();
 };
 
 #endif // CONFIG_HPP

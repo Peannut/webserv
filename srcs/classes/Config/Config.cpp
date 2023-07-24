@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/23 21:34:00 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/24 17:52:27 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,7 +312,7 @@ void Config::setupServer(std::ifstream& file)
 {
 	Server server;
 	bool hasRootInServer = false; // Flag to check if the server has at least one location with root
-
+	bool location_exist = false;
 	for (std::string line; std::getline(file, line);)
 	{
 		if (line_empty(line))
@@ -327,12 +327,13 @@ void Config::setupServer(std::ifstream& file)
 			setupErrorPage(line, server);
 		else if (!line.compare(0,10,"\tlocation:"))
 		{
+			location_exist = true;
 			setupLocation(file, line, server);
 			hasRootInServer = hasRootInServerfunc(server);
 		}
 		else if (line == "close")
 		{
-			 if (!hasRootInServer)
+			 if (!hasRootInServer && location_exist)
             {
                 throw std::runtime_error("Error: No location with root set in the server");
             }
@@ -343,6 +344,35 @@ void Config::setupServer(std::ifstream& file)
 			throw std::runtime_error("Error: invalid server directive hna");
 	}
 	
+}
+
+void Config::removeDuplicateServers()
+{
+    size_t i = 1;
+    while (i < config.size())
+    {
+        const Server& currentServer = config[i];
+        const Server& previousServer = config[i - 1];
+
+        if (currentServer.listen == previousServer.listen)
+        {
+            if (!currentServer.server_names.empty() && !previousServer.server_names.empty() && currentServer.server_names[0] == previousServer.server_names[0])
+            {
+                // If same listen and server_name, keep the previous server and remove the current one
+                config.erase(config.begin() + i);
+            }
+            else
+            {
+                // If same listen but different server_name, keep both servers
+                i++;
+            }
+        }
+        else
+        {
+            // If different listen values, keep the current server
+            i++;
+        }
+    }
 }
 
 
@@ -368,5 +398,22 @@ void	Config::setupconfig(const std::string& filename)
 			throw std::runtime_error("Error: invalid directive");
 		
 	}
+	// print config size
+	// std::cout << "SIIIIIZE" << config.size() << std::endl;
+	// print config
 	file.close();
+	removeDuplicateServers();
+	// std::cout << "SIIIIIZE" << config.size() << std::endl;
+
+	// for (const auto& server : config)
+    // {
+    //     std::cout << "Server:" << std::endl;
+    //     std::cout << "\tListen: " << server.listen.first << "." << server.listen.second << std::endl;
+
+    //     // Print other server properties as needed
+	// 	for (const auto& errorPage : server.error_pages)
+    //     {
+    //         std::cout << "\t\tStatus Code: " << errorPage.first << "  File Path: " << errorPage.second << std::endl;
+    //     }
+    // }
 }

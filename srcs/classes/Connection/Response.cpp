@@ -181,6 +181,12 @@ void    Response::nameUploadFile() {
     fileName = generateRandomName();
 }
 
+void    Response::uploadContent() {
+    std::ofstream(fileName);
+    fileName << request->_body;
+    fileName.close();
+}
+
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
     if (request->_error) {

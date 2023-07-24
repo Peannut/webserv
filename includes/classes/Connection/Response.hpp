@@ -38,7 +38,7 @@ struct Response
     void    nameUploadFile();
     void    setFileName( const std::string & );
     std::string generateRandomName();
-    bool    uploadContent();
+    void    uploadContent();
 };
 
 #endif // RESPONSE_HPP

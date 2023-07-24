@@ -93,10 +93,11 @@ void	postFile(Response	*response, const Server	&server, const Location	*loc) {
 	if (pathSupportUpload(response, loc)) {
 		response->nameUploadFile();
 		std::cout << "file name: " << response->fileName << std::endl;
-		return;
 		response->uploadContent();
+		return;
 	}
-	std::cout << "upload not supported!" << std::endl;
+	// std::cout << "upload not supported!" << std::endl;
+
 }
 
 void    deletingFile(Response *response, const Server &server, const Location *loc) {

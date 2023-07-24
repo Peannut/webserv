@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/24 17:52:27 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/24 19:09:21 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,20 +114,26 @@ void Config::setupErrorPage(std::string& line, Server& server)
 
 void Config::setuproot(std::string line, Location& location)
 {
-	if (!location.root.empty())
-		throw std::runtime_error("Error: root already set");
-	std::string val = line.substr(7, line.size() - 7);
-	if (line_empty(val))
-		throw std::runtime_error("Error: root does not have a value");
-	std::vector<std::string> root = split(val, ' ');
-	if (root.size() != 1)
-		throw std::runtime_error("Error: invalid root value");
-	if (root[0][root[0].size() - 1] == '/')
-		root[0] += '/';
-	location.root = root[0];
-	// print root
-	std::cout << "root: " << location.root << std::endl;
-	
+    if (!location.root.empty())
+        throw std::runtime_error("Error: root already set");
+
+    std::string val = line.substr(7, line.size() - 7);
+    if (line_empty(val))
+        throw std::runtime_error("Error: root does not have a value");
+
+    std::vector<std::string> root = split(val, ' ');
+    if (root.size() != 1)
+        throw std::runtime_error("Error: invalid root value");
+
+    if (!root[0].empty() && root[0][root[0].size() - 1] == '/')
+    {
+        root[0].pop_back(); // Remove the trailing slash '/'
+    }
+
+    location.root = root[0];
+
+    // print root
+    std::cout << "root: " << location.root << std::endl;
 }
 
 void Config::setupindex(std::string line, Location& location)

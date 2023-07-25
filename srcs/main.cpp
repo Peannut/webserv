@@ -4,15 +4,6 @@
 int err;
 // This is the buffer that will be passed to recv function to receive data from the client
 char buffer[BUFFER_SIZE];
-// This is just a response string test
-const std::string response
-(
-    "HTTP/1.1 200 OK\r\n"
-    "Content-length: 14\r\n"
-    "Content-Type: text/html\r\n"
-    "Connection: close\r\n\r\n"
-    "<h1>hello</h1>"
-);
 
 void setup_webserv(WebServ & webserv)
 {
@@ -23,20 +14,39 @@ void setup_webserv(WebServ & webserv)
     for (size_t sz = config.config.size(), i = 0; i < sz; ++i)
     {
         Server & server = config.get_server(i);
-
-        records = our_getaddrinfo(server.get_host().data(), server.get_port().data());
-        fdsock_server = our_bind(records);
-        our_listen(fdsock_server);
-        webserv.add_connection(LISTEN_ENABLE, fdsock_server, server);
-        freeaddrinfo(records);
+        try
+        {
+            records = our_getaddrinfo(server.get_host().data(), server.get_port().data());
+            fdsock_server = our_bind(records);
+            our_listen(fdsock_server);
+            webserv.add_connection(LISTEN_ENABLE, fdsock_server, server);
+            freeaddrinfo(records);
+        }
+        catch (const int & n) {
+            // getaddrinfo errors
+            std::cerr << ANSI_BOLD << ANSI_RED << ANSI_ULINE;
+            std::cerr << "getaddrinfo() => [" << n << "] " << gai_strerror(n) << std::endl;
+            std::cerr << ANSI_RESET;
+        }
+        catch (const char * s) {
+            // errno errors
+            std::cerr << ANSI_BOLD << ANSI_RED << ANSI_ULINE;
+            std::cerr << s << "() => [" << errno << "] " << strerror(errno) << std::endl;
+            std::cerr << ANSI_RESET;
+        }
     }
+    if (webserv._number_of_connections == 0) throw ("Zero Server !");
 }
 
 void start_multiplexing(WebServ & webserv)
 {
+    std::vector<SOCKET_POLL> & sockets = webserv._sockets;
     while (1337 & 42)
     {
-        our_poll(webserv._sockets);
+        ///////////////////////POLLING///////////////////////
+        err = poll(sockets.data(), sockets.size(), POLL_TIME);
+        if (err == -1) continue;
+        /////////////////////////////////////////////////////
         for (size_t i = 0; i < webserv._number_of_connections; ++i)
         {
             Connection & conn = webserv.get_connection(i);
@@ -49,10 +59,8 @@ void start_multiplexing(WebServ & webserv)
             }
             else if (conn.can_write())
                 sending(webserv, i);
-            else if (conn.is_error())
+            else if (conn.is_error() || conn.get_passed_time() > TIMEOUT)
                 webserv.remove_connection(i);
-            else if (!conn._isListen && conn._isMustServeNow)
-                serving(webserv, i);
         }
     }
 }
@@ -63,29 +71,15 @@ int main(int ac, char **av, char **envp)
 
     WebServ webserv;
 
-	if (ac  != 2)
-	{
-        std::cerr << ANSI_BOLD << ANSI_RED << ANSI_ULINE;
-		std::cerr << "Required one argument." << std::endl;
-        std::cerr << ANSI_RESET;
-		return (1);
-	}
     try {
+        if (ac != 2) throw ("Required one argument !");
         webserv._conf.setupconfig(av[1]);
         setup_webserv(webserv);
-        start_multiplexing(webserv);
-    }
-    catch (const int & n) {
-        // getaddrinfo errors
-        std::cerr << ANSI_BOLD << ANSI_RED << ANSI_ULINE;
-        std::cerr << "getaddrinfo() => [" << n << "] " << gai_strerror(n) << std::endl;
-        std::cerr << ANSI_RESET;
-        return 1;
     }
     catch (const char * s) {
         // errno errors
         std::cerr << ANSI_BOLD << ANSI_RED << ANSI_ULINE;
-        std::cerr << s << "() => [" << errno << "] " << strerror(errno) << std::endl;
+        std::cerr << s << std::endl;
         std::cerr << ANSI_RESET;
         return 1;
     }
@@ -94,5 +88,8 @@ int main(int ac, char **av, char **envp)
 		std::cerr << e.what() << '\n';
         return 1;
 	}
+
+    start_multiplexing(webserv);
+
     return 0;
 }

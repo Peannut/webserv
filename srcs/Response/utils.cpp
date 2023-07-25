@@ -16,9 +16,7 @@ bool hasSlashEnd(const std::string &path) {
 }
 
 bool resourceExists (const std::string &path) {
-	struct stat buffer;
-
-    return stat(path.c_str(), &buffer) == 0;
+	return (access(path.c_str(), F_OK) == 0);
 }
 
 // std::string searchFile(const std::string& requestedPath, const std::map<std::string, std::string>& locationRoots) {

@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>
+#include <ctime>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -37,7 +38,5 @@
 #include "classes/Config/Server.hpp"
 #include "classes/Config/Config.hpp"
 #include "classes/WebServ.hpp"
-
-#include <sys/stat.h> // remove this after
 
 #endif // HEADER_HPP

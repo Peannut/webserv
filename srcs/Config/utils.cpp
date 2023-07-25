@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/17 09:40:39 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/14 15:10:20 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 int line_empty(const std::string& line)
@@ -50,18 +38,16 @@ long int ft_stringtolong(const std::string& str)
 
 std::string convertToIPAddress(size_t ip)
 {
-    std::string str;
     std::stringstream ss;
 
     for (int i = 0; i < 4; ++i)
     {
         int octet = (ip >> (8 * (3 - i))) & 255;
-        ss << octet << '.';
+        ss << octet;
+        if (i != 3) ss << '.';
     }
-    str.assign(ss.str());
-    str.erase(str.end() - 1);
 
-    return str;
+    return ss.str();
 }
 
 std::string convertPortToString(short port)

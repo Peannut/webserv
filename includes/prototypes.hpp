@@ -32,6 +32,7 @@ struct Location;
 struct Connection;
 struct Request;
 struct Response;
+struct Cgi;
 
 // The declarations of the functions
 
@@ -72,6 +73,12 @@ bool isTransferEncodingValValid(const std::string & val);
 size_t matching_location(const std::string & path, const std::string & location_path);
 // </--Response/utils.cpp-->
 std::string readResource(const std::string &path);
+bool isDirectory(const std::string &path);
+bool hasSlashEnd(const std::string &path);
+bool resourceExists (const std::string &path);
+std::string readResource(const std::string &path);
+Response generateResponse(const Request &request);
+void	buildErrorResponse(const Server &server, Response *response);
 std::string findErrorPage(const Response &response,const Server &srv);
 bool        isDirectory(const std::string &path);
 bool        hasSlashEnd(const std::string &path);

@@ -6,6 +6,7 @@
 struct Response
 {
     Request *request;
+    Cgi     _cgi;
     int statusCode;
     std::string statusMessage;
     std::string contentType;
@@ -39,6 +40,12 @@ struct Response
     void    setFileName( const std::string & );
     std::string generateRandomName();
     void    uploadContent();
+
+    //peanut functions
+    void env_maker(void);
+    int handleCGI(void);
+    void cgiResponse(void);
+    void cgi_execve(void);
 };
 
 #endif // RESPONSE_HPP

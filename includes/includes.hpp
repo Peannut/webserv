@@ -31,6 +31,7 @@
 #include "prototypes.hpp"
 
 // Classes Definitions
+#include "classes/Connection/Cgi.hpp"
 #include "classes/Connection/Request.hpp"
 #include "classes/Connection/Response.hpp"
 #include "classes/Connection/Connection.hpp"

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/14 15:11:28 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 Server &Config::get_server(const size_t & index)
@@ -114,20 +102,26 @@ void Config::setupErrorPage(std::string& line, Server& server)
 
 void Config::setuproot(std::string line, Location& location)
 {
-	if (!location.root.empty())
-		throw std::runtime_error("Error: root already set");
-	std::string val = line.substr(7, line.size() - 7);
-	if (line_empty(val))
-		throw std::runtime_error("Error: root does not have a value");
-	std::vector<std::string> root = split(val, ' ');
-	if (root.size() != 1)
-		throw std::runtime_error("Error: invalid root value");
-	if (root[0][root[0].size() - 1] == '/')
-		root[0] += '/';
-	location.root = root[0];
-	// print root
-	std::cout << "root: " << location.root << std::endl;
-	
+    if (!location.root.empty())
+        throw std::runtime_error("Error: root already set");
+
+    std::string val = line.substr(7, line.size() - 7);
+    if (line_empty(val))
+        throw std::runtime_error("Error: root does not have a value");
+
+    std::vector<std::string> root = split(val, ' ');
+    if (root.size() != 1)
+        throw std::runtime_error("Error: invalid root value");
+
+    if (!root[0].empty() && root[0][root[0].size() - 1] == '/')
+    {
+		root.erase(root.end() - 1); // Remove the trailing slash '/'
+    }
+
+    location.root = root[0];
+
+    // print root
+    std::cout << "root: " << location.root << std::endl;
 }
 
 void Config::setupindex(std::string line, Location& location)
@@ -292,9 +286,27 @@ void Config::setupLocation(std::ifstream& file, std::string& line, Server& serve
 
 }
 
+bool hasRootInServerfunc(const Server& server)
+{
+    if (!server.locations.empty())
+    {
+        const std::pair<std::string, Location> & lastLocationPair = *server.locations.rbegin();
+        const Location& lastLocation = lastLocationPair.second;
+        if (lastLocation.root.empty())
+        {
+            throw std::runtime_error("Error: Root not set for a location in the server");
+        }
+        return true;
+    }
+    return false;
+}
+
+
 void Config::setupServer(std::ifstream& file)
 {
 	Server server;
+	bool hasRootInServer = false; // Flag to check if the server has at least one location with root
+	bool location_exist = false;
 	for (std::string line; std::getline(file, line);)
 	{
 		if (line_empty(line))
@@ -308,9 +320,17 @@ void Config::setupServer(std::ifstream& file)
 		else if (!line.compare(0, 12,"\terror_page:"))
 			setupErrorPage(line, server);
 		else if (!line.compare(0,10,"\tlocation:"))
+		{
+			location_exist = true;
 			setupLocation(file, line, server);
+			hasRootInServer = hasRootInServerfunc(server);
+		}
 		else if (line == "close")
 		{
+			 if (!hasRootInServer && location_exist)
+            {
+                throw std::runtime_error("Error: No location with root set in the server");
+            }
 			config.push_back(server);
 			break;
 		}
@@ -319,6 +339,36 @@ void Config::setupServer(std::ifstream& file)
 	}
 	
 }
+
+void Config::removeDuplicateServers()
+{
+    size_t i = 1;
+    while (i < config.size())
+    {
+        const Server& currentServer = config[i];
+        const Server& previousServer = config[i - 1];
+
+        if (currentServer.listen == previousServer.listen)
+        {
+            if (!currentServer.server_names.empty() && !previousServer.server_names.empty() && currentServer.server_names[0] == previousServer.server_names[0])
+            {
+                // If same listen and server_name, keep the previous server and remove the current one
+                config.erase(config.begin() + i);
+            }
+            else
+            {
+                // If same listen but different server_name, keep both servers
+                i++;
+            }
+        }
+        else
+        {
+            // If different listen values, keep the current server
+            i++;
+        }
+    }
+}
+
 
 void	Config::setupconfig(const std::string& filename)
 {
@@ -340,4 +390,5 @@ void	Config::setupconfig(const std::string& filename)
 		
 	}
 	file.close();
+	removeDuplicateServers();
 }

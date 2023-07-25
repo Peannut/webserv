@@ -23,6 +23,7 @@ struct Config
 	void setupautoindex(std::string line, Location& location);
 	void setupcgibin(std::string line, Location& location);
 	void setupuploadpass(std::string line, Location& location);
+	void removeDuplicateServers();
 };
 
 #endif // CONFIG_HPP

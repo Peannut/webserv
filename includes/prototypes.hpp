@@ -71,20 +71,19 @@ bool isContentLengthValValid(const std::string & val);
 bool isTransferEncodingValValid(const std::string & val);
 size_t matching_location(const std::string & path, const std::string & location_path);
 // </--Response/utils.cpp-->
-bool isDirectory(const std::string &path);
-bool hasSlashEnd(const std::string &path);
-bool resourceExists (const std::string &path);
-bool checkRequestError(const Response &response);
 std::string readResource(const std::string &path);
-Response generateResponse(const Request &request);
-std::string buildErrorResponseH(const Response &response);
 std::string findErrorPage(const Response &response,const Server &srv);
+bool        isDirectory(const std::string &path);
+bool        hasSlashEnd(const std::string &path);
+bool        resourceExists (const std::string &path);
+bool        fileCgi(const std::string &fullpath, const Location *loc);
+bool        pathSupportUpload(Response *response, const Location *loc);
+void        buildErrorResponse(const Server &server, Response *response);
+void        deletingFile(Response *res, const Server &server, const Location *loc);
+void        postFile(Response	*response, const Server	&server, const Location	*loc);
+void        servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path);
 // void    buildResponseHeaders(Response &response);
-void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path);
 // std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path);
-bool resourceExists (const std::string &path);
-bool	fileCgi(const std::string &fullpath, const Location *loc);
-void    deletingFile(Response *res, const Server &server, const Location *loc);
 
 
 /*

@@ -96,6 +96,10 @@ void Response::setContentlength(const size_t &cl) {
     contentLength = cl;
 }
 
+void    Response::setFileName( const std::string &newName) {
+    fileName = newName;
+}
+
 void Response::setResponsefields(const int &sc, const std::string &sm) {
     std::string ct;
 
@@ -108,6 +112,12 @@ void Response::setResponsefields(const int &sc, const std::string &sm) {
 void    Response::serveDefaultErrorPage() {
     bodyFile.open("srcs/Response/DefaultError/index.html");
     setResponsefields(500, "Internal Server Error");
+}
+
+std::string Response::generateRandomName() {
+    time_t timestamp = std::time(NULL);
+    std::string currentTime = ctime(&timestamp);
+    return currentTime;
 }
 
 void	Response::serveErrorPage(const Server &srv, const short &errCode, const std::string &statMessage) {
@@ -162,21 +172,37 @@ void Response::removeFile(const Server &server) {
     serveErrorPage(server, 203, "No Content");
 }
 
+void    Response::nameUploadFile() {
+    std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT_DISPOSITION");
+    if (it != request->_fields.end()) {
+        fileName = it->second;
+        return;
+    }
+    fileName = generateRandomName();
+}
+
+void    Response::uploadContent() {
+    std::ofstream f(fileName.c_str());
+    f << request->_body;
+    f.close();
+}
+
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
-        if (checkRequestError(*this)) { //if request has an error;
-            this->_message = buildErrorResponseH(*this);
-            this->content = findErrorPage(*this, server);
-            //after building now the Response header and body should start sending chunk by chunk to multiplexing;
-        }
-        //if request has no errors
-        else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
+    if (request->_error) {
+        buildErrorResponse(server, this);
+    }
+    else { //if request has no errors
+        if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
             servingFileGet(this ,server, loc, loc_Path);
         }
-        // else if (this->request->_method == POST_method) {
-        // }
+        else if (this->request->_method == POST_method) {
+            postFile(this, server, loc);
+        }
         else if (this->request->_method == DELETE_method) {
             deletingFile(this, server, loc);
         }
         // else{}
+    }
+    std::cout << "RESPONSE = [" << _message << ']' << std::endl;
 }

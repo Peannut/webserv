@@ -20,26 +20,13 @@ std::string findErrorPage(const Response &response,const Server &srv) {
 	return response_Body;
 }
 
-std::string buildErrorResponseH(const Response &response) {
-	std::string headers;
-	std::map<int,  std::string> errorCodes;
-	errorCodes.insert(std::make_pair(0, " 400 Bad Request"));
-	errorCodes.insert(std::make_pair(1, " 405 Method Not Allowed"));
-	errorCodes.insert(std::make_pair(2, " 505 HTTP Version Not Supported"));
-	errorCodes.insert(std::make_pair(3, " 411 Length Required"));
-
-	headers += response.request->_version;
-	std::map<int, std::string>::iterator it = errorCodes.find(response.request->_error);
-	if (it != errorCodes.end()) {
-		headers += it->second;
+void	buildErrorResponse(const Server &server, Response *response) {
+	std::map<short, std::string>::const_iterator it = server.error_pages.find(response->request->_error);
+	if (it != server.error_pages.end()) {
+		response->serveErrorPage(server, it->first, it->second);
+		return;
 	}
-	else {
-		headers += " 501 Not Implemented";
-	}
-	headers +="\r\nContent-Type: text/html\r\n";
-	headers += "Connection: Close\r\n";
-	headers += "Content-lenght: \r\n\r\n";
-	return headers;
+	response->serveDefaultErrorPage();
 }
 
 void    buildResponseHeaders(Response *response) {
@@ -99,6 +86,18 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	else { //file not found serve the not found page 404;
 		response->serveErrorPage(server, 404, "Not Found");
 	}
+}
+
+void	postFile(Response	*response, const Server	&server, const Location	*loc) {
+	UNUSED(server);
+	if (pathSupportUpload(response, loc)) {
+		response->nameUploadFile();
+		std::cout << "file name: " << response->fileName << std::endl;
+		response->uploadContent();
+		return;
+	}
+	// std::cout << "upload not supported!" << std::endl;
+
 }
 
 void    deletingFile(Response *response, const Server &server, const Location *loc) {

@@ -12,6 +12,7 @@ struct Response
     std::string content;
     std::fstream bodyFile;
     std::string _message;
+    std::string fileName;
     size_t _message_size;
     size_t _offset;
     size_t contentLength;
@@ -34,6 +35,10 @@ struct Response
     void seek_back(const size_t & amount);
     bool is_done();
     void serving(const Server &server, const Location *loc, const std::string &loc_Path);
+    void    nameUploadFile();
+    void    setFileName( const std::string & );
+    std::string generateRandomName();
+    void    uploadContent();
 };
 
 #endif // RESPONSE_HPP

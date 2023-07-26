@@ -182,7 +182,7 @@ void    Response::nameUploadFile() {
 }
 
 void    Response::uploadContent() {
-    std::ofstream(fileName);
+    std::ofstream fileName;
     fileName << request->_body;
     fileName.close();
 }

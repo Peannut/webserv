@@ -108,6 +108,7 @@ void    deletingFile(Response *response, const Server &server, const Location *l
 			}
 			else {
 				//////////////CGI//////////////
+				std::cout << "HelloWorld!" << std::endl;
 			}
 		}
 		else {//directory

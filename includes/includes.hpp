@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/23 15:18:36 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/26 15:53:38 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@
 
 // Classes Definitions
 #include "classes/Connection/Request.hpp"
-#include "classes/Config/Cgi.hpp"
+#include "classes/Connection/Cgi.hpp"
 #include "classes/Connection/Response.hpp"
 #include "classes/Connection/Connection.hpp"
 #include "classes/Config/Location.hpp"

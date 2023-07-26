@@ -6,42 +6,11 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/23 15:40:55 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/26 15:50:53 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes.hpp"
-
-// make function to setup the cgi environment
-void Response::env_maker()
-{
-	
-    int size = request->_fields.size();
-	std::cout << "size " << size << std::endl;
-	_cgi.env = new char*[size+ 4]();
-	
-	int i = 0;
-    std::map<std::string, std::string>::iterator it = request->_fields.begin();
-	while( it != request->_fields.end())
-	{
-		
-        _cgi.env[i] = new char[it->first.size() + it->second.size() + 7];
-        std::string line = CGIENV_FORMAT(it->first) + "=" + it->second;
-        std::copy(line.begin(), line.end(), _cgi.env[i]);
-		it++;
-		i++;
-	}
-    _cgi.env[i++] = strdup("SERVER_PROTOCOL=HTTP/1.1");
-    _cgi.env[i++] = strdup(("PATH_INFO=" + _cgi.pathinfo).c_str());
-    _cgi.env[i++] = strdup("REQUEST_METHOD=GET"); // static for now
-
-    // ask about this
-    // std::string val = static_cast<std::string>(_req->get_method());
-    // _cgi.env[i++] = strdup(("REQUEST_METHOD="+ val).c_str());
-
-    // print env
-
-}
 
 std::string CGIENV_FORMAT(const std::string& str)
 {
@@ -96,5 +65,36 @@ void Response::cgi_execve(void)
 void Response::cgiResponse(void)
 {
     
+
+}
+
+// make function to setup the cgi environment
+void Response::env_maker()
+{
+	
+    int size = request->_fields.size();
+	std::cout << "size " << size << std::endl;
+	_cgi.env = new char*[size+ 4]();
+	
+	int i = 0;
+    std::map<std::string, std::string>::iterator it = request->_fields.begin();
+	while( it != request->_fields.end())
+	{
+		
+        _cgi.env[i] = new char[it->first.size() + it->second.size() + 7];
+        std::string line = CGIENV_FORMAT(it->first) + "=" + it->second;
+        std::copy(line.begin(), line.end(), _cgi.env[i]);
+		it++;
+		i++;
+	}
+    _cgi.env[i++] = strdup("SERVER_PROTOCOL=HTTP/1.1");
+    _cgi.env[i++] = strdup(("PATH_INFO=" + _cgi.pathinfo).c_str());
+    _cgi.env[i++] = strdup("REQUEST_METHOD=GET"); // static for now
+
+    // ask about this
+    // std::string val = static_cast<std::string>(_req->get_method());
+    // _cgi.env[i++] = strdup(("REQUEST_METHOD="+ val).c_str());
+
+    // print env
 
 }

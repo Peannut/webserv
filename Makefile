@@ -6,7 +6,7 @@
 #    By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
-#    Updated: 2023/07/23 15:18:25 by zoukaddo         ###   ########.fr        #
+#    Updated: 2023/07/26 15:50:40 by zoukaddo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,7 @@ CONFIGDIR 		:= Config
 CONNECTIONDIR	:= Connection
 REQUESTDIR		:= Request
 RESPONSEDIR		:= Response
+CGIDIR			:= CGI
 # sources
 CFILES  :=\
 	$(CLASSESDIR)/$(CONFIGDIR)/Config.cpp \
@@ -51,6 +52,7 @@ CFILES  :=\
 	$(REQUESTDIR)/utils.cpp \
 	$(RESPONSEDIR)/responseBuilding.cpp \
 	$(RESPONSEDIR)/utils.cpp \
+	$(CGIDIR)/handling_cgi.cpp \
 	main.cpp \
 	multiplexing.cpp
 SRCS    := $(foreach F,$(CFILES),$(SRCSDIR)/$(F))
@@ -91,7 +93,8 @@ $(OBJSDIR) :
 	@mkdir $(OBJSDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(REQUESTDIR)
 	@mkdir $(OBJSDIR)/$(RESPONSEDIR)
-
+	@mkdir $(OBJSDIR)/$(CGIDIR)
+	
 $(OBJS) : $(OBJSDIR)/%.o : $(SRCSDIR)/%.cpp
 	@printf "$(ANSI_YELLOW)$(ANSI_BOLD)\n"
 	@printf "Compiling $(notdir $<) ... "

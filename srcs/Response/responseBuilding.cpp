@@ -51,11 +51,13 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	if (resourceExists(response->request->_path)) { //file does exists
 		if (!isDirectory(response->request->_path)) { //resource is a file
 			if (!fileCgi(response->request->_path, loc)) {//file has no cgi => serve it;
+				std::cout << "-----------> withoutcgi  <----------" << std::endl;
 				response->fillBodyFile(server);
 				response->getbodySize();
 				buildResponseHeaders(response);
 			}
 			else {//file has cgi
+				std::cout << "HelloWorld!" << std::endl;
 				///////////////CGI/////////////////
 				response->env_maker();
 			}
@@ -88,6 +90,18 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	else { //file not found serve the not found page 404;
 		response->serveErrorPage(server, 404, "Not Found");
 	}
+}
+
+void	postFile(Response	*response, const Server	&server, const Location	*loc) {
+	UNUSED(server);
+	if (pathSupportUpload(response, loc)) {
+		response->nameUploadFile();
+		std::cout << "file name: " << response->fileName << std::endl;
+		response->uploadContent();
+		return;
+	}
+	// std::cout << "upload not supported!" << std::endl;
+
 }
 
 void    deletingFile(Response *response, const Server &server, const Location *loc) {

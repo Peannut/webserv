@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/07/23 15:39:56 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/26 17:25:19 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ struct Response
     std::string content;
     std::fstream bodyFile;
     std::string _message;
+    std::string fileName;
     size_t _message_size;
     size_t _offset;
     size_t contentLength;
@@ -54,6 +55,10 @@ struct Response
     int handleCGI(void);
     void cgiResponse(void);
     void cgi_execve(void);
+    void    nameUploadFile();
+    void    setFileName( const std::string & );
+    std::string generateRandomName();
+    void    uploadContent();
 };
 
 #endif // RESPONSE_HPP

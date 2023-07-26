@@ -70,6 +70,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 					}
 					else {//file has cgi
 						///////////////CGI/////////////////
+						response->env_maker();
 					}
 				}
 				else { //no index should check autoindex here

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/26 15:50:53 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/26 16:13:46 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void Response::env_maker()
 {
 	
     int size = request->_fields.size();
-	std::cout << "size " << size << std::endl;
+	std::cout << "size cgiii" << size << std::endl;
 	_cgi.env = new char*[size+ 4]();
 	
 	int i = 0;

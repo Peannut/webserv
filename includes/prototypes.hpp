@@ -95,9 +95,9 @@ void        servingFileGet(Response *response ,const Server &server, const Locat
 
 /*
     Thing To Do At The End :
-        1- remove the response global variable.
+      X 1- remove the response global variable.
         2- remove the all the :.
-        3- remove the checking of errno after send and recv.
+      X 3- remove the checking of errno after send and recv.
         4- remove the member variable _message in the Request.
         5- check the allowed functions.
 */

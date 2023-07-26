@@ -51,11 +51,13 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	if (resourceExists(response->request->_path)) { //file does exists
 		if (!isDirectory(response->request->_path)) { //resource is a file
 			if (!fileCgi(response->request->_path, loc)) {//file has no cgi => serve it;
+				std::cout << "-----------> withoutcgi  <----------" << std::endl;
 				response->fillBodyFile(server);
 				response->getbodySize();
 				buildResponseHeaders(response);
 			}
 			else {//file has cgi
+				std::cout << "HelloWorld!" << std::endl;
 				///////////////CGI/////////////////
 			}
 		}
@@ -108,7 +110,6 @@ void    deletingFile(Response *response, const Server &server, const Location *l
 			}
 			else {
 				//////////////CGI//////////////
-				std::cout << "HelloWorld!" << std::endl;
 			}
 		}
 		else {//directory

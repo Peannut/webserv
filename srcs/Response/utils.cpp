@@ -54,7 +54,8 @@ bool	fileCgi(const std::string &fullpath, const Location *loc) {
 		if (lastdot == std::string::npos) {
 			return false;
 		}
-		std::string conType = fullpath.substr(lastdot + 1, fullpath.length() - lastdot);
+		std::string conType = fullpath.substr(lastdot, fullpath.length() - lastdot);
+		// std::cout << "file Extention = " << conType << "-------" << "cgi Extention = " << loc->cgi_bin.first << std::endl;
 		return conType == loc->cgi_bin.first;
 	}
 	return false;

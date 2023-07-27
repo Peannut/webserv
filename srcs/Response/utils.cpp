@@ -56,18 +56,20 @@ bool	fileCgi(const std::string &fullpath, const Location *loc) {
 		while ((index = fullpath.find(dot, index)) != std::string::npos) {
 			std::cout << "DKHELT L WHILE!" << std::endl;
 			size_t closestSlash = fullpath.find_first_of('/', index);
-			if (closestSlash == std::string::npos) {
+			size_t closestQuestionmark = fullpath.find_first_of('?', index);
+			if (closestSlash == std::string::npos && closestQuestionmark == std::string::npos) {
 				conType = fullpath.substr(index, fullpath.length() - index);
 				std::cout << "file Extention = " << conType << "-------" << "cgi Extention = " << loc->cgi_bin.first << std::endl;
 				return conType == loc->cgi_bin.first;
 			}
 			else {
-				conType = fullpath.substr(index, closestSlash - index);
+				size_t delimiter = (closestSlash < closestQuestionmark) ? closestSlash : closestQuestionmark;
+				conType = fullpath.substr(index, delimiter - index);
 				if (conType == loc->cgi_bin.first) {
 					std::cout << "l9it l file with cgi lwest!" << std::endl;
 					return true;
 				}
-				index = closestSlash + 1;
+				index = delimiter + 1;
 			}
 			std::cout << "file Extention = " << conType << "-------" << "cgi Extention = " << loc->cgi_bin.first << std::endl;
 		}

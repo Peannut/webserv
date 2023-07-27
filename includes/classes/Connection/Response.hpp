@@ -13,6 +13,7 @@ struct Response
     std::fstream bodyFile;
     std::string _message;
     std::string fileName;
+    std::string pathinformation;
     size_t _message_size;
     size_t _offset;
     size_t contentLength;
@@ -39,6 +40,7 @@ struct Response
     void    setFileName( const std::string & );
     std::string generateRandomName();
     void    uploadContent();
+    void    setPathInformation(const Location *);
 };
 
 #endif // RESPONSE_HPP

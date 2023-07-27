@@ -50,28 +50,16 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	UNUSED(loc_Path);
 	if (resourceExists(response->request->_path)) { //file does exists
 		if (!isDirectory(response->request->_path)) { //resource is a file
-			if (!fileCgi(response->request->_path, loc)) {//file has no cgi => serve it;
-				std::cout << "-----------> withoutcgi  <----------" << std::endl;
-				response->fillBodyFile(server);
-				response->getbodySize();
-				buildResponseHeaders(response);
-			}
-			else {//file has cgi
-				std::cout << "HelloWorld!" << std::endl;
-				///////////////CGI/////////////////
-			}
+			response->fillBodyFile(server);
+			response->getbodySize();
+			buildResponseHeaders(response);
 		}
 		else { //file is a directory
 			if (hasSlashEnd(response->request->_path)) {
 				if (response->hasAutoIndex(loc)) { // check autoindex
-					if (!fileCgi(response->request->_path, loc)) {
-						response->fillBodyFile(server);
-						response->getbodySize();
-						buildResponseHeaders(response);
-					}
-					else {//file has cgi
-						///////////////CGI/////////////////
-					}
+					response->fillBodyFile(server);
+					response->getbodySize();
+					buildResponseHeaders(response);
 				}
 				else { //no index should check autoindex here
 					if (!loc->autoindex) {
@@ -99,7 +87,6 @@ void	postFile(Response	*response, const Server	&server, const Location	*loc) {
 		return;
 	}
 	// std::cout << "upload not supported!" << std::endl;
-
 }
 
 void    deletingFile(Response *response, const Server &server, const Location *loc) {

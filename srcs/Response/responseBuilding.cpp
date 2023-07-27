@@ -57,7 +57,8 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 				buildResponseHeaders(response);
 			}
 			else {//file has cgi
-				std::cout << "HelloWorld!" << std::endl;
+				// exit(1);
+				// std::cout << "HelloWorld!" << std::endl;
 				///////////////CGI/////////////////
 				response->env_maker();
 			}
@@ -72,7 +73,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 					}
 					else {//file has cgi
 						///////////////CGI/////////////////
-						response->env_maker();
+						// response->env_maker();
 					}
 				}
 				else { //no index should check autoindex here

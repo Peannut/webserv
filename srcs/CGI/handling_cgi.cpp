@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/26 16:13:46 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/27 17:57:58 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,11 @@ int Response::handleCGI(void)
 void Response::cgi_execve(void)
 {
     _cgi.pid = fork();
-    if (!_cgi.pid)
+    if (_cgi.pid == 0)
     {
         dup2(_cgi.fd2[0], 0);
         dup2(_cgi.fd[1], 1);
-
+        
         close(_cgi.fd[1]);
         close(_cgi.fd[0]);
 
@@ -68,9 +68,46 @@ void Response::cgiResponse(void)
 
 }
 
+
+// std::string extract_path_info(const std::string& full_path) {
+//     std::size_t first_dot_pos = full_path.find('.');
+//     if (first_dot_pos != std::string::npos) {
+//         // Find the next occurrence of '/' after the first dot
+//         std::size_t next_slash_pos = full_path.find('/', first_dot_pos);
+//         std::size_t query_pos = full_path.find('?', first_dot_pos);
+
+//         if (next_slash_pos <= query_pos)
+//             return full_path.substr(next_slash_pos, query_pos - next_slash_pos);
+//     }
+
+//     // If the dot or slash is not found, or the next slash is not present, or '?' appears before the next slash, return an empty string
+//     return "/";
+// }
+
+std::string extract_path_info(const std::string& full_path) {
+    std::size_t first_dot_pos = full_path.find('.');
+    if (first_dot_pos != std::string::npos) {
+        // Find the next occurrence of '/' after the first dot
+        std::size_t next_slash_pos = full_path.find('/', first_dot_pos);
+        std::size_t query_pos = full_path.find('?', first_dot_pos);
+
+        if (query_pos != std::string::npos && next_slash_pos > query_pos) {
+            // If a '?' appears before the next slash, return the substring between next_slash_pos and query_pos
+            return full_path.substr(next_slash_pos, query_pos - next_slash_pos);
+        } else if (next_slash_pos != std::string::npos) {
+            // If there is no '?', extract the path_info from the string between first_dot_pos and next_slash_pos
+            return full_path.substr(next_slash_pos,  query_pos - next_slash_pos);
+        }
+    }
+
+    // If the dot or slash is not found, or the next slash is not present, or '?' does not appear before the next slash, return an empty string
+    return "/";
+}
+
 // make function to setup the cgi environment
 void Response::env_maker()
 {
+    std::cout << "hello" << std::endl;
 	
     int size = request->_fields.size();
 	std::cout << "size cgiii" << size << std::endl;
@@ -87,14 +124,36 @@ void Response::env_maker()
 		it++;
 		i++;
 	}
+
     _cgi.env[i++] = strdup("SERVER_PROTOCOL=HTTP/1.1");
-    _cgi.env[i++] = strdup(("PATH_INFO=" + _cgi.pathinfo).c_str());
-    _cgi.env[i++] = strdup("REQUEST_METHOD=GET"); // static for now
-
+    _cgi.pathinfo = extract_path_info(request->_path);
+	_cgi.env[i++] = strdup(("PATH_INFO=" + _cgi.pathinfo).c_str());
     // ask about this
-    // std::string val = static_cast<std::string>(_req->get_method());
-    // _cgi.env[i++] = strdup(("REQUEST_METHOD="+ val).c_str());
+    // std::string full_path = "/home/peanut/webserv/srcs/Response/DefaultError/test.py/folder/next?a=x";
 
-    // print env
-
+    // std::string r = extract_path_info(full_path);
+    // std::cout << "rrrrrrrr:" <<r << std::endl;
+    Methods method = request->get_method();
+    std::string val;
+    switch (method) {
+    case GET_method:
+        val = "GET";
+        break;
+    case POST_method:
+        val = "POST";
+        break;
+    case DELETE_method:
+        val = "DELETE";
+    default :
+        break;
+    }
+    _cgi.env[i++] = strdup(("REQUEST_METHOD="+ val).c_str());
+    int sizo = i;
+    for (int i = 0; i < sizo ; i++)
+    {
+        if (_cgi.env[i] != nullptr)
+        {
+            std::cout << _cgi.env[i] << std::endl;
+        }
+    }
 }

@@ -32,6 +32,7 @@ struct Location;
 struct Connection;
 struct Request;
 struct Response;
+struct File;
 
 // The declarations of the functions
 

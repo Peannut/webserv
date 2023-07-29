@@ -43,21 +43,4 @@ struct Response
     void    setPathInformation(const Location *);
 };
 
-struct File {
-
-    std::string *fullpath;
-    std::string extention;
-    std::string pathWithoutInfo;
-    std::string pathInfo;
-    const Location  *loc;
-    bool            cgi;
-
-    File(std::string *path, const Location *location);
-
-    void    separatePathInfo();
-    void    extractExtention();
-    void    fileCgiSupport();
-    //getters
-};
-
 #endif // RESPONSE_HPP

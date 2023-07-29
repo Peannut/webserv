@@ -33,6 +33,7 @@
 
 // Classes Definitions
 #include "classes/Connection/Request.hpp"
+#include "classes/Connection/File.hpp"
 #include "classes/Connection/Response.hpp"
 #include "classes/Connection/Connection.hpp"
 #include "classes/Config/Location.hpp"

@@ -196,12 +196,14 @@ void    Response::setPathInformation(const Location *loc) {
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
     UNUSED(loc_Path);
+    std::cout << "dkhel l response" << std::endl;
     if (request->_error) {
         buildErrorResponse(server, this);
     }
     else { //if request has no errors
-        File file(&(this->request->_path), loc);
-        this->setPathInformation(loc);
+        std::cout << "makaynch error fel response" << std::endl;
+        File file(&(this->request->_path), this->request->_uri, loc);
+        // this->setPathInformation(loc);
     //     if (fileCgi(this->request->_path, loc)) {
     //         //////////////cgi//////////////
     //     }

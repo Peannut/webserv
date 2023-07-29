@@ -37,6 +37,7 @@ CFILES  :=\
 	$(REQUESTDIR)/utils.cpp \
 	$(RESPONSEDIR)/responseBuilding.cpp \
 	$(RESPONSEDIR)/utils.cpp \
+	$(RESPONSEDIR)/file.cpp \
 	main.cpp \
 	multiplexing.cpp
 SRCS    := $(foreach F,$(CFILES),$(SRCSDIR)/$(F))

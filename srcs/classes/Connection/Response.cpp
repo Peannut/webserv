@@ -152,9 +152,9 @@ void Response::getbodySize( void ) {
     contentLength = static_cast<size_t>(filesize);
 }
 
-bool Response::hasAutoIndex( const Location *loc) {
+bool Response::hasIndexFile( const Location *loc) {
     for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
-        std::string fullpath = request->_path + *it;
+        std::string fullpath = request->_path + '/' +  *it;
         std::ifstream indexFile(fullpath.data());
         if (resourceExists(fullpath)) {
             request->_path += *it;
@@ -195,24 +195,26 @@ void    Response::setPathInformation(const Location *loc) {
 
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
+    UNUSED(loc_Path);
     if (request->_error) {
         buildErrorResponse(server, this);
     }
     else { //if request has no errors
-        if (fileCgi(this->request->_path, loc)) {
-            this->setPathInformation(loc);
-            //////////////cgi//////////////
-        }
-        else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
-            servingFileGet(this ,server, loc, loc_Path);
-        }
-        else if (this->request->_method == POST_method) {
-            postFile(this, server, loc);
-        }
-        else if (this->request->_method == DELETE_method) {
-            deletingFile(this, server, loc);
-        }
-        // else{}
+        File file(&(this->request->_path), loc);
+        this->setPathInformation(loc);
+    //     if (fileCgi(this->request->_path, loc)) {
+    //         //////////////cgi//////////////
+    //     }
+    //     else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
+    //         servingFileGet(this ,server, loc, loc_Path);
+    //     }
+    //     else if (this->request->_method == POST_method) {
+    //         postFile(this, server, loc);
+    //     }
+    //     else if (this->request->_method == DELETE_method) {
+    //         deletingFile(this, server, loc);
+    //     }
+    //     // else{}
     }
     std::cout << "RESPONSE = [" << _message << ']' << std::endl;
 }

@@ -56,7 +56,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 		}
 		else { //file is a directory
 			if (hasSlashEnd(response->request->_path)) {
-				if (response->hasAutoIndex(loc)) { // check autoindex
+				if (response->hasIndexFile(loc)) { // check autoindex
 					response->fillBodyFile(server);
 					response->getbodySize();
 					buildResponseHeaders(response);
@@ -90,18 +90,14 @@ void	postFile(Response	*response, const Server	&server, const Location	*loc) {
 }
 
 void    deletingFile(Response *response, const Server &server, const Location *loc) {
+	UNUSED(loc);
 	if (resourceExists(response->request->_path)){
 		if (!isDirectory(response->request->_path)) {
-			if(!fileCgi(response->request->_path, loc)) {
 				response->removeFile(server);
-			}
-			else {
-				//////////////CGI//////////////
-			}
 		}
 		else {//directory
 			if (hasSlashEnd(response->request->_path)) {
-				//chi haja machi tal tem f schema;
+				//baghi i deleti directory... hbil hada
 			}
 			else { // makaynach slash
 				response->serveErrorPage(server, 409, "Conflict");

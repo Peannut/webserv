@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/07/27 18:39:50 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/29 13:20:55 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,10 @@ struct Response
     int handleCGI(void);
     void cgiResponse(void);
     void cgi_execve(const Location &loc);
+    void data_reader(void);
+    void reqbodysend(void);
+    std::string env_grabber(const std::string& key);
+    // -----------------
     void    nameUploadFile();
     void    setFileName( const std::string & );
     std::string generateRandomName();

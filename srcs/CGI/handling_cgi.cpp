@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/28 16:16:29 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/29 14:46:36 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,61 @@ int Response::handleCGI(void)
     return (1);
 }
 
+void Response::data_reader(void)
+{
+    int size = 10000;
+    char buffer[size + 1];
+    int bytes_read;
+    bytes_read = read(_cgi.fd[0], buffer, size);
+    if (!bytes_read)
+    {
+        close(_cgi.fd[0]);
+        // error
+    }
+    _cgi.body.insert(_cgi.body.end(), buffer, buffer + bytes_read);
+}
+
+std::string Response::env_grabber(const std::string& key)
+{
+    std::string result;
+    char** tmp_env = _cgi.env;
+    while (*tmp_env)
+    {
+        std::string env_var = *tmp_env;
+        if (env_var.find(key) == 0)
+        {
+            return (result = env_var.substr(key.size() + 1));
+            break;
+        }
+        tmp_env++;
+    }
+    return NULL;
+}
+
+void    Response::reqbodysend(void)
+{
+
+    int content_length = std::stoi(env_grabber("CONTENT_LENGTH"));
+
+    if (CGI_BUFFER < content_length)
+    {
+        size_t read_size = 0;
+        size_t remaining_data_size = content_length - read_size;
+        size_t write_size = (remaining_data_size < CGI_BUFFER) ? remaining_data_size : CGI_BUFFER;
+
+        write(_cgi.fd2[1], &_cgi.body[0], _cgi.body.size());
+        _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + write_size);
+
+        if (_cgi.body.empty())
+            close(_cgi.fd2[1]);
+    }
+    else
+    {
+        write(_cgi.fd2[1], &_cgi.body[0], _cgi.body.size());
+        _cgi.body.clear();
+        close(_cgi.fd2[1]);
+    }
+}
 
 void Response::cgi_execve(const Location &loc)
 {
@@ -52,17 +107,20 @@ void Response::cgi_execve(const Location &loc)
 
         close(_cgi.fd2[1]);
         close(_cgi.fd2[0]);
-
-        const char* script_path_cstr = loc.cgi_bin.second.c_str();
-        const_cast<char *>(script_path_cstr);
-        // I should execve locationpath d cgi dl config
-         char *const argv[] = {
-            script_path_cstr,
+       
+        std::string filepath = _cgi.file_path;
+        char * const av[3] = {
+			const_cast<char * const>(loc.cgi_bin.second.c_str()),
+			const_cast<char * const>(filepath.c_str()),
             NULL
-
-        };
-        // execve(loc.cgi_bin.second.c_str(), );
-        // exit(42);
+		};
+        
+        if (execve(loc.cgi_bin.second.c_str(), av, _cgi.env) == -1)
+        {
+            std::cout << "execve failed" << std::endl;
+            exit(1);
+        }
+    
     }
     close(_cgi.fd[1]);
     close(_cgi.fd2[0]); 
@@ -108,6 +166,42 @@ std::string extract_path_info(const std::string& full_path) {
 
     // If the dot or slash is not found, or the next slash is not present, or '?' does not appear before the next slash, return an empty string
     return "/";
+}
+
+
+std::string get_filepath(const std::string &path)
+{
+    std::size_t first_dot_pos = path.find('.');
+    if (first_dot_pos != std::string::npos) {
+        // Find the next occurrence of '/' after the first dot
+        std::size_t next_slash_pos = path.find('/', first_dot_pos);
+        std::size_t query_pos = path.find('?', first_dot_pos);
+
+        if (query_pos != std::string::npos && next_slash_pos > query_pos) {
+            // If a '?' appears before the next slash, return the substring between next_slash_pos and query_pos
+            return path.substr(0, query_pos);
+        } else if (next_slash_pos != std::string::npos) {
+            // If there is no '?', extract the path_info from the string between first_dot_pos and next_slash_pos
+            return path.substr(0, next_slash_pos);
+        }
+    }
+
+    // If the dot or slash is not found, or the next slash is not present, or '?' does not appear before the next slash, return an empty string
+    return path;
+}
+
+std::string extract_file_path(const std::string &path)
+{
+    std::size_t first_dot_pos = path.find('.');
+    if (first_dot_pos != std::string::npos) {
+        // Find the next occurrence of '/' after the first dot
+        std::size_t next_slash_pos = path.find('/', first_dot_pos);
+
+        if (next_slash_pos != std::string::npos) {
+            return path.substr(0, next_slash_pos);
+        }
+    }
+    return path;
 }
 
 // make function to setup the cgi environment
@@ -162,5 +256,8 @@ void Response::env_maker()
             std::cout << _cgi.env[i] << std::endl;
         }
     }
-    std::cout << "path d yassin:" << pathinformation << std::endl;
+    _cgi.file_path = get_filepath(request->_path);
+    // std::cout << "file pathaaaaa:" << _cgi.file_path << std::endl;
+    // std::cout << "path d zwina:" << request->_path << std::endl;
+    std::cout << "body jay mn zwina" <<request->_body << std::endl;
 }

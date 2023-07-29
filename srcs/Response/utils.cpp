@@ -50,13 +50,29 @@ bool pathSupportUpload(Response *response, const Location *loc) {
 
 bool	fileCgi(const std::string &fullpath, const Location *loc) {
 	if (!loc->cgi_bin.first.empty()) {
-		size_t lastdot = fullpath.find_last_of('.');
-		if (lastdot == std::string::npos) {
-			return false;
+		std::string dot = ".";
+		std::string conType;
+		size_t index = 0;
+		while ((index = fullpath.find(dot, index)) != std::string::npos) {
+			std::cout << "DKHELT L WHILE!" << std::endl;
+			size_t closestSlash = fullpath.find_first_of('/', index);
+			size_t closestQuestionmark = fullpath.find_first_of('?', index);
+			if (closestSlash == std::string::npos && closestQuestionmark == std::string::npos) {
+				conType = fullpath.substr(index, fullpath.length() - index);
+				std::cout << "file Extention = " << conType << "-------" << "cgi Extention = " << loc->cgi_bin.first << std::endl;
+				return conType == loc->cgi_bin.first;
+			}
+			else {
+				size_t delimiter = (closestSlash < closestQuestionmark) ? closestSlash : closestQuestionmark;
+				conType = fullpath.substr(index, delimiter - index);
+				if (conType == loc->cgi_bin.first) {
+					std::cout << "l9it l file with cgi lwest!" << std::endl;
+					return true;
+				}
+				index = delimiter + 1;
+			}
+			std::cout << "file Extention = " << conType << "-------" << "cgi Extention = " << loc->cgi_bin.first << std::endl;
 		}
-		std::string conType = fullpath.substr(lastdot, fullpath.length() - lastdot);
-		// std::cout << "file Extention = " << conType << "-------" << "cgi Extention = " << loc->cgi_bin.first << std::endl;
-		return conType == loc->cgi_bin.first;
 	}
 	return false;
 }

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/27 17:57:58 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/07/28 16:16:29 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int Response::handleCGI(void)
 }
 
 
-void Response::cgi_execve(void)
+void Response::cgi_execve(const Location &loc)
 {
     _cgi.pid = fork();
     if (_cgi.pid == 0)
@@ -53,13 +53,19 @@ void Response::cgi_execve(void)
         close(_cgi.fd2[1]);
         close(_cgi.fd2[0]);
 
-
+        const char* script_path_cstr = loc.cgi_bin.second.c_str();
+        const_cast<char *>(script_path_cstr);
         // I should execve locationpath d cgi dl config
-        // execve();
-        exit(42);
+         char *const argv[] = {
+            script_path_cstr,
+            NULL
+
+        };
+        // execve(loc.cgi_bin.second.c_str(), );
+        // exit(42);
     }
     close(_cgi.fd[1]);
-    close(_cgi.fd2[0]);
+    close(_cgi.fd2[0]); 
 }
 
 void Response::cgiResponse(void)
@@ -156,4 +162,5 @@ void Response::env_maker()
             std::cout << _cgi.env[i] << std::endl;
         }
     }
+    std::cout << "path d yassin:" << pathinformation << std::endl;
 }

@@ -187,13 +187,24 @@ void    Response::uploadContent() {
     fileName.close();
 }
 
+void    Response::setPathInformation(const Location *loc) {
+    size_t cgiExtentionIndex = this->request->_path.find(loc->cgi_bin.first, 0) + loc->cgi_bin.first.length();
+    pathinformation = this->request->_path.substr(cgiExtentionIndex, this->request->_path.length() - cgiExtentionIndex);
+    std::cout << pathinformation << std::endl;
+}
+
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
     if (request->_error) {
         buildErrorResponse(server, this);
     }
     else { //if request has no errors
-        if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
+        if (fileCgi(this->request->_path, loc)) {
+            this->setPathInformation(loc);
+            //////////////cgi//////////////
+            env_maker();
+        }
+        else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
             servingFileGet(this ,server, loc, loc_Path);
         }
         else if (this->request->_method == POST_method) {

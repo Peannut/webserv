@@ -1,11 +1,16 @@
 #include "includes.hpp"
 
 File::File(std::string *path, const std::string &reqUri, const Location *location) : fullpath(path), uri(reqUri) , loc(location) {
-	isDirectory();
+	existance = fileExists();
+	directory = isDirectory();
 	extractFileName();
 	nameHasSlash();
 	extractExtention();
 	separatePathInfo();
+}
+
+bool fileExists() {
+	return(access(fullpath->c_str(), F_OK) == 0);
 }
 
 bool File::isDirectory() {
@@ -51,5 +56,3 @@ void	File::separatePathInfo() {
 	size_t pos = fullpath->find_last_of(filename);
 	pathInfo = fullpath->substr(pos + 1, fullpath->length() - pos);
 }
-
-

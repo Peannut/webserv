@@ -10,12 +10,15 @@ struct File {
     std::string filename;
     std::string extention;
     std::string pathInfo;
+    bool            existance;
+    bool            directory;
     bool            cgi;
     const Location  *loc;
 
     File(std::string *path, const std::string &reqUri, const Location *location);
 
-    void    isDirectory();
+    bool    fileExists();
+    bool    isDirectory();
     void    extractFileName();
     void    separatePathInfo();
     void    extractExtention();

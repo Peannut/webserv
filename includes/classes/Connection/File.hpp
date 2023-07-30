@@ -10,19 +10,23 @@ struct File {
     std::string filename;
     std::string extention;
     std::string pathInfo;
-    bool            existance;
+    bool            existing;
     bool            directory;
     bool            cgi;
+    bool            endWithSlash;
     const Location  *loc;
 
     File(std::string *path, const std::string &reqUri, const Location *location);
 
+    void    setFileInformation();
     bool    fileExists();
     bool    isDirectory();
+    bool    nameHasSlash();
+    void    concatinateIndexFile();
     void    extractFileName();
     void    separatePathInfo();
     void    extractExtention();
-    bool    nameHasSlash();
+    bool	fileCgiSupport();
 };
 
 #endif //FILE_HPP 

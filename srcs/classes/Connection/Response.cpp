@@ -205,7 +205,7 @@ void Response::serving(const Server &server, const Location *loc, const std::str
             //////////////cgi//////////////
         }
         else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
-            servingFileGet(this ,server, loc, file);
+            servingFileGet(this ,server, loc, loc_Path);
         }
         else if (this->request->_method == POST_method) {
             postFile(this, server, loc);

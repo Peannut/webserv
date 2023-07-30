@@ -196,27 +196,24 @@ void    Response::setPathInformation(const Location *loc) {
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
     UNUSED(loc_Path);
-    std::cout << "dkhel l response" << std::endl;
     if (request->_error) {
         buildErrorResponse(server, this);
     }
     else { //if request has no errors
-        std::cout << "makaynch error fel response" << std::endl;
         File file(&(this->request->_path), this->request->_uri, loc);
-        // this->setPathInformation(loc);
-    //     if (fileCgi(this->request->_path, loc)) {
-    //         //////////////cgi//////////////
-    //     }
-    //     else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
-    //         servingFileGet(this ,server, loc, loc_Path);
-    //     }
-    //     else if (this->request->_method == POST_method) {
-    //         postFile(this, server, loc);
-    //     }
-    //     else if (this->request->_method == DELETE_method) {
-    //         deletingFile(this, server, loc);
-    //     }
-    //     // else{}
+        if (file.cgi) {
+            //////////////cgi//////////////
+        }
+        else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
+            servingFileGet(this ,server, loc, file);
+        }
+        else if (this->request->_method == POST_method) {
+            postFile(this, server, loc);
+        }
+        else if (this->request->_method == DELETE_method) {
+            deletingFile(this, server, loc);
+        }
+        // else{}
     }
     std::cout << "RESPONSE = [" << _message << ']' << std::endl;
 }

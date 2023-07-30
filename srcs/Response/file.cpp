@@ -1,45 +1,55 @@
 #include "includes.hpp"
 
 File::File(std::string *path, const std::string &reqUri, const Location *location) : fullpath(path), uri(reqUri) , loc(location) {
-	std::cout << "file constructor" << std::endl;
+	isDirectory();
 	extractFileName();
+	nameHasSlash();
+	extractExtention();
 	separatePathInfo();
 }
 
-void	File::extractFileName() {
-	
-	size_t lastSlash = fullpath->find_last_of('/');
-	if (lastSlash == fullpath->length() - 1) {//slash mamorah walou
-		std::cout << "commo" << std::endl;
-		if (lastSlash == 0) { //makayn walou 7ta 9bel slash
-			filename = "/";
-			return;
-		}
-		lastSlash = fullpath->find_last_of('/', fullpath->length() - 2);
-	}
-	filename = fullpath->substr(lastSlash + 1, fullpath->length() - lastSlash);
-	std::cout << "file name is: " << filename << std::endl;
+bool File::isDirectory() {
+	return (access(fullpath->c_str(), X_OK) == 0);
 }
 
-// void	File::extractExtention(size_t &dotindex) {
-// 	extention = fullpath->substr(dotindex, )
-// }
+void	File::extractFileName() {
+	size_t lastSlash = uri.find_last_of('/');
+	if (lastSlash == uri.length() - 1) {//slash mamorah walou
+		if (lastSlash == 0) { //makayn walou 7ta 9bel slash
+			filename = "/";
+			cgi = false;
+			return;
+		}
+		lastSlash = uri.find_last_of('/', uri.length() - 2);
+	}
+	filename = uri.substr(lastSlash + 1, uri.length() - lastSlash);
+}
 
-void	File::separatePathInfo() {
-	size_t dotIndex = fullpath->find_last_of('.');
-	if (dotIndex == std::string::npos) {
-		pathWithoutInfo = *fullpath;
-		pathInfo = "";
-		extention = "";
+bool File::nameHasSlash() {
+	size_t lastChar = filename.length() - 1;
+	return (filename.at(lastChar) == '/');
+}
+
+void	File::extractExtention() {
+	size_t dot = filename.find_last_of('.');
+	size_t nameLenght = filename.length();
+	if (dot == std::string::npos) {
+		extention = "N/A";
 		cgi = false;
 		return;
 	}
-	// extractExtention(dotIndex);
-	size_t closestSlash = fullpath->find_first_of('/', dotIndex);
-	if (closestSlash == std::string::npos) {
-		closestSlash = fullpath->length();
+	if (nameHasSlash()) {
+		nameLenght -= 1;
 	}
-	pathWithoutInfo = fullpath->substr(0, closestSlash + 1);
-	pathInfo = fullpath->substr(closestSlash, fullpath->length() - closestSlash + 1);
-	std::cout << "path to file is: *" << pathWithoutInfo<<"*" << std::endl << "path Info: *" << pathInfo << "*" <<std::endl;
+	extention = filename.substr(dot, nameLenght - dot);
+	if (extention == loc->cgi_bin.first) {
+		cgi = true;
+	}
 }
+
+void	File::separatePathInfo() {
+	size_t pos = fullpath->find_last_of(filename);
+	pathInfo = fullpath->substr(pos + 1, fullpath->length() - pos);
+}
+
+

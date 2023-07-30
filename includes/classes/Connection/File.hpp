@@ -9,18 +9,17 @@ struct File {
     std::string uri;
     std::string filename;
     std::string extention;
-    std::string pathWithoutInfo;
     std::string pathInfo;
-    const Location  *loc;
     bool            cgi;
+    const Location  *loc;
 
     File(std::string *path, const std::string &reqUri, const Location *location);
 
+    void    isDirectory();
     void    extractFileName();
     void    separatePathInfo();
-    void    extractExtention(size_t &);
-    void    fileCgiSupport();
-    //getters
+    void    extractExtention();
+    bool    nameHasSlash();
 };
 
 #endif //FILE_HPP 

@@ -204,14 +204,16 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         if (file.cgi) {
             //////////////cgi//////////////
         }
-        else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
-            servingFileGet(this ,server, loc, loc_Path);
-        }
-        else if (this->request->_method == POST_method) {
-            postFile(this, server, loc);
-        }
-        else if (this->request->_method == DELETE_method) {
-            deletingFile(this, server, loc);
+        else { //ghadi npassi l file object hna bach nkhdem bih ou nsegel 3liya lkhedma
+            if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
+                servingFileGet(this ,server, loc, loc_Path);
+            }
+            else if (this->request->_method == POST_method) {
+                postFile(this, server, loc);
+            }
+            else if (this->request->_method == DELETE_method) {
+                deletingFile(this, server, loc);
+            }
         }
         // else{}
     }

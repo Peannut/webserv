@@ -100,7 +100,7 @@ struct Request
     void field_key_mode(const char & c);
     void field_val_mode(const char & c);
     void field_last_CRLF_mode(const char & c);
-    void body_content_mode(const char & c);
+    size_t body_content_mode(const std::string & buffer, const size_t & i);
     void body_length_mode(const char & c);
     void body_length_CRLF_mode(const char & c);
     void body_chunk_mode(const char & c);

@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>
+#include <ctime>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -44,6 +45,7 @@
 #include "prototypes.hpp"
 
 // Classes Definitions
+#include "classes/Connection/Cgi.hpp"
 #include "classes/Connection/Request.hpp"
 #include "classes/Connection/Cgi.hpp"
 #include "classes/Connection/Response.hpp"

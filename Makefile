@@ -45,6 +45,7 @@ CFILES  :=\
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Request.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Response.cpp \
 	$(CLASSESDIR)/WebServ.cpp \
+	$(CGIDIR)/handling_cgi.cpp \
 	$(CONFIGDIR)/utils.cpp \
 	$(REQUESTDIR)/body.cpp \
 	$(REQUESTDIR)/fields.cpp \
@@ -90,6 +91,7 @@ $(OBJSDIR) :
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONNECTIONDIR)
+	@mkdir $(OBJSDIR)/$(CGIDIR)
 	@mkdir $(OBJSDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(REQUESTDIR)
 	@mkdir $(OBJSDIR)/$(RESPONSEDIR)

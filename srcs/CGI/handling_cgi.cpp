@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/29 14:46:36 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/01 15:05:47 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ std::string CGIENV_FORMAT(const std::string& str)
     if (result != "Content-Type" && result != "Content-Length")
         result.insert(0, "HTTP_");
 
-    for (char& c : result)
+    for (size_t i = 0; i < result.length(); ++i)
     {
+        char & c = result[i];
         if (c == '-')
             c = '_';
         else

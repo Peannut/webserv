@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/24 19:09:21 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/01 15:10:05 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void Config::setuproot(std::string line, Location& location)
 
     if (!root[0].empty() && root[0][root[0].size() - 1] == '/')
     {
-        root[0].pop_back(); // Remove the trailing slash '/'
+		root.erase(root.end() - 1); // Remove the trailing slash '/'
     }
 
     location.root = root[0];
@@ -302,7 +302,7 @@ bool hasRootInServerfunc(const Server& server)
 {
     if (!server.locations.empty())
     {
-        const auto& lastLocationPair = *server.locations.rbegin();
+        const std::pair<std::string, Location> & lastLocationPair = *server.locations.rbegin();
         const Location& lastLocation = lastLocationPair.second;
         if (lastLocation.root.empty())
         {
@@ -334,11 +334,17 @@ void Config::setupServer(std::ifstream& file)
 		else if (!line.compare(0,10,"\tlocation:"))
 		{
 			location_exist = true;
+		{
+			location_exist = true;
 			setupLocation(file, line, server);
 			hasRootInServer = hasRootInServerfunc(server);
 		}
 		else if (line == "close")
 		{
+			 if (!hasRootInServer && location_exist)
+            {
+                throw std::runtime_error("Error: No location with root set in the server");
+            }
 			 if (!hasRootInServer && location_exist)
             {
                 throw std::runtime_error("Error: No location with root set in the server");
@@ -351,6 +357,36 @@ void Config::setupServer(std::ifstream& file)
 	}
 	
 }
+
+void Config::removeDuplicateServers()
+{
+    size_t i = 1;
+    while (i < config.size())
+    {
+        const Server& currentServer = config[i];
+        const Server& previousServer = config[i - 1];
+
+        if (currentServer.listen == previousServer.listen)
+        {
+            if (!currentServer.server_names.empty() && !previousServer.server_names.empty() && currentServer.server_names[0] == previousServer.server_names[0])
+            {
+                // If same listen and server_name, keep the previous server and remove the current one
+                config.erase(config.begin() + i);
+            }
+            else
+            {
+                // If same listen but different server_name, keep both servers
+                i++;
+            }
+        }
+        else
+        {
+            // If different listen values, keep the current server
+            i++;
+        }
+    }
+}
+
 
 void Config::removeDuplicateServers()
 {
@@ -408,18 +444,4 @@ void	Config::setupconfig(const std::string& filename)
 	// std::cout << "SIIIIIZE" << config.size() << std::endl;
 	// print config
 	file.close();
-	removeDuplicateServers();
-	// std::cout << "SIIIIIZE" << config.size() << std::endl;
-
-	// for (const auto& server : config)
-    // {
-    //     std::cout << "Server:" << std::endl;
-    //     std::cout << "\tListen: " << server.listen.first << "." << server.listen.second << std::endl;
-
-    //     // Print other server properties as needed
-	// 	for (const auto& errorPage : server.error_pages)
-    //     {
-    //         std::cout << "\t\tStatus Code: " << errorPage.first << "  File Path: " << errorPage.second << std::endl;
-    //     }
-    // }
 }

@@ -18,7 +18,7 @@
 struct Connection
 {
     bool _isListen;
-    bool _isMustServeNow;
+    const time_t _startTime;
     SOCKET_POLL *_socket;
     const Server *_srv;
     const std::string * _loc_path;
@@ -29,6 +29,7 @@ struct Connection
     Connection(const bool & isListen, SOCKET_POLL & socket);
     ~Connection();
 
+    time_t get_passed_time();
     SOCKET_POLL & get_socket();
     SOCKET_FD & get_fdsock();
     const Server & get_srv(void);

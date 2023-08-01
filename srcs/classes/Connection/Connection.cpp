@@ -2,7 +2,7 @@
 
 Connection::Connection(const bool & isListen, SOCKET_POLL & socket)
 : _isListen(isListen)
-, _isMustServeNow(false)
+, _startTime(time(NULL))
 , _socket(&socket)
 , _srv(NULL)
 , _loc_path(NULL)
@@ -16,6 +16,11 @@ Connection::~Connection()
     close(_socket->fd);
     if (_req) delete _req;
     if (_res) delete _res;
+}
+
+time_t Connection::get_passed_time()
+{
+    return (time(NULL) - _startTime);
 }
 
 SOCKET_POLL & Connection::get_socket()

@@ -30,7 +30,7 @@ bool Request::concatenate(const std::string & buffer)
             case field_val_m:       field_val_mode(c); break;
             case field_last_CRLF_m: field_last_CRLF_mode(c); break;
             // body
-            case body_content_m:    body_content_mode(c); break;
+            case body_content_m:    i = body_content_mode(buffer, i); break;
             case body_length_m:     body_length_mode(c); break;
             case body_length_CRLF_m:body_length_CRLF_mode(c); break;
             case body_chunk_m:      body_chunk_mode(c); break;

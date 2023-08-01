@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/01 15:04:31 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/01 18:38:40 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ struct Response
     void data_reader(void);
     void reqbodysend(void);
     std::string env_grabber(const std::string& key);
+    void cgi_supervisor(void);
     // -----------------
     void    nameUploadFile();
     void    setFileName( const std::string & );

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/01 15:05:47 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/01 18:39:37 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,26 +74,47 @@ void    Response::reqbodysend(void)
 {
 
     int content_length = std::stoi(env_grabber("CONTENT_LENGTH"));
+    size_t read_size = 0;
+    size_t write_size = 0;
 
-    if (CGI_BUFFER < content_length)
+    if (CGI_BUFFER < _cgi.body.size())
     {
-        size_t read_size = 0;
-        size_t remaining_data_size = content_length - read_size;
-        size_t write_size = (remaining_data_size < CGI_BUFFER) ? remaining_data_size : CGI_BUFFER;
-
-        write(_cgi.fd2[1], &_cgi.body[0], _cgi.body.size());
-        _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + write_size);
-
-        if (_cgi.body.empty())
-            close(_cgi.fd2[1]);
+           if (read_size + CGI_BUFFER > content_length)
+            {
+                write_size = content_length - read_size;
+                write(_cgi.fd[1], &_cgi.body[0], write_size);
+                _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + write_size);
+            }
+            else
+            {
+                write(_cgi.fd[1], &_cgi.body[0], CGI_BUFFER);
+                _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + CGI_BUFFER);
+            }
     }
     else
     {
-        write(_cgi.fd2[1], &_cgi.body[0], _cgi.body.size());
+        if (read_size + _cgi.body.size() > content_length)
+        {
+            write_size = content_length - read_size;
+            write(_cgi.fd[1], &_cgi.body[0], write_size);
+            _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + write_size);
+        }
+        else
+        {
+            write(_cgi.fd[1], &_cgi.body[0], _cgi.body.size());
+            _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + _cgi.body.size());
+        }
+    }
+
+    read_size += write_size;
+    if (read_size == content_length || _cgi._srv.client_max_body_size == read_size)
+    {
+        close(_cgi.fd[1]);
         _cgi.body.clear();
-        close(_cgi.fd2[1]);
+        _cgi.counter++;
     }
 }
+
 
 void Response::cgi_execve(const Location &loc)
 {
@@ -205,6 +226,27 @@ std::string extract_file_path(const std::string &path)
     return path;
 }
 
+void Response::cgi_supervisor()
+{
+	switch (_cgi.counter)
+	{
+		case 0:
+			// execcgi;
+			break;
+		case 1:
+			// send body to cgi;
+			break;
+		case 2:
+			// waitforcgi;
+			break;
+		case 3: 
+			// readfromcgi;
+			break;
+		case 4:
+			// cgi response;
+			break;
+	}
+}
 // make function to setup the cgi environment
 void Response::env_maker()
 {

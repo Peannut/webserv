@@ -46,17 +46,18 @@ void    buildResponseHeaders(Response *response) {
 	response->_message_size = response->_message.length();
 }
 
-void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path) {
-	UNUSED(loc_Path);
-	if (resourceExists(response->request->_path)) { //file does exists
-		if (!isDirectory(response->request->_path)) { //resource is a file
+void servingFileGet(Response *response ,const Server &server, const Location *loc, const File &file) { 
+	std::cout << "file existing: " << file.existing << " directory: " << file.directory << " with slash: " << file.endWithSlash <<std::endl;
+	if (file.existing) { //file does exists
+		if (!file.directory) { //resource is a file
 			response->fillBodyFile(server);
 			response->getbodySize();
 			buildResponseHeaders(response);
 		}
 		else { //file is a directory
-			if (hasSlashEnd(response->request->_path)) {
-				if (response->hasIndexFile(loc)) { // check autoindex
+			if (file.endWithSlash) {
+				std::cout << "l9a repo ou fih slash felekher" << std::endl;
+				if (file.indexFound) { // check autoindex
 					response->fillBodyFile(server);
 					response->getbodySize();
 					buildResponseHeaders(response);
@@ -64,6 +65,11 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 				else { //no index should check autoindex here
 					if (!loc->autoindex) {
 						response->serveErrorPage(server, 403, "Forbidden");
+					}
+					else {// auto index
+						response->setResponsefields(200, "OK");
+						response->_message += "\r\n\r\n";
+						response->generateIndexPage();
 					}
 				}
 			}

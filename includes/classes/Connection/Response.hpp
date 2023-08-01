@@ -41,6 +41,7 @@ struct Response
     std::string generateRandomName();
     void    uploadContent();
     void    setPathInformation(const Location *);
+    void    generateIndexPage();
 };
 
 #endif // RESPONSE_HPP

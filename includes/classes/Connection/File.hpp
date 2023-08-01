@@ -14,6 +14,7 @@ struct File {
     bool            directory;
     bool            cgi;
     bool            endWithSlash;
+    bool            indexFound;
     const Location  *loc;
 
     File(std::string *path, const std::string &reqUri, const Location *location);
@@ -22,7 +23,7 @@ struct File {
     bool    fileExists();
     bool    isDirectory();
     bool    nameHasSlash();
-    void    concatinateIndexFile();
+    bool    concatinateIndexFile();
     void    extractFileName();
     void    separatePathInfo();
     void    extractExtention();

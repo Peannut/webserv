@@ -47,16 +47,17 @@ void	File::separatePathInfo() {
 	pathInfo = fullpath->substr(pos + 1, fullpath->length() - pos);
 }
 
-void	File::concatinateIndexFile() {
+bool	File::concatinateIndexFile() {
     for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
         std::string path = (*fullpath) +  *it;
 		// std::cout << " ----------path after concatinating is: " << path << "------------" << std::endl;
         if (!access(path.c_str(), F_OK)) {
             (*fullpath) += *it;
 			uri += *it;
-			return ;
+			return true;
         }
     }
+	return false;
 }
 
 bool	File::fileCgiSupport() {
@@ -72,14 +73,14 @@ void	File::setFileInformation() {
 	directory = isDirectory();
 	endWithSlash = nameHasSlash();
 	if (directory && endWithSlash) {
-		concatinateIndexFile();
+		indexFound = concatinateIndexFile();
 	}
 	extractFileName();
 	extractExtention();
 	cgi = fileCgiSupport();
 	separatePathInfo();
-	// std::cout << "--file existance: " << existing << "--is resource directory: " << directory << std::endl << \
-	//  "--does path has slash at the end: " << endWithSlash << "--file fullpath :"  \
-	//  << *fullpath << std::endl <<  "--file uri: " << uri << \
-	//  "--file extention: "<< extention <<"--file supports CGI: " << cgi << std::endl;
+	/*std::cout << "--file existance: " << existing << "--is resource directory: " << directory << std::endl << \
+	 "--does path has slash at the end: " << endWithSlash << "--file fullpath :"  \
+	 << *fullpath << std::endl <<  "--file uri: " << uri << \
+	 "--file extention: "<< extention <<"--file supports CGI: " << cgi << std::endl;*/
 }

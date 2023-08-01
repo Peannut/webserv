@@ -31,6 +31,8 @@
 
 #include "prototypes.hpp"
 
+#include <dirent.h>
+
 // Classes Definitions
 #include "classes/Connection/Request.hpp"
 #include "classes/Connection/File.hpp"

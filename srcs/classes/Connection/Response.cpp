@@ -193,6 +193,27 @@ void    Response::setPathInformation(const Location *loc) {
     std::cout << pathinformation << std::endl;
 }
 
+void    Response::generateIndexPage() {
+    std::string page = "<html><head><title>Index of " + request->_path + "</title></head><body>\n";
+    page += "<h1>Index of " + request->_path + "</h1>\n";
+    page += "<ul>\n";
+
+    DIR* dir = opendir(request->_path.c_str());
+    if (dir) {
+        struct dirent* entry;
+        while ((entry = readdir(dir)) != NULL) {
+            std::string name = entry->d_name;
+            if (name != "." && name != "..") {
+                page += "<li><a href=\"" + name + "\">" + name + "</a></li>\n";
+            }
+        }
+        closedir(dir);
+    }
+    page += "</ul>\n";
+    page += "</body></html>\n";
+    _message += page;
+}
+
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
     UNUSED(loc_Path);
@@ -200,13 +221,16 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         buildErrorResponse(server, this);
     }
     else { //if request has no errors
+        std::cout << "dkhel l else" << std::endl;
         File file(&(this->request->_path), this->request->_uri, loc);
         if (file.cgi) {
+            std::cout << "dkhel l cgi" << std::endl;
             //////////////cgi//////////////
         }
-        else { //ghadi npassi l file object hna bach nkhdem bih ou nsegel 3liya lkhedma
-            if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
-                servingFileGet(this ,server, loc, loc_Path);
+        else {
+            std::cout << "mal9ahch cgi" << std::endl;
+            if (this->request->_method == GET_method) { 
+                servingFileGet(this ,server, loc, file);
             }
             else if (this->request->_method == POST_method) {
                 postFile(this, server, loc);

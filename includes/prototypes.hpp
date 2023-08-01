@@ -84,7 +84,7 @@ bool        pathSupportUpload(Response *response, const Location *loc);
 void        buildErrorResponse(const Server &server, Response *response);
 void        deletingFile(Response *res, const Server &server, const Location *loc);
 void        postFile(Response	*response, const Server	&server, const Location	*loc);
-void        servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path);
+void        servingFileGet(Response *response ,const Server &server, const Location *loc, const File &file);
 // void    buildResponseHeaders(Response &response);
 // std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path);
 

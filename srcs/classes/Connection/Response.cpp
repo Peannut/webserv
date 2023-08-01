@@ -100,10 +100,6 @@ void    Response::setFileName( const std::string &newName) {
     fileName = newName;
 }
 
-void    Response::setFileName( const std::string &newName) {
-    fileName = newName;
-}
-
 void Response::setResponsefields(const int &sc, const std::string &sm) {
     std::string ct;
 
@@ -116,12 +112,6 @@ void Response::setResponsefields(const int &sc, const std::string &sm) {
 void    Response::serveDefaultErrorPage() {
     bodyFile.open("srcs/Response/DefaultError/index.html");
     setResponsefields(500, "Internal Server Error");
-}
-
-std::string Response::generateRandomName() {
-    time_t timestamp = std::time(NULL);
-    std::string currentTime = ctime(&timestamp);
-    return currentTime;
 }
 
 std::string Response::generateRandomName() {
@@ -224,9 +214,6 @@ void Response::serving(const Server &server, const Location *loc, const std::str
             deletingFile(this, server, loc);
         }
         // else{}
-    }
-    std::cout << "RESPONSE = [" << _message << ']' << std::endl;
-}
     }
     std::cout << "RESPONSE = [" << _message << ']' << std::endl;
 }

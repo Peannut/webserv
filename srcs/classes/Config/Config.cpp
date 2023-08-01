@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/01 15:10:05 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/01 15:17:11 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,8 +334,6 @@ void Config::setupServer(std::ifstream& file)
 		else if (!line.compare(0,10,"\tlocation:"))
 		{
 			location_exist = true;
-		{
-			location_exist = true;
 			setupLocation(file, line, server);
 			hasRootInServer = hasRootInServerfunc(server);
 		}
@@ -357,36 +355,6 @@ void Config::setupServer(std::ifstream& file)
 	}
 	
 }
-
-void Config::removeDuplicateServers()
-{
-    size_t i = 1;
-    while (i < config.size())
-    {
-        const Server& currentServer = config[i];
-        const Server& previousServer = config[i - 1];
-
-        if (currentServer.listen == previousServer.listen)
-        {
-            if (!currentServer.server_names.empty() && !previousServer.server_names.empty() && currentServer.server_names[0] == previousServer.server_names[0])
-            {
-                // If same listen and server_name, keep the previous server and remove the current one
-                config.erase(config.begin() + i);
-            }
-            else
-            {
-                // If same listen but different server_name, keep both servers
-                i++;
-            }
-        }
-        else
-        {
-            // If different listen values, keep the current server
-            i++;
-        }
-    }
-}
-
 
 void Config::removeDuplicateServers()
 {

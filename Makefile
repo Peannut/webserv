@@ -6,7 +6,7 @@
 #    By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
-#    Updated: 2023/07/26 15:50:40 by zoukaddo         ###   ########.fr        #
+#    Updated: 2023/08/01 15:15:33 by zoukaddo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,6 @@ CFILES  :=\
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Request.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Response.cpp \
 	$(CLASSESDIR)/WebServ.cpp \
-	$(CGIDIR)/handling_cgi.cpp \
 	$(CONFIGDIR)/utils.cpp \
 	$(REQUESTDIR)/body.cpp \
 	$(REQUESTDIR)/fields.cpp \
@@ -91,7 +90,6 @@ $(OBJSDIR) :
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONNECTIONDIR)
-	@mkdir $(OBJSDIR)/$(CGIDIR)
 	@mkdir $(OBJSDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(REQUESTDIR)
 	@mkdir $(OBJSDIR)/$(RESPONSEDIR)

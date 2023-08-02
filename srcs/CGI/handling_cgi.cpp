@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/02 16:25:46 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/02 19:45:31 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,12 @@ void Response::data_reader(void)
 {
     char buffer[CGI_BUFFER + 1];
     int bytes_read;
+    std::string tmp;
     bytes_read = read(_cgi.fd[0], buffer, CGI_BUFFER);
     if (!bytes_read)
     {
         close(_cgi.fd[0]);
-		std::string status = "Status: ";
+		// tmp = "Status: ";
         // error
 
         _cgi.counter += 1;
@@ -85,10 +86,11 @@ std::string Response::env_grabber(const std::string& key)
 void    Response::reqbodysend(void)
 {
 
+    std::cout << "counter from reqbodysend: " << _cgi.counter << std::endl;
     // int content_length = std::stoi(env_grabber("CONTENT_LENGTH"));
     int content_length = std::stoi(request->_fields.find("Content-Length")->second);
 
-    // std::cout << "content_length: " << content_length << std::endl;
+    write(3,"testcgi\n",8);
     size_t read_size = 0;
     size_t write_size = 0;
     // print content_leght in error fd
@@ -135,8 +137,9 @@ void Response::cgi_execve(const Location &loc)
 {
     _cgi.pid = fork();
     std::cout << "le pid:" << _cgi.pid << std::endl;
-    if (_cgi.pid == 0)
+    if (!_cgi.pid)
     {
+        std::cout << "here" << std::endl;
         dup2(_cgi.fd2[0], 0);
         dup2(_cgi.fd[1], 1);
         
@@ -163,6 +166,7 @@ void Response::cgi_execve(const Location &loc)
     close(_cgi.fd[1]);
     close(_cgi.fd2[0]);
     _cgi.counter++;
+    std::cout << "counter:" << _cgi.counter << std::endl;
 }
 
 void Response::cgiResponse(void)
@@ -188,25 +192,25 @@ void Response::cgiResponse(void)
 //     return "/";
 // }
 
-std::string extract_path_info(const std::string& full_path) {
-    std::size_t first_dot_pos = full_path.find('.');
-    if (first_dot_pos != std::string::npos) {
-        // Find the next occurrence of '/' after the first dot
-        std::size_t next_slash_pos = full_path.find('/', first_dot_pos);
-        std::size_t query_pos = full_path.find('?', first_dot_pos);
+// std::string extract_path_info(const std::string& full_path) {
+//     std::size_t first_dot_pos = full_path.find('.');
+//     if (first_dot_pos != std::string::npos) {
+//         // Find the next occurrence of '/' after the first dot
+//         std::size_t next_slash_pos = full_path.find('/', first_dot_pos);
+//         std::size_t query_pos = full_path.find('?', first_dot_pos);
 
-        if (query_pos != std::string::npos && next_slash_pos > query_pos) {
-            // If a '?' appears before the next slash, return the substring between next_slash_pos and query_pos
-            return full_path.substr(next_slash_pos, query_pos - next_slash_pos);
-        } else if (next_slash_pos != std::string::npos) {
-            // If there is no '?', extract the path_info from the string between first_dot_pos and next_slash_pos
-            return full_path.substr(next_slash_pos,  query_pos - next_slash_pos);
-        }
-    }
+//         if (query_pos != std::string::npos && next_slash_pos > query_pos) {
+//             // If a '?' appears before the next slash, return the substring between next_slash_pos and query_pos
+//             return full_path.substr(next_slash_pos, query_pos - next_slash_pos);
+//         } else if (next_slash_pos != std::string::npos) {
+//             // If there is no '?', extract the path_info from the string between first_dot_pos and next_slash_pos
+//             return full_path.substr(next_slash_pos,  query_pos - next_slash_pos);
+//         }
+//     }
 
-    // If the dot or slash is not found, or the next slash is not present, or '?' does not appear before the next slash, return an empty string
-    return "/";
-}
+//     // If the dot or slash is not found, or the next slash is not present, or '?' does not appear before the next slash, return an empty string
+//     return "/";
+// }
 
 
 std::string get_filepath(const std::string &path)
@@ -246,6 +250,8 @@ std::string extract_file_path(const std::string &path)
 
 void Response::cgi_supervisor()
 {
+    std::cout << "supervisor" << std::endl;
+    std::cout << "counter:" << _cgi.counter << std::endl;
 	switch (_cgi.counter)
 	{
 		case 0:
@@ -288,7 +294,7 @@ void Response::env_maker()
 	
     int size = request->_fields.size();
 	std::cout << "size cgiii" << size << std::endl;
-	_cgi.env = new char*[size+ 4]();
+	_cgi.env = new char*[size+ 5]();
 	
 	int i = 0;
     std::map<std::string, std::string>::iterator it = request->_fields.begin();
@@ -303,8 +309,9 @@ void Response::env_maker()
 	}
 
     _cgi.env[i++] = strdup("SERVER_PROTOCOL=HTTP/1.1");
-    _cgi.pathinfo = extract_path_info(request->_path);
-	_cgi.env[i++] = strdup(("PATH_INFO=" + _cgi.pathinfo).c_str());
+    // _cgi.pathinfo = extract_path_info(request->_path);
+	_cgi.env[i++] = strdup("PATH_INFO=/");
+    _cgi.env[i++] = strdup(("QUERY_STRING=" + request->_query).c_str());
     // ask about this
     // std::string full_path = "/home/peanut/webserv/srcs/Response/DefaultError/test.py/folder/next?a=x";
 

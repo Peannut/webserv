@@ -6,7 +6,7 @@
 #    By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
-#    Updated: 2023/08/01 15:15:33 by zoukaddo         ###   ########.fr        #
+#    Updated: 2023/08/02 17:07:46 by zoukaddo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,6 +53,7 @@ CFILES  :=\
 	$(RESPONSEDIR)/responseBuilding.cpp \
 	$(RESPONSEDIR)/utils.cpp \
 	$(CGIDIR)/handling_cgi.cpp \
+	$(RESPONSEDIR)/file.cpp \
 	main.cpp \
 	multiplexing.cpp
 SRCS    := $(foreach F,$(CFILES),$(SRCSDIR)/$(F))

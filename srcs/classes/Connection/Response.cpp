@@ -152,9 +152,9 @@ void Response::getbodySize( void ) {
     contentLength = static_cast<size_t>(filesize);
 }
 
-bool Response::hasAutoIndex( const Location *loc) {
+bool Response::hasIndexFile( const Location *loc) {
     for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
-        std::string fullpath = request->_path + *it;
+        std::string fullpath = request->_path + '/' +  *it;
         std::ifstream indexFile(fullpath.data());
         if (resourceExists(fullpath)) {
             request->_path += *it;
@@ -172,6 +172,37 @@ void Response::removeFile(const Server &server) {
     serveErrorPage(server, 203, "No Content");
 }
 
+void    Response::deleteAllDirContent(std::string path, const Server &server) {
+    DIR* dir = opendir(path.c_str());
+    if (dir) {
+        struct dirent* entry;
+        while ((entry = readdir(dir)) != NULL) {
+            std::string name = entry->d_name;
+            if (name != "." && name != "..") {
+                std::string fullPath = path + "/" + name;
+                struct stat pathinfo;
+                if (stat(fullPath.c_str(), &pathinfo)) {
+                    serveDefaultErrorPage();
+                }
+                else {
+                    if (isDirectory(fullPath)) {
+                        deleteAllDirContent(fullPath, server);
+                        rmdir(fullPath.c_str());
+                    } else if (S_ISREG(pathinfo.st_mode)) {
+                        if (access(fullPath.c_str(), W_OK) == 0) {
+                            remove(fullPath.c_str());
+                            serveErrorPage(server, 204, "No Content");
+                        } else {
+                        serveErrorPage(server, 403, "Forbidden");
+                        }
+                    }
+                }
+            }
+        }
+        closedir(dir);
+    }
+}
+
 void    Response::nameUploadFile() {
     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT_DISPOSITION");
     if (it != request->_fields.end()) {
@@ -181,10 +212,11 @@ void    Response::nameUploadFile() {
     fileName = generateRandomName();
 }
 
-void    Response::uploadContent() {
+void    Response::uploadContent(const Server &server) {
     std::ofstream fileName;
+
+    serveErrorPage(server, 201, "Created");
     fileName << request->_body;
-    fileName.close();
 }
 
 void    Response::setPathInformation(const Location *loc) {
@@ -193,27 +225,54 @@ void    Response::setPathInformation(const Location *loc) {
     std::cout << pathinformation << std::endl;
 }
 
+void    Response::generateIndexPage() {
+    std::string page = "<html><head><title>Index of " + request->_path + "</title></head><body>\n";
+    page += "<h1>Index of " + request->_path + "</h1>\n";
+    page += "<ul>\n";
+
+    DIR* dir = opendir(request->_path.c_str());
+    if (dir) {
+        struct dirent* entry;
+        while ((entry = readdir(dir)) != NULL) {
+            std::string name = entry->d_name;
+            if (name != "." && name != "..") {
+                page += "<li><a href=\"" + name + "\">" + name + "</a></li>\n";
+            }
+        }
+        closedir(dir);
+    }
+    page += "</ul>\n";
+    page += "</body></html>\n";
+    _message += page;
+}
+
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
+    UNUSED(loc_Path);
     if (request->_error) {
         buildErrorResponse(server, this);
     }
     else { //if request has no errors
-        if (fileCgi(this->request->_path, loc)) {
-            this->setPathInformation(loc);
+        std::cout << "dkhel l else" << std::endl;
+        File file(&(this->request->_path), this->request->_uri, loc);
+        if (file.cgi) {
+            std::cout << "dkhel l cgi" << std::endl;
             //////////////cgi//////////////
             handleCGI();
             cgi_supervisor();
             // env_maker();
         }
-        else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
-            servingFileGet(this ,server, loc, loc_Path);
-        }
-        else if (this->request->_method == POST_method) {
-            postFile(this, server, loc);
-        }
-        else if (this->request->_method == DELETE_method) {
-            deletingFile(this, server, loc);
+        else {
+            std::cout << "mal9ahch cgi" << std::endl;
+            if (this->request->_method == GET_method) { 
+                servingFileGet(this ,server, loc, file);
+            }
+            else if (this->request->_method == POST_method) {
+                postFile(this, server, loc, file);
+            }
+            else if (this->request->_method == DELETE_method) {
+                deletingFile(this, server, loc, file);
+            }
         }
         // else{}
     }

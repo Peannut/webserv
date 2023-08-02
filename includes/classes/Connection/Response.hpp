@@ -43,7 +43,7 @@ struct Response
     void    serveDefaultErrorPage( void );
     void getbodySize( void );
     std::string getContentType( void );
-    bool hasAutoIndex(const Location *loc);
+    bool hasIndexFile(const Location *loc);
     void    removeFile(const Server &server);
     size_t extract();
     void seek_back(const size_t & amount);
@@ -65,8 +65,10 @@ struct Response
     void    nameUploadFile();
     void    setFileName( const std::string & );
     std::string generateRandomName();
-    void    uploadContent();
+    void    uploadContent(const Server  &server);
     void    setPathInformation(const Location *);
+    void    generateIndexPage();
+    void    deleteAllDirContent(std::string path, const Server &server);
 };
 
 #endif // RESPONSE_HPP

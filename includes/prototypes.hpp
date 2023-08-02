@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/01 19:01:43 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/02 17:11:10 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,9 @@ struct Location;
 struct Connection;
 struct Request;
 struct Response;
+struct File;
 struct Cgi;
+
 // The declarations of the functions
 
 // <-- main.cpp -->
@@ -96,12 +98,13 @@ std::string findErrorPage(const Response &response,const Server &srv);
 bool        isDirectory(const std::string &path);
 bool        hasSlashEnd(const std::string &path);
 bool        resourceExists (const std::string &path);
-bool        fileCgi(const std::string &fullpath, const Location *loc);
+bool        fileCgi(std::string fullpath, const Location *loc);
+bool        outilsHasIndex(std::string *path, const Location    *loc);
 bool        pathSupportUpload(Response *response, const Location *loc);
 void        buildErrorResponse(const Server &server, Response *response);
-void        deletingFile(Response *res, const Server &server, const Location *loc);
-void        postFile(Response	*response, const Server	&server, const Location	*loc);
-void        servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path);
+void        deletingFile(Response *res, const Server &server, const Location *loc, const File &file);
+void        postFile(Response	*response, const Server	&server, const Location	*loc, const File &file);
+void        servingFileGet(Response *response ,const Server &server, const Location *loc, const File &file);
 // void    buildResponseHeaders(Response &response);
 // std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path);
 

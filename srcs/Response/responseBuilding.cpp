@@ -95,15 +95,14 @@ void	postFile(Response	*response, const Server	&server, const Location	*loc) {
 	// std::cout << "upload not supported!" << std::endl;
 }
 
-void    deletingFile(Response *response, const Server &server, const Location *loc) {
-	UNUSED(loc);
-	if (resourceExists(response->request->_path)){
-		if (!isDirectory(response->request->_path)) {
+void    deletingFile(Response *response, const Server &server, const Location *loc, const File &file) {
+	if (file.existing){
+		if (!file.directory) {
 				response->removeFile(server);
 		}
 		else {//directory
 			if (hasSlashEnd(response->request->_path)) {
-				//baghi i deleti directory... hbil hada
+				//response->remove all directory content;
 			}
 			else { // makaynach slash
 				response->serveErrorPage(server, 409, "Conflict");

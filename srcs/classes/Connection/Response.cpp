@@ -172,6 +172,47 @@ void Response::removeFile(const Server &server) {
     serveErrorPage(server, 203, "No Content");
 }
 
+void    removeFile(const Std::string &) {
+    
+}
+
+void    Response::deleteAllDirContent(std::string path, const Server &server) {
+    DIR* dir = opendir(request->_path.c_str());
+    if (dir) {
+        struct dirent* entry;
+        while ((entry = readdir(dir)) != NULL) {
+            std::string name = entry->d_name;
+            if (name != "." && name != "..") {
+                std::string fullPath = request->_path + "/" + name;
+                struct stat pathinfo;
+                if (stat(fullpath.c_str, &pathinfo)) {
+                    serveDefaultErrorPage();
+                }
+                else {
+                    if (!isDirectory(fullPath)) {
+                        // Entry is a subdirectory, recursively delete its content
+                        deleteAllDirContent(fullPath, server);
+                        // After deleting the content, remove the empty subdirectory
+                        rmdir(fullPath.c_str());
+                    } else if (S_ISREG(pathinfo.st_mode)) {
+                        // Entry is a regular file, check if it has write permission
+                        if (access(fullPath.c_str(), W_OK) == 0) {
+                            // If the file has write permission, remove it
+                            removeFile(fullPath);
+                            serveErrorPage(server, 204, "No Content");
+                        } else {
+                        // Handle cases where the file does not have write permission
+                        // (e.g., log the error, skip deletion, etc.)
+                        serveErrorPage(server, 403, "Forbidden");
+                        }
+                    }
+                }
+            }
+        }
+        closedir(dir);
+    }
+}
+
 void    Response::nameUploadFile() {
     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT_DISPOSITION");
     if (it != request->_fields.end()) {
@@ -236,7 +277,7 @@ void Response::serving(const Server &server, const Location *loc, const std::str
                 postFile(this, server, loc);
             }
             else if (this->request->_method == DELETE_method) {
-                deletingFile(this, server, loc);
+                deletingFile(this, server, loc, file);
             }
         }
         // else{}

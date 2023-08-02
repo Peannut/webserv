@@ -32,7 +32,6 @@ struct Response
     std::string getContentType( void );
     bool hasIndexFile(const Location *loc);
     void    removeFile(const Server &server);
-    void    removeFile(const Std::string &)
     size_t extract();
     void seek_back(const size_t & amount);
     bool is_done();

@@ -96,13 +96,14 @@ void	postFile(Response	*response, const Server	&server, const Location	*loc) {
 }
 
 void    deletingFile(Response *response, const Server &server, const Location *loc, const File &file) {
+	UNUSED(loc);
 	if (file.existing){
 		if (!file.directory) {
 				response->removeFile(server);
 		}
 		else {//directory
 			if (hasSlashEnd(response->request->_path)) {
-				//response->remove all directory content;
+				response->deleteAllDirContent(response->request->_path, server);
 			}
 			else { // makaynach slash
 				response->serveErrorPage(server, 409, "Conflict");

@@ -172,37 +172,27 @@ void Response::removeFile(const Server &server) {
     serveErrorPage(server, 203, "No Content");
 }
 
-void    removeFile(const Std::string &) {
-    
-}
-
 void    Response::deleteAllDirContent(std::string path, const Server &server) {
-    DIR* dir = opendir(request->_path.c_str());
+    DIR* dir = opendir(path.c_str());
     if (dir) {
         struct dirent* entry;
         while ((entry = readdir(dir)) != NULL) {
             std::string name = entry->d_name;
             if (name != "." && name != "..") {
-                std::string fullPath = request->_path + "/" + name;
+                std::string fullPath = path + "/" + name;
                 struct stat pathinfo;
-                if (stat(fullpath.c_str, &pathinfo)) {
+                if (stat(fullPath.c_str(), &pathinfo)) {
                     serveDefaultErrorPage();
                 }
                 else {
-                    if (!isDirectory(fullPath)) {
-                        // Entry is a subdirectory, recursively delete its content
+                    if (isDirectory(fullPath)) {
                         deleteAllDirContent(fullPath, server);
-                        // After deleting the content, remove the empty subdirectory
                         rmdir(fullPath.c_str());
                     } else if (S_ISREG(pathinfo.st_mode)) {
-                        // Entry is a regular file, check if it has write permission
                         if (access(fullPath.c_str(), W_OK) == 0) {
-                            // If the file has write permission, remove it
-                            removeFile(fullPath);
+                            remove(fullPath.c_str());
                             serveErrorPage(server, 204, "No Content");
                         } else {
-                        // Handle cases where the file does not have write permission
-                        // (e.g., log the error, skip deletion, etc.)
                         serveErrorPage(server, 403, "Forbidden");
                         }
                     }

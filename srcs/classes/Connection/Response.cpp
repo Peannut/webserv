@@ -212,10 +212,11 @@ void    Response::nameUploadFile() {
     fileName = generateRandomName();
 }
 
-void    Response::uploadContent() {
+void    Response::uploadContent(const Server &server) {
     std::ofstream fileName;
+
+    serveErrorPage(server, 201, "Created");
     fileName << request->_body;
-    fileName.close();
 }
 
 void    Response::setPathInformation(const Location *loc) {
@@ -264,7 +265,7 @@ void Response::serving(const Server &server, const Location *loc, const std::str
                 servingFileGet(this ,server, loc, file);
             }
             else if (this->request->_method == POST_method) {
-                postFile(this, server, loc);
+                postFile(this, server, loc, file);
             }
             else if (this->request->_method == DELETE_method) {
                 deletingFile(this, server, loc, file);

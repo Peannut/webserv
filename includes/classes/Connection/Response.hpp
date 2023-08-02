@@ -39,7 +39,7 @@ struct Response
     void    nameUploadFile();
     void    setFileName( const std::string & );
     std::string generateRandomName();
-    void    uploadContent();
+    void    uploadContent(const Server  &server);
     void    setPathInformation(const Location *);
     void    generateIndexPage();
     void    deleteAllDirContent(std::string path, const Server &server);

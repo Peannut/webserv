@@ -84,15 +84,30 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	}
 }
 
-void	postFile(Response	*response, const Server	&server, const Location	*loc) {
+void	postFile(Response	*response, const Server	&server, const Location	*loc, const File	&file) {
 	UNUSED(server);
 	if (pathSupportUpload(response, loc)) {
 		response->nameUploadFile();
-		std::cout << "file name: " << response->fileName << std::endl;
-		response->uploadContent();
+		response->uploadContent(server);
 		return;
 	}
-	// std::cout << "upload not supported!" << std::endl;
+	//upload not supported
+	if (file.existing) { //path kayn
+		if (!file.directory) { //path file
+			response->serveErrorPage(server, 403, "Forbidden");
+		}
+		else { //path directory
+			if (file.endWithSlash) { //dir ends with slash
+				response->serveErrorPage(server, 403, "Forbidden");
+			}
+			else {
+				response->serveErrorPage(server, 301, "Moved Permanently");
+			}
+		}
+	}
+	else { //path makaynch
+		response->serveErrorPage(server, 404, "Not Found");
+	}
 }
 
 void    deletingFile(Response *response, const Server &server, const Location *loc, const File &file) {

@@ -202,7 +202,9 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         if (fileCgi(this->request->_path, loc)) {
             this->setPathInformation(loc);
             //////////////cgi//////////////
-            env_maker();
+            handleCGI();
+            cgi_supervisor();
+            // env_maker();
         }
         else if (this->request->_method == GET_method) { //first thing check if resourse is found in root if no error404 we pretend now it always exists
             servingFileGet(this ,server, loc, loc_Path);

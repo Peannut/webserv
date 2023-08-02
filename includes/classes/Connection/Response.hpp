@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/01 18:38:40 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/02 11:04:22 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ struct Response
     void cgi_execve(const Location &loc);
     void data_reader(void);
     void reqbodysend(void);
+    void cgi_wait(void);
     std::string env_grabber(const std::string& key);
     void cgi_supervisor(void);
     // -----------------

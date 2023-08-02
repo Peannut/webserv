@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/01 18:39:37 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/02 16:25:46 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,15 @@ std::string CGIENV_FORMAT(const std::string& str)
 
 int Response::handleCGI(void)
 {   
+    
+
+    if (access(_cgi.loc.cgi_bin.second.c_str(), X_OK))
+    {
+        serveDefaultErrorPage();
+        // 500
+        // serveErrorPage(_cgi._srv, 404, "Not Found");
+    }
+    
     env_maker();
     pipe(_cgi.fd);
     pipe(_cgi.fd2);
@@ -41,14 +50,17 @@ int Response::handleCGI(void)
 
 void Response::data_reader(void)
 {
-    int size = 10000;
-    char buffer[size + 1];
+    char buffer[CGI_BUFFER + 1];
     int bytes_read;
-    bytes_read = read(_cgi.fd[0], buffer, size);
+    bytes_read = read(_cgi.fd[0], buffer, CGI_BUFFER);
     if (!bytes_read)
     {
         close(_cgi.fd[0]);
+		std::string status = "Status: ";
         // error
+
+        _cgi.counter += 1;
+        return ;
     }
     _cgi.body.insert(_cgi.body.end(), buffer, buffer + bytes_read);
 }
@@ -73,10 +85,13 @@ std::string Response::env_grabber(const std::string& key)
 void    Response::reqbodysend(void)
 {
 
-    int content_length = std::stoi(env_grabber("CONTENT_LENGTH"));
+    // int content_length = std::stoi(env_grabber("CONTENT_LENGTH"));
+    int content_length = std::stoi(request->_fields.find("Content-Length")->second);
+
+    // std::cout << "content_length: " << content_length << std::endl;
     size_t read_size = 0;
     size_t write_size = 0;
-
+    // print content_leght in error fd
     if (CGI_BUFFER < _cgi.body.size())
     {
            if (read_size + CGI_BUFFER > content_length)
@@ -119,6 +134,7 @@ void    Response::reqbodysend(void)
 void Response::cgi_execve(const Location &loc)
 {
     _cgi.pid = fork();
+    std::cout << "le pid:" << _cgi.pid << std::endl;
     if (_cgi.pid == 0)
     {
         dup2(_cgi.fd2[0], 0);
@@ -145,11 +161,13 @@ void Response::cgi_execve(const Location &loc)
     
     }
     close(_cgi.fd[1]);
-    close(_cgi.fd2[0]); 
+    close(_cgi.fd2[0]);
+    _cgi.counter++;
 }
 
 void Response::cgiResponse(void)
 {
+    // parse cgi output
     
 
 }
@@ -231,22 +249,38 @@ void Response::cgi_supervisor()
 	switch (_cgi.counter)
 	{
 		case 0:
-			// execcgi;
+			cgi_execve(_cgi.loc); 
 			break;
 		case 1:
-			// send body to cgi;
+            reqbodysend(); // send body to cgi;
 			break;
 		case 2:
-			// waitforcgi;
+			cgi_wait();// waitforcgi;
 			break;
 		case 3: 
-			// readfromcgi;
+			data_reader();// readfromcgi;
 			break;
 		case 4:
 			// cgi response;
 			break;
 	}
 }
+
+void Response::cgi_wait()
+{
+    int status ;
+
+    if (waitpid(_cgi.pid, &status, WNOHANG) == 0)
+    {
+        return ;
+    }
+    if (WEXITSTATUS(status) > 0)
+        serveDefaultErrorPage();
+    
+    _cgi.counter += 1;
+    return ;
+}
+
 // make function to setup the cgi environment
 void Response::env_maker()
 {

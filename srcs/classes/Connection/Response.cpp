@@ -112,6 +112,8 @@ void Response::setResponsefields(const int &sc, const std::string &sm) {
 void    Response::serveDefaultErrorPage() {
     bodyFile.open("srcs/Response/DefaultError/index.html");
     setResponsefields(500, "Internal Server Error");
+    buildResponseHeaders();
+    //kansetti ou makanktebch f message + khasni nbda npasi l file object bach nbda nkhdem bih blast getContent type ect;
 }
 
 std::string Response::generateRandomName() {
@@ -123,11 +125,13 @@ std::string Response::generateRandomName() {
 void	Response::serveErrorPage(const Server &srv, const short &errCode, const std::string &statMessage) {
 	std::map<short, std::string>::const_iterator it = srv.error_pages.find(errCode);
         if(it == srv.error_pages.end()) {
+            std::cout << "mal9ach l error page li bgha!" << std::endl;
             serveDefaultErrorPage();
             return;
         }
         bodyFile.open(it->second.data());
         setResponsefields(errCode, statMessage);
+        buildResponseHeaders();
 }
 
 void Response::fillBodyFile( const Server &server ) { //khas server maydouzch liya const
@@ -150,6 +154,23 @@ void Response::getbodySize( void ) {
     std::streampos filesize = bodyFile.tellg();
     bodyFile.seekg(0);
     contentLength = static_cast<size_t>(filesize);
+}
+
+void    Response::buildResponseHeaders() {
+	std::stringstream tmp;
+	_message += "HTTP/1.1 ";
+	tmp << statusCode;
+	_message += tmp.str();
+	_message += " ";
+	_message += statusMessage;
+	_message += "\r\nContent-Type: ";
+	_message += contentType;
+	_message += "\r\nConnection: Close\r\nContent-lenght: ";
+	tmp.str("");
+	tmp << contentLength;
+	_message += tmp.str();
+	_message += "\r\n\r\n";
+	_message_size = _message.length();
 }
 
 bool Response::hasIndexFile( const Location *loc) {

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/02 11:04:22 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/03 19:37:55 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,15 @@ struct Response
 
 
     //peanut functions
-    void env_maker(void);
-    int handleCGI(void);
+    void env_maker(File &file);
+    int handleCGI(File &file);
     void cgiResponse(void);
-    void cgi_execve(const Location &loc);
+    void cgi_execve(const Location &loc, File &file);
     void data_reader(void);
     void reqbodysend(void);
     void cgi_wait(void);
     std::string env_grabber(const std::string& key);
-    void cgi_supervisor(void);
+    void cgi_supervisor(File &file);
     // -----------------
     void    nameUploadFile();
     void    setFileName( const std::string & );

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/02 19:45:31 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/03 20:17:47 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ std::string CGIENV_FORMAT(const std::string& str)
 {
     std::string result = str;
 
-    if (result != "Content-Type" && result != "Content-Length")
+    if (result != "CONTENT-TYPE" && result != "CONTENT-LENGTH")
         result.insert(0, "HTTP_");
 
     for (size_t i = 0; i < result.length(); ++i)
@@ -31,39 +31,56 @@ std::string CGIENV_FORMAT(const std::string& str)
     return result;
 }
 
-int Response::handleCGI(void)
+int Response::handleCGI(File &file)
 {   
-    
-
-    if (access(_cgi.loc.cgi_bin.second.c_str(), X_OK))
+    if (access(file.loc->cgi_bin.second.c_str(), X_OK))
     {
         serveDefaultErrorPage();
+        std::cout << "505 t catcha" << std::endl;
+        exit(1);
         // 500
         // serveErrorPage(_cgi._srv, 404, "Not Found");
     }
     
-    env_maker();
+    env_maker(file);
     pipe(_cgi.fd);
     pipe(_cgi.fd2);
+    std::cout << "pipe done" << std::endl;
     return (1);
 }
-
-void Response::data_reader(void)
+void Response::data_reader()
 {
     char buffer[CGI_BUFFER + 1];
     int bytes_read;
-    std::string tmp;
-    bytes_read = read(_cgi.fd[0], buffer, CGI_BUFFER);
-    if (!bytes_read)
-    {
-        close(_cgi.fd[0]);
-		// tmp = "Status: ";
-        // error
 
-        _cgi.counter += 1;
-        return ;
+    // Read data from the CGI pipe until there's no more data
+    while ((bytes_read = read(_cgi.fd2[0], buffer, CGI_BUFFER)) > 0)
+    {
+        // Null-terminate the buffer after reading data
+        buffer[bytes_read] = '\0';
+
+        // Append the read data to the cgi_buffer
+        _cgi.cgi_buffer.insert(_cgi.cgi_buffer.end(), buffer, buffer + bytes_read);
     }
-    _cgi.body.insert(_cgi.body.end(), buffer, buffer + bytes_read);
+
+    if (bytes_read == 0)
+    {
+        // No more data to read, close the read end of the pipe
+        close(_cgi.fd2[0]);
+
+        // Handle the CGI output or response here, e.g., store it in a member variable, print it, or process it further.
+        _cgi.cgi_buffer.push_back('\0'); // Null-terminate the buffer
+        std::cout << "CGI Output: " << _cgi.cgi_buffer.data() << std::endl;
+
+        return;
+    }
+    else if (bytes_read == -1)
+    {
+        // Handle read error
+        perror("read");
+        // You can add error handling here
+        return;
+    }
 }
 
 std::string Response::env_grabber(const std::string& key)
@@ -83,193 +100,130 @@ std::string Response::env_grabber(const std::string& key)
     return NULL;
 }
 
-void    Response::reqbodysend(void)
+
+void Response::reqbodysend()
 {
-
-    std::cout << "counter from reqbodysend: " << _cgi.counter << std::endl;
-    // int content_length = std::stoi(env_grabber("CONTENT_LENGTH"));
-    int content_length = std::stoi(request->_fields.find("Content-Length")->second);
-
-    write(3,"testcgi\n",8);
-    size_t read_size = 0;
-    size_t write_size = 0;
-    // print content_leght in error fd
-    if (CGI_BUFFER < _cgi.body.size())
-    {
-           if (read_size + CGI_BUFFER > content_length)
-            {
-                write_size = content_length - read_size;
-                write(_cgi.fd[1], &_cgi.body[0], write_size);
-                _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + write_size);
-            }
-            else
-            {
-                write(_cgi.fd[1], &_cgi.body[0], CGI_BUFFER);
-                _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + CGI_BUFFER);
-            }
-    }
+    int content_length;
+    
+    std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT-LENGTH");
+    if (it != request->_fields.end())
+        content_length = std::stoi(it->second);
     else
+        content_length = 0;
+
+        
+    std::cout << "content_length: from reqbody" << content_length << std::endl;
+
+    // copy request body to _cgi.body
+    for(size_t i = 0; i < request->_body.size(); i++)
+        _cgi.body.push_back(request->_body[i]);
+
+
+    size_t read_size = 0;
+    ssize_t bytes_written = 0;
+    while (read_size < content_length)
     {
-        if (read_size + _cgi.body.size() > content_length)
-        {
-            write_size = content_length - read_size;
-            write(_cgi.fd[1], &_cgi.body[0], write_size);
-            _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + write_size);
-        }
+        size_t write_size;
+        if (_cgi.body.size() > CGI_BUFFER)
+            write_size = std::min(static_cast<size_t>(CGI_BUFFER), content_length - read_size);
         else
+            write_size = std::min(static_cast<size_t>(_cgi.body.size()), content_length - read_size);
+
+
+        std::cout << "write_size: " << write_size << std::endl;
+        bytes_written = write(_cgi.fd[1], _cgi.body.data(), write_size);
+    
+        if (bytes_written == -1)
         {
-            write(_cgi.fd[1], &_cgi.body[0], _cgi.body.size());
-            _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + _cgi.body.size());
+            // Handle write errors
+            // You can use perror("write") or other error handling here
+            break;
         }
+        else if (bytes_written == 0)
+        {
+            // Handle write error when 0 bytes were written (unlikely)
+            // You can use perror("write") or other error handling here
+            break;
+        }
+
+        read_size += bytes_written;
+
+        // Erase the written data from the buffer
+        _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + bytes_written);
     }
 
-    read_size += write_size;
-    if (read_size == content_length || _cgi._srv.client_max_body_size == read_size)
-    {
-        close(_cgi.fd[1]);
-        _cgi.body.clear();
-        _cgi.counter++;
-    }
+    // Close the write end of the pipe, signaling the end of data
+    close(_cgi.fd[1]);
+    close(_cgi.fd2[1]);
+    std::cout << "writen: " << read_size << std::endl;
+    std::cout << "salam" << std::endl;
 }
 
-
-void Response::cgi_execve(const Location &loc)
+void Response::cgi_execve(const Location &loc, File &file)
 {
     _cgi.pid = fork();
-    std::cout << "le pid:" << _cgi.pid << std::endl;
-    if (!_cgi.pid)
-    {
-        std::cout << "here" << std::endl;
-        dup2(_cgi.fd2[0], 0);
-        dup2(_cgi.fd[1], 1);
-        
-        close(_cgi.fd[1]);
-        close(_cgi.fd[0]);
+    if (_cgi.pid == -1) {
+        perror("fork");
+        exit(1);
+    }
 
-        close(_cgi.fd2[1]);
-        close(_cgi.fd2[0]);
-       
-        std::string filepath = _cgi.file_path;
-        char * const av[3] = {
-			const_cast<char * const>(loc.cgi_bin.second.c_str()),
-			const_cast<char * const>(filepath.c_str()),
-            NULL
-		};
-        
-        if (execve(loc.cgi_bin.second.c_str(), av, _cgi.env) == -1)
-        {
-            std::cout << "execve failed" << std::endl;
+    if (_cgi.pid == 0) { // Child process
+        // Close unused file descriptors
+        close(_cgi.fd[1]); // Close write end of the pipe
+        close(_cgi.fd2[0]); // Close read end of the second pipe
+
+        // Redirect standard input and standard output
+        if (dup2(_cgi.fd2[1], STDOUT_FILENO) == -1) {
+            perror("dup2");
             exit(1);
         }
-    
+        if (dup2(_cgi.fd[0], STDIN_FILENO) == -1) {
+            perror("dup2");
+            exit(1);
+        }
+
+        // Close the remaining file descriptors in the child process
+        close(_cgi.fd[0]);
+        close(_cgi.fd2[1]);
+
+        // Set up arguments for execve
+        std::string filepath = *file.fullpath;
+        char * const av[3] = {
+            const_cast<char * const>(file.loc->cgi_bin.second.c_str()),
+            const_cast<char * const>(filepath.c_str()),
+            NULL
+        };
+
+        // Execute the CGI script
+        if (execve(file.loc->cgi_bin.second.c_str(), av, _cgi.env) == -1) {
+            perror("execve");
+            exit(1);
+        }
+    } else { // Parent process
+        // Close the unused ends of the pipes in the parent process
+        close(_cgi.fd[0]);
+        close(_cgi.fd2[1]);
     }
-    close(_cgi.fd[1]);
-    close(_cgi.fd2[0]);
-    _cgi.counter++;
-    std::cout << "counter:" << _cgi.counter << std::endl;
+
+    // Parent continues here
+    std::cout << "Child process PID: " << _cgi.pid << std::endl;
 }
 
 void Response::cgiResponse(void)
 {
-    // parse cgi output
     
 
 }
 
-
-// std::string extract_path_info(const std::string& full_path) {
-//     std::size_t first_dot_pos = full_path.find('.');
-//     if (first_dot_pos != std::string::npos) {
-//         // Find the next occurrence of '/' after the first dot
-//         std::size_t next_slash_pos = full_path.find('/', first_dot_pos);
-//         std::size_t query_pos = full_path.find('?', first_dot_pos);
-
-//         if (next_slash_pos <= query_pos)
-//             return full_path.substr(next_slash_pos, query_pos - next_slash_pos);
-//     }
-
-//     // If the dot or slash is not found, or the next slash is not present, or '?' appears before the next slash, return an empty string
-//     return "/";
-// }
-
-// std::string extract_path_info(const std::string& full_path) {
-//     std::size_t first_dot_pos = full_path.find('.');
-//     if (first_dot_pos != std::string::npos) {
-//         // Find the next occurrence of '/' after the first dot
-//         std::size_t next_slash_pos = full_path.find('/', first_dot_pos);
-//         std::size_t query_pos = full_path.find('?', first_dot_pos);
-
-//         if (query_pos != std::string::npos && next_slash_pos > query_pos) {
-//             // If a '?' appears before the next slash, return the substring between next_slash_pos and query_pos
-//             return full_path.substr(next_slash_pos, query_pos - next_slash_pos);
-//         } else if (next_slash_pos != std::string::npos) {
-//             // If there is no '?', extract the path_info from the string between first_dot_pos and next_slash_pos
-//             return full_path.substr(next_slash_pos,  query_pos - next_slash_pos);
-//         }
-//     }
-
-//     // If the dot or slash is not found, or the next slash is not present, or '?' does not appear before the next slash, return an empty string
-//     return "/";
-// }
-
-
-std::string get_filepath(const std::string &path)
-{
-    std::size_t first_dot_pos = path.find('.');
-    if (first_dot_pos != std::string::npos) {
-        // Find the next occurrence of '/' after the first dot
-        std::size_t next_slash_pos = path.find('/', first_dot_pos);
-        std::size_t query_pos = path.find('?', first_dot_pos);
-
-        if (query_pos != std::string::npos && next_slash_pos > query_pos) {
-            // If a '?' appears before the next slash, return the substring between next_slash_pos and query_pos
-            return path.substr(0, query_pos);
-        } else if (next_slash_pos != std::string::npos) {
-            // If there is no '?', extract the path_info from the string between first_dot_pos and next_slash_pos
-            return path.substr(0, next_slash_pos);
-        }
-    }
-
-    // If the dot or slash is not found, or the next slash is not present, or '?' does not appear before the next slash, return an empty string
-    return path;
-}
-
-std::string extract_file_path(const std::string &path)
-{
-    std::size_t first_dot_pos = path.find('.');
-    if (first_dot_pos != std::string::npos) {
-        // Find the next occurrence of '/' after the first dot
-        std::size_t next_slash_pos = path.find('/', first_dot_pos);
-
-        if (next_slash_pos != std::string::npos) {
-            return path.substr(0, next_slash_pos);
-        }
-    }
-    return path;
-}
-
-void Response::cgi_supervisor()
+void Response::cgi_supervisor(File &file)
 {
     std::cout << "supervisor" << std::endl;
-    std::cout << "counter:" << _cgi.counter << std::endl;
-	switch (_cgi.counter)
-	{
-		case 0:
-			cgi_execve(_cgi.loc); 
-			break;
-		case 1:
-            reqbodysend(); // send body to cgi;
-			break;
-		case 2:
-			cgi_wait();// waitforcgi;
-			break;
-		case 3: 
-			data_reader();// readfromcgi;
-			break;
-		case 4:
-			// cgi response;
-			break;
-	}
+
+    cgi_execve(_cgi.loc, file);
+    reqbodysend();
+    cgi_wait();
+    data_reader();
+    cgiResponse();
 }
 
 void Response::cgi_wait()
@@ -282,19 +236,18 @@ void Response::cgi_wait()
     }
     if (WEXITSTATUS(status) > 0)
         serveDefaultErrorPage();
-    
-    _cgi.counter += 1;
+
     return ;
 }
 
 // make function to setup the cgi environment
-void Response::env_maker()
+void Response::env_maker(File &file)
 {
-    std::cout << "hello" << std::endl;
+    std::cout << "hello env_maker" << std::endl;
 	
     int size = request->_fields.size();
 	std::cout << "size cgiii" << size << std::endl;
-	_cgi.env = new char*[size+ 5]();
+	_cgi.env = new char*[size+ 6]();
 	
 	int i = 0;
     std::map<std::string, std::string>::iterator it = request->_fields.begin();
@@ -303,20 +256,18 @@ void Response::env_maker()
 		
         _cgi.env[i] = new char[it->first.size() + it->second.size() + 7];
         std::string line = CGIENV_FORMAT(it->first) + "=" + it->second;
-        std::copy(line.begin(), line.end(), _cgi.env[i]);
+        std::strcpy(_cgi.env[i], line.c_str());
+        // std::copy(line.begin(), line.end(), _cgi.env[i]);
 		it++;
 		i++;
 	}
 
+    std::string fullpath = *file.fullpath;
     _cgi.env[i++] = strdup("SERVER_PROTOCOL=HTTP/1.1");
-    // _cgi.pathinfo = extract_path_info(request->_path);
-	_cgi.env[i++] = strdup("PATH_INFO=/");
+    _cgi.env[i++] = strdup(("SCRIPT_FILENAME=" + fullpath).c_str());
+    _cgi.env[i++] = strdup(("PATH_INFO=" + fullpath).c_str());
     _cgi.env[i++] = strdup(("QUERY_STRING=" + request->_query).c_str());
-    // ask about this
-    // std::string full_path = "/home/peanut/webserv/srcs/Response/DefaultError/test.py/folder/next?a=x";
 
-    // std::string r = extract_path_info(full_path);
-    // std::cout << "rrrrrrrr:" <<r << std::endl;
     Methods method = request->get_method();
     std::string val;
     switch (method) {
@@ -332,7 +283,10 @@ void Response::env_maker()
         break;
     }
     _cgi.env[i++] = strdup(("REQUEST_METHOD="+ val).c_str());
+    _cgi.env[i] = NULL;
     int sizo = i;
+    std::cout << "the whole env" << std::endl;
+
     for (int i = 0; i < sizo ; i++)
     {
         if (_cgi.env[i] != nullptr)
@@ -340,7 +294,6 @@ void Response::env_maker()
             std::cout << _cgi.env[i] << std::endl;
         }
     }
-    _cgi.file_path = get_filepath(request->_path);
     // std::cout << "file pathaaaaa:" << _cgi.file_path << std::endl;
     // std::cout << "path d zwina:" << request->_path << std::endl;
     std::cout << "body jay mn zwina" <<request->_body << std::endl;

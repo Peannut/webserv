@@ -258,8 +258,9 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
             //////////////cgi//////////////
-            handleCGI();
-            cgi_supervisor();
+        
+            handleCGI(file);
+            cgi_supervisor(file);
             // env_maker();
         }
         else {

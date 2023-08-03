@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 
 print("Content-type: text/plain\n")
 print("Hello, CGI!")

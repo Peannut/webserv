@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/01 19:02:02 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/03 19:34:06 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include "prototypes.hpp"
 
-#define CGI_BUFFER 10000
+#define CGI_BUFFER 10
 
 struct 	Cgi
 {
@@ -25,11 +25,13 @@ struct 	Cgi
 	std::string pathinfo;
 	int	fd[2];
 	int fd2[2];
-	std::string file_path;
 	std::vector<char> body;
-	int counter;
+	std::vector<char> cgi_buffer;
 	Server _srv;
 	Location loc;
+
+
+	Cgi(): env(NULL), pid(-1) {}
 };
 
 #endif // ! CGI_HPP

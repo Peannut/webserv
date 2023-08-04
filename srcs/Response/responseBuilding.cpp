@@ -46,34 +46,30 @@ void    buildResponseHeaders(Response *response) {
 	response->_message_size = response->_message.length();
 }
 
-void servingFileGet(Response *response ,const Server &server, const Location *loc, const std::string &loc_Path) {
-	UNUSED(loc_Path);
-	if (resourceExists(response->request->_path)) { //file does exists
-		if (!isDirectory(response->request->_path)) { //resource is a file
-			if (!fileCgi(response->request->_path, loc)) {//file has no cgi => serve it;
-				response->fillBodyFile(server);
-				response->getbodySize();
-				buildResponseHeaders(response);
-			}
-			else {//file has cgi
-				///////////////CGI/////////////////
-			}
+void servingFileGet(Response *response ,const Server &server, const Location *loc, const File &file) { 
+	std::cout << "file existing: " << file.existing << " directory: " << file.directory << " with slash: " << file.endWithSlash <<std::endl;
+	if (file.existing) { //file does exists
+		if (!file.directory) { //resource is a file
+			response->fillBodyFile(server);
+			response->getbodySize();
+			buildResponseHeaders(response);
 		}
 		else { //file is a directory
-			if (hasSlashEnd(response->request->_path)) {
-				if (response->hasAutoIndex(loc)) { // check autoindex
-					if (!fileCgi(response->request->_path, loc)) {
-						response->fillBodyFile(server);
-						response->getbodySize();
-						buildResponseHeaders(response);
-					}
-					else {//file has cgi
-						///////////////CGI/////////////////
-					}
+			if (file.endWithSlash) {
+				std::cout << "l9a repo ou fih slash felekher" << std::endl;
+				if (file.indexFound) { // check autoindex
+					response->fillBodyFile(server);
+					response->getbodySize();
+					buildResponseHeaders(response);
 				}
 				else { //no index should check autoindex here
 					if (!loc->autoindex) {
 						response->serveErrorPage(server, 403, "Forbidden");
+					}
+					else {// auto index
+						response->setResponsefields(200, "OK");
+						response->_message += "\r\n\r\n";
+						response->generateIndexPage();
 					}
 				}
 			}
@@ -88,31 +84,41 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 	}
 }
 
-void	postFile(Response	*response, const Server	&server, const Location	*loc) {
+void	postFile(Response	*response, const Server	&server, const Location	*loc, const File	&file) {
 	UNUSED(server);
 	if (pathSupportUpload(response, loc)) {
 		response->nameUploadFile();
-		std::cout << "file name: " << response->fileName << std::endl;
-		response->uploadContent();
+		response->uploadContent(server);
 		return;
 	}
-	// std::cout << "upload not supported!" << std::endl;
-
-}
-
-void    deletingFile(Response *response, const Server &server, const Location *loc) {
-	if (resourceExists(response->request->_path)){
-		if (!isDirectory(response->request->_path)) {
-			if(!fileCgi(response->request->_path, loc)) {
-				response->removeFile(server);
+	//upload not supported
+	if (file.existing) { //path kayn
+		if (!file.directory) { //path file
+			response->serveErrorPage(server, 403, "Forbidden");
+		}
+		else { //path directory
+			if (file.endWithSlash) { //dir ends with slash
+				response->serveErrorPage(server, 403, "Forbidden");
 			}
 			else {
-				//////////////CGI//////////////
+				response->serveErrorPage(server, 301, "Moved Permanently");
 			}
+		}
+	}
+	else { //path makaynch
+		response->serveErrorPage(server, 404, "Not Found");
+	}
+}
+
+void    deletingFile(Response *response, const Server &server, const Location *loc, const File &file) {
+	UNUSED(loc);
+	if (file.existing){
+		if (!file.directory) {
+				response->removeFile(server);
 		}
 		else {//directory
 			if (hasSlashEnd(response->request->_path)) {
-				//chi haja machi tal tem f schema;
+				response->deleteAllDirContent(response->request->_path, server);
 			}
 			else { // makaynach slash
 				response->serveErrorPage(server, 409, "Conflict");

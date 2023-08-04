@@ -23,6 +23,21 @@ bool pathSupportUpload(Response *response, const Location *loc) {
 	return (response->request->_path == loc->upload_pass);
 }
 
+bool outilsHasIndex( std::string *path, const Location *loc) {
+    for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
+        std::string fullpath = *path + '/' +  *it;
+        std::ifstream indexFile(fullpath.data());
+        if (resourceExists(fullpath)) {
+            *path = fullpath;
+			// if extention is not cgi == false
+			size_t dot = path->find_last_of('.');
+			std::string extention= path->substr(dot, path->length() - dot);
+			return extention == loc->cgi_bin.first;
+        }
+    }
+    return false;
+}
+
 // std::string searchFile(const std::string& requestedPath, const std::map<std::string, std::string>& locationRoots) {
 //     std::string filePath;
 
@@ -48,14 +63,37 @@ bool pathSupportUpload(Response *response, const Location *loc) {
 //     return filePath;
 // }
 
-bool	fileCgi(const std::string &fullpath, const Location *loc) {
+bool	fileCgi(std::string fullpath, const Location *loc) {
 	if (!loc->cgi_bin.first.empty()) {
-		size_t lastdot = fullpath.find_last_of('.');
-		if (lastdot == std::string::npos) {
-			return false;
+		std::string dot = ".";
+		std::string conType;
+		size_t index = 0;
+		while ((index = fullpath.find(dot, index)) != std::string::npos) {
+			std::cout << "DKHELT L WHILE!" << std::endl;
+			size_t closestSlash = fullpath.find_first_of('/', index);
+			size_t closestQuestionmark = fullpath.find_first_of('?', index);
+			if (closestSlash == std::string::npos && closestQuestionmark == std::string::npos) {
+				conType = fullpath.substr(index, fullpath.length() - index);
+				if (!isDirectory(fullpath)) {
+					return conType == loc->cgi_bin.first;
+				}
+				if (!outilsHasIndex(&fullpath, loc)) {
+					return false;
+				}
+				// std::cout << "file Extention = " << conType << "-------" << "cgi Extention = " << loc->cgi_bin.first << std::endl;
+				return true; //gotta take index file extention;
+			}
+			else {
+				size_t delimiter = (closestSlash < closestQuestionmark) ? closestSlash : closestQuestionmark;
+				conType = fullpath.substr(index, delimiter - index);
+				if (conType == loc->cgi_bin.first) {
+					std::cout << "l9it l file with cgi lwest!" << std::endl;
+					return true;
+				}
+				index = delimiter + 1;
+			}
+			std::cout << "file Extention = " << conType << "-------" << "cgi Extention = " << loc->cgi_bin.first << std::endl;
 		}
-		std::string conType = fullpath.substr(lastdot + 1, fullpath.length() - lastdot);
-		return conType == loc->cgi_bin.first;
 	}
 	return false;
 }

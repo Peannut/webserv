@@ -331,6 +331,10 @@ void Config::setupServer(std::ifstream& file)
             {
                 throw std::runtime_error("Error: No location with root set in the server");
             }
+			 if (!hasRootInServer && location_exist)
+            {
+                throw std::runtime_error("Error: No location with root set in the server");
+            }
 			config.push_back(server);
 			break;
 		}
@@ -384,11 +388,16 @@ void	Config::setupconfig(const std::string& filename)
 		if (line_empty(line))
 			continue ;
 		if (!line.compare(0,7,"server:"))
+		{
 			setupServer(file);
+			
+		}
 		else
 			throw std::runtime_error("Error: invalid directive");
 		
 	}
+	// print config size
+	// std::cout << "SIIIIIZE" << config.size() << std::endl;
+	// print config
 	file.close();
-	removeDuplicateServers();
 }

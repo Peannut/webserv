@@ -69,7 +69,9 @@ void Request::field_last_CRLF_mode(const char & c)
     {
         if (_fields.find("HOST") == _fields.end())
             set_error(400);
-        else if (_transfer != none_tr && _fields.find("CONTENT-TYPE") == _fields.end())
+        else if (((_transfer == content_tr && _transfer_content_len > 0) || \
+                (_transfer == chunk_tr)) && \
+                _fields.find("CONTENT-TYPE") == _fields.end())
             set_error(415);
         else
         {

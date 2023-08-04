@@ -29,30 +29,13 @@ void	buildErrorResponse(const Server &server, Response *response) {
 	response->serveDefaultErrorPage();
 }
 
-void    buildResponseHeaders(Response *response) {
-	std::stringstream tmp;
-	response->_message += "HTTP/1.1 ";
-	tmp << response->statusCode;
-	response->_message += tmp.str();
-	response->_message += " ";
-	response->_message += response->statusMessage;
-	response->_message += "\r\nContent-Type: ";
-	response->_message += response->contentType;
-	response->_message += "\r\nConnection: Close\r\nContent-lenght: ";
-	tmp.str("");
-	tmp << response->contentLength;
-	response->_message += tmp.str();
-	response->_message += "\r\n\r\n";
-	response->_message_size = response->_message.length();
-}
-
 void servingFileGet(Response *response ,const Server &server, const Location *loc, const File &file) { 
 	std::cout << "file existing: " << file.existing << " directory: " << file.directory << " with slash: " << file.endWithSlash <<std::endl;
 	if (file.existing) { //file does exists
 		if (!file.directory) { //resource is a file
 			response->fillBodyFile(server);
 			response->getbodySize();
-			buildResponseHeaders(response);
+			response->buildResponseHeaders();
 		}
 		else { //file is a directory
 			if (file.endWithSlash) {
@@ -60,7 +43,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 				if (file.indexFound) { // check autoindex
 					response->fillBodyFile(server);
 					response->getbodySize();
-					buildResponseHeaders(response);
+					response->buildResponseHeaders();
 				}
 				else { //no index should check autoindex here
 					if (!loc->autoindex) {
@@ -70,6 +53,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 						response->setResponsefields(200, "OK");
 						response->_message += "\r\n\r\n";
 						response->generateIndexPage();
+						response->buildResponseHeaders();
 					}
 				}
 			}
@@ -89,6 +73,7 @@ void	postFile(Response	*response, const Server	&server, const Location	*loc, con
 	if (pathSupportUpload(response, loc)) {
 		response->nameUploadFile();
 		response->uploadContent(server);
+		response->buildResponseHeaders();
 		return;
 	}
 	//upload not supported
@@ -114,11 +99,13 @@ void    deletingFile(Response *response, const Server &server, const Location *l
 	UNUSED(loc);
 	if (file.existing){
 		if (!file.directory) {
-				response->removeFile(server);
+			response->removeFile(server);
+			response->buildResponseHeaders();
 		}
 		else {//directory
 			if (hasSlashEnd(response->request->_path)) {
 				response->deleteAllDirContent(response->request->_path, server);
+				response->buildResponseHeaders();
 			}
 			else { // makaynach slash
 				response->serveErrorPage(server, 409, "Conflict");

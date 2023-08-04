@@ -57,6 +57,7 @@ struct Response
     void    setPathInformation(const Location *);
     void    generateIndexPage();
     void    deleteAllDirContent(std::string path, const Server &server);
+    void    buildResponseHeaders( void );
 };
 
 #endif // RESPONSE_HPP

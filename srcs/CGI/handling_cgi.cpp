@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/03 20:17:47 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/05 16:51:03 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,10 @@ int Response::handleCGI(File &file)
     std::cout << "pipe done" << std::endl;
     return (1);
 }
+#include <algorithm> // for std::search
+
+
+
 void Response::data_reader()
 {
     char buffer[CGI_BUFFER + 1];
@@ -211,9 +215,86 @@ void Response::cgi_execve(const Location &loc, File &file)
 
 void Response::cgiResponse(void)
 {
-    
+    // Convert vector of char to a string
+    _message.assign(_cgi.cgi_buffer.begin(), _cgi.cgi_buffer.end());
 
+    // Find the position of "HTTP/1.1" in the buffer
+    size_t http_pos = _message.find("HTTP/1.1");
+
+    // If "HTTP/1.1" is not found, replace "Status" with "HTTP/1.1 200 OK\r\n"
+    if (http_pos == std::string::npos)
+    {
+        size_t status_pos = _message.find("Status: ");
+        if (status_pos != std::string::npos)
+        {
+            _message.replace(status_pos, 7, "HTTP/1.1");
+        }
+        else
+        {
+            // If "Status" is not found, add "HTTP/1.1 200 OK\r\n" at the beginning
+            _message.insert(0, "HTTP/1.1");
+        }
+    }
+
+    // Check if "\r\n\r\n" is present in the buffer; if not, add it
+    if (_message.find("\r\n\r\n") == std::string::npos)
+    {
+        _message.insert(_message.find("\r\n\r\n"), "\r\n");
+    }
+
+    // Print or store the modified CGI output
+    std::cout << "Modified CGI Output:\n" << _message << std::endl;
+
+
+    // now split the buffer into headers and body
+    // _message is the header
+
+    
 }
+
+
+
+// void Response::cgiResponse()
+// {
+//     // Convert vector of char to string (Assuming _cgi.cgi_buffer is std::vector<char>)
+//     std::string cgi_buffer(_cgi.cgi_buffer.begin(), _cgi.cgi_buffer.end());
+
+//     // Check if "Status: " is present and insert HTTP version if it doesn't exist
+//     if (cgi_buffer.find("Status: ") == std::string::npos)
+//     {
+//         // Append the HTTP version and status line
+//         cgi_buffer.insert(0, "HTTP/1.1 200 OK\r\n");
+//     }
+
+//     // Check for the presence of a blank line in the buffer
+//     if (cgi_buffer.find("\r\n\r\n") == std::string::npos)
+//     {
+//         // If a blank line is not present, add it after the headers
+//         cgi_buffer.insert(cgi_buffer.find("\r\n\r\n"), "\r\n");
+//     }
+
+//     // Print or process the modified CGI output as needed
+//     std::cout << "Modified CGI Output: " << std::endl;
+//     std::cout << cgi_buffer << std::endl;
+
+//     // You can assign the modified CGI output to Response members (e.g., content, contentType, etc.) as required.
+//     // For example, you can do:
+//     // this->content = cgi_buffer;
+// }
+
+// void Response::cgiResponse(void)
+// {
+//     // convert vector of char to fstream
+//     std::string cgi_buffer(_cgi.cgi_buffer.begin(), _cgi.cgi_buffer.end());
+//     // check for start line and headers)
+//     std::cout << "cgiResponse" << std::endl;
+//     if (cgi_buffer.find("Status: ") != std::string::npos)
+//         cgi_buffer.insert(0, "HTTP/1.1 Status: 200 OK\r\n");
+//     if (cgi_buffer.find("\r\n\r\n") == std::string::npos)
+//         cgi_buffer.insert(cgi_buffer.find("\r\n\r\n"), "\r\n");
+//     std::cout << "cgiResponse" << std::endl;
+//     std::cout << cgi_buffer << std::endl;
+// }
 
 void Response::cgi_supervisor(File &file)
 {

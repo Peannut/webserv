@@ -12,14 +12,18 @@ foreach ($cookies as $cookie) {
 }
 
 if (isset($_COOKIE['testing_cookies'])) {
-    echo "Status: 200 OK\r\n";
+    echo "HTTP/1.1 200 OK\r\n";
     echo "Content-Type: text/html\r\n";
+    echo "Host: localhost\r\n";
+    echo "Content-Length: 100\r\n";
     $cookieValue = is_numeric($_COOKIE['testing_cookies']) ? intval($_COOKIE['testing_cookies']) + 1 : 0;
     echo "Set-Cookie: testing_cookies=" . $cookieValue . "\r\n\r\n";
     echo "testing_cookies = " . $cookieValue;
 } else {
     echo "Status: 404 Not Found\r\n";
     echo "Content-Type: text/html\r\n";
+    echo  "Host: localhost\r\n";
+    echo "Content-Length: 100\r\n";
     echo "Set-Cookie: testing_cookies=0\r\n\r\n";
     echo "No cookie found.";
 }

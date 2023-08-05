@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/02 17:11:10 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/05 21:54:10 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,6 @@ bool isTransferEncodingValValid(const std::string & val);
 size_t matching_location(const std::string & path, const std::string & location_path);
 // </--Response/utils.cpp-->
 std::string readResource(const std::string &path);
-bool isDirectory(const std::string &path);
-bool hasSlashEnd(const std::string &path);
-bool resourceExists (const std::string &path);
-std::string readResource(const std::string &path);
-Response generateResponse(const Request &request);
-void	buildErrorResponse(const Server &server, Response *response);
 std::string findErrorPage(const Response &response,const Server &srv);
 bool        isDirectory(const std::string &path);
 bool        hasSlashEnd(const std::string &path);

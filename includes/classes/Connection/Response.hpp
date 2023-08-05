@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/03 19:37:55 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/05 17:31:13 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ struct Response
     void    setPathInformation(const Location *);
     void    generateIndexPage();
     void    deleteAllDirContent(std::string path, const Server &server);
+    void    buildResponseHeaders( void );
 };
 
 #endif // RESPONSE_HPP

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/05 16:51:03 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/05 22:15:11 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,19 @@ int Response::handleCGI(File &file)
     }
     
     env_maker(file);
+    if (access(file.loc->cgi_bin.second.c_str(), X_OK))
+    {
+        serveDefaultErrorPage();
+        std::cout << "505 t catcha" << std::endl;
+        exit(1);
+        // 500
+        // serveErrorPage(_cgi._srv, 404, "Not Found");
+    }
+    
+    env_maker(file);
     pipe(_cgi.fd);
     pipe(_cgi.fd2);
+    std::cout << "pipe done" << std::endl;
     std::cout << "pipe done" << std::endl;
     return (1);
 }
@@ -73,7 +84,7 @@ void Response::data_reader()
         close(_cgi.fd2[0]);
 
         // Handle the CGI output or response here, e.g., store it in a member variable, print it, or process it further.
-        _cgi.cgi_buffer.push_back('\0'); // Null-terminate the buffer
+        // _cgi.cgi_buffer.push_back('\0'); // Null-terminate the buffer
         std::cout << "CGI Output: " << _cgi.cgi_buffer.data() << std::endl;
 
         return;
@@ -165,12 +176,13 @@ void Response::reqbodysend()
 
 void Response::cgi_execve(const Location &loc, File &file)
 {
+    UNUSED(loc);
     _cgi.pid = fork();
+    
     if (_cgi.pid == -1) {
         perror("fork");
         exit(1);
     }
-
     if (_cgi.pid == 0) { // Child process
         // Close unused file descriptors
         close(_cgi.fd[1]); // Close write end of the pipe
@@ -197,17 +209,20 @@ void Response::cgi_execve(const Location &loc, File &file)
             const_cast<char * const>(filepath.c_str()),
             NULL
         };
-
         // Execute the CGI script
         if (execve(file.loc->cgi_bin.second.c_str(), av, _cgi.env) == -1) {
             perror("execve");
             exit(1);
         }
-    } else { // Parent process
+    } 
+    else { // Parent process
         // Close the unused ends of the pipes in the parent process
         close(_cgi.fd[0]);
         close(_cgi.fd2[1]);
     }
+
+    // Parent continues here
+    std::cout << "Child process PID: " << _cgi.pid << std::endl;
 
     // Parent continues here
     std::cout << "Child process PID: " << _cgi.pid << std::endl;
@@ -244,6 +259,7 @@ void Response::cgiResponse(void)
 
     // Print or store the modified CGI output
     std::cout << "Modified CGI Output:\n" << _message << std::endl;
+    _message_size = _message.length();
 
 
     // now split the buffer into headers and body
@@ -300,6 +316,7 @@ void Response::cgi_supervisor(File &file)
 {
     std::cout << "supervisor" << std::endl;
 
+    cgi_wait();
     cgi_execve(_cgi.loc, file);
     reqbodysend();
     cgi_wait();
@@ -311,7 +328,7 @@ void Response::cgi_wait()
 {
     int status ;
 
-    if (waitpid(_cgi.pid, &status, WNOHANG) == 0)
+    if (_cgi.pid != -1 && waitpid(_cgi.pid, &status, WNOHANG) == 0)
     {
         return ;
     }

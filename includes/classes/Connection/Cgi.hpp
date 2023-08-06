@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/05 17:30:21 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/06 12:14:35 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,16 @@ struct 	Cgi
 
 
 	Cgi(): env(NULL), pid(-1) {}
+	
+	~Cgi() {
+		if (env)
+		{
+			int i = 0;
+			while (env[i])
+				delete env[i++];
+			delete env;
+		}
+	}
 };
 
 #endif // ! CGI_HPP

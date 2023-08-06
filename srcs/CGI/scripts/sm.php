@@ -11,7 +11,6 @@ $content_length = strlen($html_content);
 // Send the content
 echo ("Status: 200 OK\r\n");
 echo ("Host: localhost\r\n");
-echo ("Connection: Close\r\n");
 echo ("Content-Type: text/html\r\n");
 echo ("Content-length: $content_length\r\n\r\n");
 

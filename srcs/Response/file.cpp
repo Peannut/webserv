@@ -18,15 +18,26 @@ bool File::nameHasSlash() {
 }
 
 void	File::extractFileName() {
+	std::string tmp;
+	size_t questionMark = uri.find_first_not_of('?');
 	size_t lastSlash = uri.find_last_of('/');
-	if (lastSlash == uri.length() - 1) {//slash mamorah walou
+
+	tmp = questionMark != std::string::npos ? tmp = uri.substr(0, uri.length() - questionMark) : uri;
+	// if (questionMark != std::string::npos) {
+	// 	tmp = uri.substr(0, uri.length() - questionMark);
+	std::cout << "new string is = " << tmp << std::endl;
+	// }
+	// std::cout << "akhir slash morah = " <<"**"<<tmp.at(questionMark) <<"**"<< std::endl;
+	if (lastSlash == tmp.length() - 1) {//slash mamorah walou oula morah question mark
 		if (lastSlash == 0) { //makayn walou 7ta 9bel slash
 			filename = "/";
 			return;
 		}
-		lastSlash = uri.find_last_of('/', uri.length() - 2);
+		size_t newDelim = lastSlash - 1;
+		lastSlash = tmp.find_last_of('/', newDelim);
 	}
-	filename = uri.substr(lastSlash + 1, uri.length() - lastSlash);
+	filename = tmp.substr(lastSlash + 1, tmp.length() - lastSlash);
+	std::cout << "*********file name is = " << filename << "*********" << std::endl;
 }
 
 void	File::extractExtention() {
@@ -40,6 +51,7 @@ void	File::extractExtention() {
 		nameLenght -= 1;
 	}
 	extention = filename.substr(dot, nameLenght - dot);
+	std::cout << "---------file extention is = " << extention << "---------" << std::endl;
 }
 
 void	File::separatePathInfo() {

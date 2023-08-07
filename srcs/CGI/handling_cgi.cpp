@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/07 17:35:23 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/07 19:44:40 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,8 +314,6 @@ void Response::cgiResponse(void)
     // Print or store the modified CGI output
     std::cout << "Modified CGI Output:\n" << _message << std::endl;
     _message_size = _message.length();
-
-    // Now, _message is separated into headers and body
 }
 
 

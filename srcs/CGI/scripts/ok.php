@@ -1,4 +1,6 @@
 <?php
+
+setcookie("test_cookie", "Hello, Cookie!", time() + 3600); // Cookie will expire in 1 hour (3600 seconds)
 // Check if the cookie is set and display its value
 if (isset($_COOKIE["test_cookie"])) {
     $cookieValue = $_COOKIE["test_cookie"];

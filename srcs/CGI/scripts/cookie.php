@@ -9,22 +9,18 @@ foreach ($cookies as $cookie) {
     $value = isset($parts[1]) ? trim($parts[1]) : '';
     $_COOKIE[$name] = $value;
 }
-// TAKE IT FROM ENV VAR
-// $cookieValue = is_numeric($_COOKIE['testing_cookies']) ? intval($_COOKIE['testing_cookies']) + 1 : 0;
-$content_length = strlen("your cookie value is = " . $cookieValue);
 
 if (isset($_COOKIE['testing_cookies'])) {
     echo "Status: 200 OK\r\n";
     echo "Content-Type: text/html\r\n";
-    echo "Content-length: $content_length\r\n";
     $cookieValue = is_numeric($_COOKIE['testing_cookies']) ? intval($_COOKIE['testing_cookies']) + 1 : 0;
     echo "Set-Cookie: testing_cookies=" . $cookieValue . "\r\n\r\n";
-    echo "your cookie value is = " . $cookieValue;
+    echo "testing_cookies = " . $cookieValue;
 } else {
     echo "Status: 404 Not Found\r\n";
     echo "Content-Type: text/html\r\n";
     echo "Set-Cookie: testing_cookies=0\r\n\r\n";
     echo "No cookie found.";
-}
+}li
 
 ?>

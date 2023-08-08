@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/08 16:22:49 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/08 19:51:06 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,25 +43,11 @@ int Response::handleCGI(File &file)
     }
     
     env_maker(file);
-    if (access(file.loc->cgi_bin.second.c_str(), X_OK))
-    {
-        serveDefaultErrorPage();
-        std::cout << "505 t catcha" << std::endl;
-        exit(1);
-        // 500
-        // serveErrorPage(_cgi._srv, 404, "Not Found");
-    }
-    
-    env_maker(file);
     pipe(_cgi.fd);
     pipe(_cgi.fd2);
     std::cout << "pipe done" << std::endl;
-    std::cout << "pipe done" << std::endl;
     return (1);
 }
-#include <algorithm> // for std::search
-
-
 
 void Response::data_reader()
 {
@@ -322,26 +308,26 @@ void Response::cgi_supervisor(File &file)
 {
     std::cout << "supervisor" << std::endl;
 
-    cgi_wait();
     cgi_execve(_cgi.loc, file);
     reqbodysend();
     cgi_wait();
-    data_reader();
-    cgiResponse();
 }
 
 void Response::cgi_wait()
 {
-    int status ;
+    int status;
 
-    if (_cgi.pid != -1 && waitpid(_cgi.pid, &status, WNOHANG) == 0)
-    {
-        return ;
-    }
-    if (WEXITSTATUS(status) > 0)
+    err = waitpid(_cgi.pid, &status, WNOHANG);
+    if (err == 0)
+        return;
+    else if (err == -1 || WEXITSTATUS(status) > 0)
         serveDefaultErrorPage();
-
-    return ;
+    else if (err == _cgi.pid)
+    {
+        data_reader();
+        cgiResponse(); 
+    }
+    _cgi._isDone = true;
 }
 
 // make function to setup the cgi environment

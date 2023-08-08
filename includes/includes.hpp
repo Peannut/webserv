@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/08/06 23:04:15 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/08 19:02:18 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/stat.h>
+#include <signal.h>
 #include <dirent.h>
 #include <netdb.h>
 #include <fcntl.h>

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:03 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/14 10:35:40 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/08 19:47:36 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,18 @@ void start_multiplexing(WebServ & webserv)
             {
                 if (conn._isListen)
                     accepting(webserv, i);
+                else if (conn.get_passed_time() > TIMEOUT)
+                    webserv.remove_connection(i);
                 else
                     receiving(webserv, i);
             }
             else if (conn.can_write())
-                sending(webserv, i);
+            {
+                if (conn.get_res()._cgi.pid != -1 && !conn.get_res()._cgi._isDone)
+                    conn.get_res().cgi_wait();
+                else
+                    sending(webserv, i);
+            }
             else if (conn.is_error() || (!conn._isListen && conn.get_passed_time() > TIMEOUT))
                 webserv.remove_connection(i);
         }

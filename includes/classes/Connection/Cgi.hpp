@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/06 12:14:35 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/08 19:48:27 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 
 struct 	Cgi
 {
-
 	pid_t pid;
 	char **env;
 	std::string pathinfo;
@@ -27,18 +26,24 @@ struct 	Cgi
 	int fd2[2];
 	std::vector<char> body;
 	std::vector<char> cgi_buffer;
+	bool _isDone;
 	Server _srv;
 	Location loc;
 
 
-	Cgi(): env(NULL), pid(-1) {}
 	
+	Cgi(): pid(-1), env(NULL), _isDone() {}
 	~Cgi() {
+		std::cout << "=========================================================" << std::endl;
 		if (env)
 		{
+			std::cout << "******************************************************************" << std::endl;
 			int i = 0;
 			while (env[i])
+			{
+				std::cout << "deleted" << std::endl;
 				delete env[i++];
+			}
 			delete env;
 		}
 	}

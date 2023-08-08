@@ -40,6 +40,8 @@ void Request::body_length_CRLF_mode(const char & c)
         _transfer_chunk_len = _transfer_content_len;
         __tmp1.clear();
         _mode = body_chunk_m;
+        if (_transfer_content_len > _transfer_content_max_len)
+            set_error(413);
     }
 }
 
@@ -47,7 +49,7 @@ void Request::body_chunk_mode(const char & c)
 {
     if (_transfer_chunk_len == 0)
     {
-        if (c != '\r') _mode = body_chunk_CRLF_m;
+        if (c != '\r') set_error(400);
         else _mode = body_chunk_CRLF_m;
     }
     else

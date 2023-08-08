@@ -38,6 +38,10 @@ bool Response::is_done()
     return (_offset >= _message_size && (!bodyFile.is_open() || bodyFile.eof()));
 }
 
+void	Response::getFileStructure(File *file) {
+	fileinfo = file;
+}
+
 std::string Response::getContentType( void ) {
 	std::string conType;
 
@@ -276,6 +280,8 @@ void Response::serving(const Server &server, const Location *loc, const std::str
     else { //if request has no errors
         std::cout << "dkhel l else" << std::endl;
         File file(&(this->request->_path), this->request->_uri, loc);
+        getFileStructure(&file);
+        std::cout << fileinfo->directory << std::endl;
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
             //////////////cgi//////////////

@@ -17,6 +17,7 @@ struct Response
     size_t _message_size;
     size_t _offset;
     size_t contentLength;
+    File *fileinfo;
 
     Response(Request *req);
 
@@ -44,6 +45,7 @@ struct Response
     void    generateIndexPage();
     void    deleteAllDirContent(std::string path, const Server &server);
     void    buildResponseHeaders( void );
+    void    getFileStructure(File *file);
 };
 
 #endif // RESPONSE_HPP

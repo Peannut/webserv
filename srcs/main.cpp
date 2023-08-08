@@ -58,7 +58,12 @@ void start_multiplexing(WebServ & webserv)
                     receiving(webserv, i);
             }
             else if (conn.can_write())
-                sending(webserv, i);
+            {
+                if (conn.get_res()._cgi.pid != -1 && !conn.get_res()._cgi._isDone)
+                    conn.get_res().cgi_wait();
+                else
+                    sending(webserv, i);
+            }
             else if (conn.is_error() || (!conn._isListen && conn.get_passed_time() > TIMEOUT))
                 webserv.remove_connection(i);
         }

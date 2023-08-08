@@ -7,7 +7,6 @@
 
 struct 	Cgi
 {
-
 	pid_t pid;
 	char **env;
 	std::string pathinfo;
@@ -15,11 +14,11 @@ struct 	Cgi
 	int fd2[2];
 	std::vector<char> body;
 	std::vector<char> cgi_buffer;
+	bool _isDone;
 	Server _srv;
 	Location loc;
 
-
-	Cgi(): pid(-1), env(NULL) {}
+	Cgi(): pid(-1), env(NULL), _isDone() {}
 };
 
 #endif // ! CGI_HPP

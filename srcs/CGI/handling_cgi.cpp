@@ -200,7 +200,40 @@ void Response::cgi_execve(const Location &loc, File &file)
 
 void Response::cgiResponse(void)
 {
-    
+    // Convert vector of char to a string
+    _message.assign(_cgi.cgi_buffer.begin(), _cgi.cgi_buffer.end());
+
+    // Find the position of "HTTP/1.1" in the buffer
+    size_t http_pos = _message.find("HTTP/1.1");
+
+    // If "HTTP/1.1" is not found, replace "Status" with "HTTP/1.1 200 OK\r\n"
+    if (http_pos == std::string::npos)
+    {
+        size_t status_pos = _message.find("Status: ");
+        if (status_pos != std::string::npos)
+        {
+            _message.replace(status_pos, 7, "HTTP/1.1");
+        }
+        else
+        {
+            // If "Status" is not found, add "HTTP/1.1 200 OK\r\n" at the beginning
+            _message.insert(0, "HTTP/1.1");
+        }
+    }
+
+    // Check if "\r\n\r\n" is present in the buffer; if not, add it
+    if (_message.find("\r\n\r\n") == std::string::npos)
+    {
+        _message.insert(_message.find("\r\n\r\n"), "\r\n");
+    }
+
+    // Print or store the modified CGI output
+    std::cout << "Modified CGI Output:\n" << _message << std::endl;
+    _message_size = _message.length();
+
+
+    // now split the buffer into headers and body
+    // _message is the header
 
 }
 
@@ -211,22 +244,23 @@ void Response::cgi_supervisor(File &file)
     cgi_execve(_cgi.loc, file);
     reqbodysend();
     cgi_wait();
-    data_reader();
-    cgiResponse();
 }
 
 void Response::cgi_wait()
 {
-    int status ;
+    int status;
 
-    if (waitpid(_cgi.pid, &status, WNOHANG) == 0)
-    {
-        return ;
-    }
-    if (WEXITSTATUS(status) > 0)
+    err = waitpid(_cgi.pid, &status, WNOHANG);
+    if (err == 0)
+        return;
+    else if (err == -1 || WEXITSTATUS(status) > 0)
         serveDefaultErrorPage();
-
-    return ;
+    else if (err == _cgi.pid)
+    {
+        data_reader();
+        cgiResponse(); 
+    }
+    _cgi._isDone = true;
 }
 
 // make function to setup the cgi environment

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/07 19:44:40 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/08 16:22:49 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,7 @@ void Response::cgiResponse(void)
         if (status_pos != std::string::npos)
         {
             // Replace only the "Status" with "HTTP/1.1"
-            _message.replace(status_pos, 6, "HTTP/1.1 ");
+            _message.replace(status_pos, 7, "HTTP/1.1 ");
         }
         else
         {

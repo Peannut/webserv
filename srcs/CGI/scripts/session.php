@@ -1,7 +1,7 @@
 <?php
 // Split the HTTP cookie header into individual cookies
 $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-$PATH_INFO = "/home/peanut/Desktop/webserv/srcs/CGI/scripts/data";
+$PATH_INFO = "/Users/zoukaddo/Desktop/webserv/srcs/CGI/scripts/data";
 // Loop through the cookies and set them
 foreach ($cookies as $cookie) {
     $parts = explode('=', $cookie);

@@ -19,17 +19,12 @@ bool File::nameHasSlash() {
 
 void	File::extractFileName() {
 	std::string tmp;
-	size_t questionMark = uri.find_first_not_of('?');
+	size_t questionMark = uri.find_last_of('?');
 	size_t lastSlash = uri.find_last_of('/');
 
-	tmp = questionMark != std::string::npos ? tmp = uri.substr(0, uri.length() - questionMark) : uri;
-	// if (questionMark != std::string::npos) {
-	// 	tmp = uri.substr(0, uri.length() - questionMark);
-	std::cout << "new string is = " << tmp << std::endl;
-	// }
-	// std::cout << "akhir slash morah = " <<"**"<<tmp.at(questionMark) <<"**"<< std::endl;
+	tmp = questionMark != std::string::npos ? uri.substr(0, questionMark) : uri;
 	if (lastSlash == tmp.length() - 1) {//slash mamorah walou oula morah question mark
-		if (lastSlash == 0) { //makayn walou 7ta 9bel slash
+		if (lastSlash == 0) {
 			filename = "/";
 			return;
 		}
@@ -74,7 +69,7 @@ bool	File::concatinateIndexFile() {
 
 bool	File::fileCgiSupport() {
 	if (!existing || (directory && !endWithSlash)) {
-		// std::cout << "*******dkhel l if ghalta f cgi support******* " << std::endl;
+		std::cout << "*******machi cgi ghit hitach makaynch oula directory bla slash******* " << std::endl;
 		return false;
 	}
 	return (loc->cgi_bin.first == extention);

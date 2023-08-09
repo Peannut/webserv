@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/01 15:17:11 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 14:32:13 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -412,4 +412,10 @@ void	Config::setupconfig(const std::string& filename)
 	// std::cout << "SIIIIIZE" << config.size() << std::endl;
 	// print config
 	file.close();
+}
+
+void Config::fillConfig2()
+{
+	for (size_t i = 0; i < config.size(); ++i)
+		configMap[config[i].listen].push_back(&config[i]);
 }

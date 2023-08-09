@@ -276,9 +276,8 @@ void    Response::generateIndexPage() {
     bodyFile.open("indexpage.html");
 }
 
-void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
+void Response::serving(const Server &server, const Location &location)
 
-    UNUSED(loc_Path);
     if (request->_error) {
         buildErrorResponse(server, this);
     }
@@ -289,20 +288,19 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
             //////////////cgi//////////////
-
             handleCGI(file);
             cgi_supervisor(file);
         }
         else {
             std::cout << "mal9ahch cgi" << std::endl;
             if (this->request->_method == GET_method) { 
-                servingFileGet(this ,server, loc, file);
+                servingFileGet(this ,server, location, file);
             }
             else if (this->request->_method == POST_method) {
-                postFile(this, server, loc, file);
+                postFile(this, server, location, file);
             }
             else if (this->request->_method == DELETE_method) {
-                deletingFile(this, server, loc, file);
+                deletingFile(this, server, location, file);
             }
         }
         // else{}

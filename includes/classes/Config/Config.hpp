@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:11:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/07/24 17:19:44 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 14:33:49 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 struct Config
 {
 	std::vector<Server> config;
+	std::map<std::pair<int, short>, std::vector<Server*> > configMap;
 
 	Server &get_server(const size_t & index);
 	void setupconfig(const std::string& filename);
@@ -38,6 +39,7 @@ struct Config
 	void setupcgibin(std::string line, Location& location);
 	void setupuploadpass(std::string line, Location& location);
 	void removeDuplicateServers();
+	void fillConfig2();
 };
 
 #endif // CONFIG_HPP

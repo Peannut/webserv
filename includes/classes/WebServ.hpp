@@ -13,7 +13,7 @@ struct WebServ
     WebServ();
 
     Connection & get_connection(const size_t & index);
-    void add_connection(const bool & isListen, const int & fdsock, const Server & server);
+    void add_connection(const bool & isListen, const int & fdsock, std::vector<Server *> & servers);
     void remove_connection(const size_t & index);
 };
 

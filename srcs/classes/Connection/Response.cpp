@@ -116,7 +116,9 @@ void Response::setResponsefields(const int &sc, const std::string &sm) {
 void    Response::serveDefaultErrorPage() {
     bodyFile.open("srcs/Response/DefaultError/index.html");
     setResponsefields(500, "Internal Server Error");
+    getbodySize();
     buildResponseHeaders();
+    getContentType();
     //kansetti ou makanktebch f message + khasni nbda npasi l file object bach nbda nkhdem bih blast getContent type ect;
 }
 
@@ -135,6 +137,7 @@ void	Response::serveErrorPage(const Server &srv, const short &errCode, const std
         }
         bodyFile.open(it->second.data());
         setResponsefields(errCode, statMessage);
+        getbodySize();
         buildResponseHeaders();
 }
 
@@ -268,7 +271,9 @@ void    Response::generateIndexPage() {
     }
     page += "</ul>\n";
     page += "</body></html>\n";
-    _message += page;
+    std::ofstream outfile("indexpage.html");
+    outfile << page;
+    bodyFile.open("indexpage.html");
 }
 
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {

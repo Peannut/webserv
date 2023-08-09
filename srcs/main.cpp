@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/24 15:03:03 by zwina             #+#    #+#             */
+/*   Updated: 2023/08/08 19:47:36 by zoukaddo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes.hpp"
 
 // This global variable will hold all the return of the system call functions that will fail if they return -1
@@ -54,6 +66,8 @@ void start_multiplexing(WebServ & webserv)
             {
                 if (conn._isListen)
                     accepting(webserv, i);
+                else if (conn.get_passed_time() > TIMEOUT)
+                    webserv.remove_connection(i);
                 else
                     receiving(webserv, i);
             }

@@ -2,7 +2,6 @@
 // Parse the HTTP cookie header
 // Split the HTTP cookie header into individual cookies
 $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-
 // Loop through the cookies and set them
 foreach ($cookies as $cookie) {
     $parts = explode('=', $cookie);
@@ -22,6 +21,6 @@ if (isset($_COOKIE['testing_cookies'])) {
     echo "Content-Type: text/html\r\n";
     echo "Set-Cookie: testing_cookies=0\r\n\r\n";
     echo "No cookie found.";
-}
+}li
 
 ?>

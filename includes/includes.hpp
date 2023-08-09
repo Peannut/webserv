@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   includes.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
+/*   Updated: 2023/08/09 09:04:45 by zwina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HEADER_HPP
 #define HEADER_HPP
 
@@ -22,9 +34,11 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/stat.h>
+#include <signal.h>
 #include <dirent.h>
 #include <netdb.h>
 #include <fcntl.h>

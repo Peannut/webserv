@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handling_cgi.cpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/08/09 09:10:27 by zwina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes.hpp"
 
 std::string CGIENV_FORMAT(const std::string& str)
@@ -36,6 +48,7 @@ int Response::handleCGI(File &file)
     std::cout << "pipe done" << std::endl;
     return (1);
 }
+
 void Response::data_reader()
 {
     char buffer[CGI_BUFFER + 1];
@@ -57,7 +70,7 @@ void Response::data_reader()
         close(_cgi.fd2[0]);
 
         // Handle the CGI output or response here, e.g., store it in a member variable, print it, or process it further.
-        _cgi.cgi_buffer.push_back('\0'); // Null-terminate the buffer
+        // _cgi.cgi_buffer.push_back('\0'); // Null-terminate the buffer
         std::cout << "CGI Output: " << _cgi.cgi_buffer.data() << std::endl;
 
         return;
@@ -91,7 +104,7 @@ std::string Response::env_grabber(const std::string& key)
 
 void Response::reqbodysend()
 {
-    size_t content_length;
+    int content_length;
     
     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT-LENGTH");
     if (it != request->_fields.end())
@@ -155,7 +168,6 @@ void Response::cgi_execve(const Location &loc, File &file)
         perror("fork");
         exit(1);
     }
-
     if (_cgi.pid == 0) { // Child process
         // Close unused file descriptors
         close(_cgi.fd[1]); // Close write end of the pipe
@@ -182,13 +194,13 @@ void Response::cgi_execve(const Location &loc, File &file)
             const_cast<char * const>(filepath.c_str()),
             NULL
         };
-
         // Execute the CGI script
         if (execve(file.loc->cgi_bin.second.c_str(), av, _cgi.env) == -1) {
             perror("execve");
             exit(1);
         }
-    } else { // Parent process
+    } 
+    else { // Parent process
         // Close the unused ends of the pipes in the parent process
         close(_cgi.fd[0]);
         close(_cgi.fd2[1]);
@@ -196,8 +208,33 @@ void Response::cgi_execve(const Location &loc, File &file)
 
     // Parent continues here
     std::cout << "Child process PID: " << _cgi.pid << std::endl;
+
+    // Parent continues here
+    std::cout << "Child process PID: " << _cgi.pid << std::endl;
 }
 
+// void Response::cgiResponse(void)
+// {
+//     // Convert vector of char to a string
+//     _message.assign(_cgi.cgi_buffer.begin(), _cgi.cgi_buffer.end());
+
+//     size_t http_pos = _message.find("HTTP/1.1");
+
+//     if (http_pos == std::string::npos)
+//     {
+//         size_t status_pos = _message.find("Status: ");
+//         if (status_pos != std::string::npos)
+//             _message.replace(status_pos, 7, "HTTP/1.1");
+//         else
+//             _message.insert(0, "HTTP/1.1 200 OK\r\n");
+       
+//     }
+//     if (_message.find("\r\n\r\n") == std::string::npos)
+//         _message.insert(_message.find("\r\n", ), "\r\n");
+//     // Print or store the modified CGI output
+//     std::cout << "Modified CGI Output:\n" << _message << std::endl;
+//     _message_size = _message.length();
+// }
 void Response::cgiResponse(void)
 {
     // Convert vector of char to a string
@@ -212,30 +249,59 @@ void Response::cgiResponse(void)
         size_t status_pos = _message.find("Status: ");
         if (status_pos != std::string::npos)
         {
-            _message.replace(status_pos, 7, "HTTP/1.1");
+            // Replace only the "Status" with "HTTP/1.1"
+            _message.replace(status_pos, 7, "HTTP/1.1 ");
         }
         else
         {
             // If "Status" is not found, add "HTTP/1.1 200 OK\r\n" at the beginning
-            _message.insert(0, "HTTP/1.1");
+            _message.insert(0, "HTTP/1.1 200 OK\r\n");
         }
     }
 
-    // Check if "\r\n\r\n" is present in the buffer; if not, add it
+    // Check if "\r\n\r\n" exists to separate headers and body
     if (_message.find("\r\n\r\n") == std::string::npos)
     {
-        _message.insert(_message.find("\r\n\r\n"), "\r\n");
+        // If "\r\n\r\n" does not exist, add it after the last header
+        size_t last_header_pos = _message.rfind("\r\n");
+        if (last_header_pos != std::string::npos)
+        {
+            _message.insert(last_header_pos + 2, "\r\n");
+        }
     }
+
+    // Split message into headers and body
+    size_t pos = _message.find("\r\n\r\n");
+    std::string _message_body = _message.substr(pos + 4);
+    std::string headers = _message.substr(0, pos + 4);
+
+    // Check if "Content-length: " exists
+    size_t content_length_pos = headers.find("Content-length: ");
+    if (content_length_pos == std::string::npos)
+    {
+        // If "Content-length: " does not exist, calculate the content length dynamically
+        size_t calculated_content_length = _message_body.length();
+
+        // Append the "Content-length" header before the end of headers
+        size_t end_of_headers_pos = headers.find_last_not_of("\r\n");
+        headers.insert(end_of_headers_pos + 1, "\r\nContent-length: " + std::to_string(calculated_content_length));
+    }
+    // else
+    // {
+    //     // If "Content-length: " exists, update its value to the correct length
+    //     size_t end_of_content_length_pos = headers.find("\r\n", content_length_pos);
+    //     headers.replace(content_length_pos + 16, end_of_content_length_pos - (content_length_pos + 16), std::to_string(_message_body.length()));
+    // }
+
+    // Update the modified CGI output (_message)
+    _message = headers + _message_body;
 
     // Print or store the modified CGI output
     std::cout << "Modified CGI Output:\n" << _message << std::endl;
     _message_size = _message.length();
-
-
-    // now split the buffer into headers and body
-    // _message is the header
-
 }
+
+
 
 void Response::cgi_supervisor(File &file)
 {
@@ -270,7 +336,7 @@ void Response::env_maker(File &file)
 	
     int size = request->_fields.size();
 	std::cout << "size cgiii" << size << std::endl;
-	_cgi.env = new char*[size+ 6]();
+	_cgi.env = new char*[size+ 7]();
 	
 	int i = 0;
     std::map<std::string, std::string>::iterator it = request->_fields.begin();
@@ -290,6 +356,7 @@ void Response::env_maker(File &file)
     _cgi.env[i++] = strdup(("SCRIPT_FILENAME=" + fullpath).c_str());
     _cgi.env[i++] = strdup(("PATH_INFO=" + fullpath).c_str());
     _cgi.env[i++] = strdup(("QUERY_STRING=" + request->_query).c_str());
+    _cgi.env[i++] = strdup(("REQUEST_URI=" + file.uri).c_str());
 
     Methods method = request->get_method();
     std::string val;

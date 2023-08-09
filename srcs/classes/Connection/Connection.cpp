@@ -15,7 +15,11 @@ Connection::~Connection()
 {
     close(_socket->fd);
     if (_req) delete _req;
-    if (_res) delete _res;
+    if (_res)
+	{
+		if (_res->_cgi.pid != -1) kill(_res->_cgi.pid, SIGKILL);
+		delete _res;
+	}
 }
 
 time_t Connection::get_passed_time()

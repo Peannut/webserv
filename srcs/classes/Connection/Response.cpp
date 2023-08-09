@@ -6,7 +6,7 @@ Response::Response(Request *req)
 , _offset()
 {}
 
-void    settingServerForCgi(Server *server) {
+void    Response::settingServerForCgi(const Server *server) {
     srv = server;
 }
 
@@ -292,7 +292,7 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         getFileStructure(&file);
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
-            setServerForCgi(&server);
+            settingServerForCgi(&server);
 
             handleCGI(file);
             cgi_supervisor(file);

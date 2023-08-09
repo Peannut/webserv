@@ -305,7 +305,6 @@ void Response::serving(const Server &server, const Location *loc, const std::str
                 deletingFile(this, server, loc, file);
             }
         }
-        // else{}
     }
     std::cout << "RESPONSE = [" << _message << ']' << std::endl;
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Response.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
+/*   Updated: 2023/08/09 09:16:45 by zwina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
@@ -6,6 +18,7 @@
 struct Response
 {
     Request *request;
+    Cgi     _cgi;
     int statusCode;
     std::string statusMessage;
     std::string contentType;
@@ -37,6 +50,19 @@ struct Response
     void seek_back(const size_t & amount);
     bool is_done();
     void serving(const Server &server, const Location *loc, const std::string &loc_Path);
+
+
+    //peanut functions
+    void env_maker(File &file);
+    int handleCGI(File &file);
+    void cgiResponse(void);
+    void cgi_execve(const Location &loc, File &file);
+    void data_reader(void);
+    void reqbodysend(void);
+    void cgi_wait(void);
+    std::string env_grabber(const std::string& key);
+    void cgi_supervisor(File &file);
+    // -----------------
     void    nameUploadFile();
     void    setFileName( const std::string & );
     std::string generateRandomName();

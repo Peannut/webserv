@@ -286,10 +286,12 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         std::cout << "dkhel l else" << std::endl;
         File file(&(this->request->_path), this->request->_uri, loc);
         getFileStructure(&file);
-        std::cout << fileinfo->directory << std::endl;
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
             //////////////cgi//////////////
+
+            handleCGI(file);
+            cgi_supervisor(file);
         }
         else {
             std::cout << "mal9ahch cgi" << std::endl;

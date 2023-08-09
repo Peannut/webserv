@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Connection.hpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/23 17:44:20 by zwina             #+#    #+#             */
+/*   Updated: 2023/07/23 15:20:03 by zoukaddo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CONNECTION_HPP
 #define CONNECTION_HPP
 
@@ -6,7 +18,7 @@
 struct Connection
 {
     bool _isListen;
-    bool _isMustServeNow;
+    const time_t _startTime;
     SOCKET_POLL *_socket;
     const Server *_srv;
     const std::string * _loc_path;
@@ -17,6 +29,7 @@ struct Connection
     Connection(const bool & isListen, SOCKET_POLL & socket);
     ~Connection();
 
+    time_t get_passed_time();
     SOCKET_POLL & get_socket();
     SOCKET_FD & get_fdsock();
     const Server & get_srv(void);

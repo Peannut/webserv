@@ -70,12 +70,6 @@ void our_listen(const SOCKET_FD & fdsock)
     if (err == -1) throw ("listen");
 }
 
-void our_poll(std::vector<SOCKET_POLL> & sockets)
-{
-    err = poll(sockets.data(), sockets.size(), POLL_TIME);
-    if (err == -1) throw ("poll");
-}
-
 void accepting(WebServ & webserv, const size_t & index)
 {
     std::cout << ANSI_GREEN;
@@ -86,13 +80,13 @@ void accepting(WebServ & webserv, const size_t & index)
     const SOCKET_POLL & socket_server = conn.get_socket();
 
     SOCKET_FD fdsock_client = accept(socket_server.fd, NULL, NULL);
-    if (fdsock_client == -1) throw ("accept");
+    if (fdsock_client == -1) return;
 
     err = fcntl(fdsock_client, F_SETFL, O_NONBLOCK);
-    if (err == -1) throw ("fcntl");
+    if (err == -1) { close(fdsock_client); return; }
     err = 1;
     err = setsockopt(fdsock_client, SOL_SOCKET, SO_REUSEADDR, &err, sizeof(err));
-    if (err == -1) throw ("setsockopt");
+    if (err == -1) { close(fdsock_client); return; }
 
     webserv.add_connection(!LISTEN_ENABLE, fdsock_client, conn.get_srv());
 }
@@ -105,15 +99,12 @@ void receiving(WebServ & webserv, const size_t & index)
 
     Connection & conn = webserv.get_connection(index);
     const SOCKET_POLL & socket_client = conn.get_socket();
+    Request & req = webserv.get_connection(index).get_req();
 
     int number_of_bytes = recv(socket_client.fd, buffer, BUFFER_SIZE, 0);
-    if (number_of_bytes == -1) throw ("recv");
-
     if (number_of_bytes == 0) webserv.remove_connection(index);
-    else {
-        if (conn.get_req().concatenate(std::string(buffer, number_of_bytes)))
-            conn._isMustServeNow = true;
-    }
+    else if (req.concatenate(std::string(buffer, number_of_bytes)))
+        serving(webserv, index);
 }
 
 void sending(WebServ & webserv, const size_t & index)
@@ -124,13 +115,10 @@ void sending(WebServ & webserv, const size_t & index)
 
     Connection & conn = webserv.get_connection(index);
     const SOCKET_POLL & socket_client = conn.get_socket();
-
     Response & res = webserv.get_connection(index).get_res();
 
     size_t length = res.extract();
     int number_of_bytes = send(socket_client.fd, buffer, length, 0);
-    if (number_of_bytes == -1) throw ("send");
-
     res.seek_back(length - number_of_bytes);
     if (res.is_done()) webserv.remove_connection(index);
 }

@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   prototypes.hpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/08/09 09:14:24 by zwina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+
 #ifndef PROTOTYPES_HPP
 #define PROTOTYPES_HPP
 
@@ -6,9 +20,10 @@
 #define SOCKET_POLL struct pollfd
 #define SOCKET_FD int
 #define LISTEN_ENABLE true // the type of connection, is it a server socket (aka. listen) or a client socket
+#define TIMEOUT (time_t)60 // the maximum number of second that we will wait if the client socket freezed
 #define POLL_TIME 0 // the time that poll() waits in milliseconds
 #define BACK_LOG 10 // one socket can handle BACK_LOG number of connection
-#define BUFFER_SIZE (size_t)8 // the size of the receiving the sending buffer
+#define BUFFER_SIZE (size_t)8192 // the size of the receiving the sending buffer
 #define URI_LIMIT 8192 // the maximum size of the uri in the request
 
 #define ANSI_RESET      "\033[0m"
@@ -22,7 +37,6 @@
 // This is the declaration, the definition is in the main.cpp file
 extern int err;
 extern char buffer[BUFFER_SIZE];
-extern const std::string response;
 
 // The declarations of the structs
 struct WebServ;
@@ -33,6 +47,7 @@ struct Connection;
 struct Request;
 struct Response;
 struct File;
+struct Cgi;
 
 // The declarations of the functions
 
@@ -46,7 +61,6 @@ SOCKET_FD           our_socket          (const int &domain, const int &type, con
 void                our_listen          (const SOCKET_FD &fdsock);
 void                setup_webserv       (WebServ & webserv);
 void                start_multiplexing  (WebServ & webserv);
-void                our_poll            (std::vector<SOCKET_POLL> & sockets);
 void                accepting           (WebServ & webserv, const size_t & index);
 void                receiving           (WebServ & webserv, const size_t & index);
 void                sending             (WebServ & webserv, const size_t & index);
@@ -91,9 +105,9 @@ void        servingFileGet(Response *response ,const Server &server, const Locat
 
 /*
     Thing To Do At The End :
-        1- remove the response global variable.
+      X 1- remove the response global variable.
         2- remove the all the :.
-        3- remove the checking of errno after send and recv.
+      X 3- remove the checking of errno after send and recv.
         4- remove the member variable _message in the Request.
         5- check the allowed functions.
 */

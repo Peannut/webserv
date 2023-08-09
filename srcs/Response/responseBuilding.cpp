@@ -71,10 +71,11 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 void	postFile(Response	*response, const Server	&server, const Location	*loc, const File	&file) {
 	UNUSED(server);
 	if (!loc->upload_pass.empty()) {
-		if (resourceExists(loc->upload_pass)) { //check upload pass existance
+		if (resourceExists(loc->upload_pass)) {
+			std::cout << "upload pass exists!" << std::endl;
 			response->nameUploadFile();
-			response->uploadContent(server);
-			response->buildResponseHeaders();
+			response->uploadContent(server, loc);
+			return;
 		}
 		response->serveErrorPage(server, 404, "Forbidden");
 		return;

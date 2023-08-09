@@ -6,7 +6,7 @@ size_t Request::body_content_mode(const std::string & buffer, const size_t & i)
     if (length <= _transfer_content_len)
     {
         try {
-            _body.append(buffer.data() + i);
+            _body.append(buffer.data() + i, length);
             _transfer_content_len -= length;
             if (_transfer_content_len == 0)
                 _mode = success_m;

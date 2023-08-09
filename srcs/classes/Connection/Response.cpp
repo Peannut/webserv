@@ -38,6 +38,10 @@ bool Response::is_done()
     return (_offset >= _message_size && (!bodyFile.is_open() || bodyFile.eof()));
 }
 
+void	Response::getFileStructure(File *file) {
+	fileinfo = file;
+}
+
 std::string Response::getContentType( void ) {
 	std::string conType;
 
@@ -112,9 +116,10 @@ void Response::setResponsefields(const int &sc, const std::string &sm) {
 void    Response::serveDefaultErrorPage() {
     bodyFile.open("srcs/Response/DefaultError/index.html");
     setResponsefields(500, "Internal Server Error");
+    getbodySize();
     buildResponseHeaders();
+    getContentType();
     //kansetti ou makanktebch f message + khasni nbda npasi l file object bach nbda nkhdem bih blast getContent type ect;
-
 }
 
 std::string Response::generateRandomName() {
@@ -132,6 +137,7 @@ void	Response::serveErrorPage(const Server &srv, const short &errCode, const std
         }
         bodyFile.open(it->second.data());
         setResponsefields(errCode, statMessage);
+        getbodySize();
         buildResponseHeaders();
 }
 
@@ -265,7 +271,9 @@ void    Response::generateIndexPage() {
     }
     page += "</ul>\n";
     page += "</body></html>\n";
-    _message += page;
+    std::ofstream outfile("indexpage.html");
+    outfile << page;
+    bodyFile.open("indexpage.html");
 }
 
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
@@ -277,6 +285,7 @@ void Response::serving(const Server &server, const Location *loc, const std::str
     else { //if request has no errors
         std::cout << "dkhel l else" << std::endl;
         File file(&(this->request->_path), this->request->_uri, loc);
+        getFileStructure(&file);
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
             //////////////cgi//////////////

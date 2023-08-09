@@ -51,8 +51,8 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 					}
 					else {// auto index
 						response->setResponsefields(200, "OK");
-						response->_message += "\r\n\r\n";
 						response->generateIndexPage();
+						response->getbodySize();
 						response->buildResponseHeaders();
 					}
 				}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/05 17:31:13 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 09:16:45 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ struct Response
     size_t _message_size;
     size_t _offset;
     size_t contentLength;
+    File *fileinfo;
 
     Response(Request *req);
 
@@ -70,6 +71,7 @@ struct Response
     void    generateIndexPage();
     void    deleteAllDirContent(std::string path, const Server &server);
     void    buildResponseHeaders( void );
+    void    getFileStructure(File *file);
 };
 
 #endif // RESPONSE_HPP

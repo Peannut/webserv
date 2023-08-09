@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 09:49:38 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:24:08 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,7 @@ struct 	Cgi
 		{
 			int i = 0;
 			while (env[i])
-			{
-				std::cout << "deleted" << std::endl;
 				delete env[i++];
-			}
 			delete env;
 		}
 	}

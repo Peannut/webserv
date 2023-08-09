@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 09:50:49 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 10:14:37 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,23 @@ int Response::handleCGI(File &file)
     if (access(file.loc->cgi_bin.second.c_str(), X_OK))
     {
         serveDefaultErrorPage();
-        std::cout << "505 t catcha" << std::endl;
-        exit(1);
+        std::cout << "500 t catcha" << std::endl;
+        return (1);
         // 500
         // serveErrorPage(_cgi._srv, 404, "Not Found");
     }
-    
+    if (access(file.fullpath->c_str(), R_OK))
+    {
+        std::cout << file.fullpath->c_str() << std::endl;
+        serveErrorPage(_cgi._srv, 404, "Not Found");
+        std::cout << "404 t catcha" << std::endl;
+        return (1);
+    }
     env_maker(file);
     pipe(_cgi.fd);
     pipe(_cgi.fd2);
     std::cout << "pipe done" << std::endl;
-    return (1);
+    return (0);
 }
 
 void Response::data_reader()
@@ -104,7 +110,7 @@ std::string Response::env_grabber(const std::string& key)
 
 void Response::reqbodysend()
 {
-    int content_length;
+    size_t content_length;
     
     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT-LENGTH");
     if (it != request->_fields.end())
@@ -206,36 +212,8 @@ void Response::cgi_execve(const Location &loc, File &file)
         close(_cgi.fd[0]);
         close(_cgi.fd2[1]);
     }
-
-    // Parent continues here
-    std::cout << "Child process PID: " << _cgi.pid << std::endl;
-
-    // Parent continues here
-    std::cout << "Child process PID: " << _cgi.pid << std::endl;
 }
 
-// void Response::cgiResponse(void)
-// {
-//     // Convert vector of char to a string
-//     _message.assign(_cgi.cgi_buffer.begin(), _cgi.cgi_buffer.end());
-
-//     size_t http_pos = _message.find("HTTP/1.1");
-
-//     if (http_pos == std::string::npos)
-//     {
-//         size_t status_pos = _message.find("Status: ");
-//         if (status_pos != std::string::npos)
-//             _message.replace(status_pos, 7, "HTTP/1.1");
-//         else
-//             _message.insert(0, "HTTP/1.1 200 OK\r\n");
-       
-//     }
-//     if (_message.find("\r\n\r\n") == std::string::npos)
-//         _message.insert(_message.find("\r\n", ), "\r\n");
-//     // Print or store the modified CGI output
-//     std::cout << "Modified CGI Output:\n" << _message << std::endl;
-//     _message_size = _message.length();
-// }
 void Response::cgiResponse(void)
 {
     // Convert vector of char to a string

@@ -18,6 +18,7 @@
 struct Response
 {
     Request *request;
+    Server  *srv;
     Cgi     _cgi;
     int statusCode;
     std::string statusMessage;
@@ -72,6 +73,7 @@ struct Response
     void    deleteAllDirContent(std::string path, const Server &server);
     void    buildResponseHeaders( void );
     void    getFileStructure(File *file);
+    void    settingServerForCgi(Server *server);
 };
 
 #endif // RESPONSE_HPP

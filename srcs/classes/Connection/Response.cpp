@@ -6,6 +6,10 @@ Response::Response(Request *req)
 , _offset()
 {}
 
+void    settingServerForCgi(Server *server) {
+    srv = server;
+}
+
 size_t Response::extract()
 {
     size_t length = 0;
@@ -288,7 +292,7 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         getFileStructure(&file);
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
-            //////////////cgi//////////////
+            setServerForCgi(&server);
 
             handleCGI(file);
             cgi_supervisor(file);

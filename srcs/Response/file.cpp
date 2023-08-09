@@ -9,7 +9,15 @@ bool File::fileExists() {
 }
 
 bool File::isDirectory() {
-	return (access(fullpath->c_str(), X_OK) == 0);
+	// return (access(fullpath->c_str(), X_OK) == 0);
+	struct stat info;
+	if (!stat(fullpath->c_str(), &info)) {
+		if (S_ISDIR(info.st_mode)) {
+			return true;
+		}
+		return false;
+	}
+	return false;
 }
 
 bool File::nameHasSlash() {

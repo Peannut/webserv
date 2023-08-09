@@ -70,10 +70,13 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 
 void	postFile(Response	*response, const Server	&server, const Location	*loc, const File	&file) {
 	UNUSED(server);
-	if (pathSupportUpload(response, loc)) {
-		response->nameUploadFile();
-		response->uploadContent(server);
-		response->buildResponseHeaders();
+	if (!loc->upload_pass.empty()) {
+		if (resourceExists(loc->upload_pass)) { //check upload pass existance
+			response->nameUploadFile();
+			response->uploadContent(server);
+			response->buildResponseHeaders();
+		}
+		response->serveErrorPage(server, 404, "Forbidden");
 		return;
 	}
 	//upload not supported

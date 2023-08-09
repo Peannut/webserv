@@ -18,15 +18,21 @@ bool File::nameHasSlash() {
 }
 
 void	File::extractFileName() {
+	std::string tmp;
+	size_t questionMark = uri.find_last_of('?');
 	size_t lastSlash = uri.find_last_of('/');
-	if (lastSlash == uri.length() - 1) {//slash mamorah walou
-		if (lastSlash == 0) { //makayn walou 7ta 9bel slash
+
+	tmp = questionMark != std::string::npos ? uri.substr(0, questionMark) : uri;
+	if (lastSlash == tmp.length() - 1) {//slash mamorah walou oula morah question mark
+		if (lastSlash == 0) {
 			filename = "/";
 			return;
 		}
-		lastSlash = uri.find_last_of('/', uri.length() - 2);
+		size_t newDelim = lastSlash - 1;
+		lastSlash = tmp.find_last_of('/', newDelim);
 	}
-	filename = uri.substr(lastSlash + 1, uri.length() - lastSlash);
+	filename = tmp.substr(lastSlash + 1, tmp.length() - lastSlash);
+	std::cout << "*********file name is = " << filename << "*********" << std::endl;
 }
 
 void	File::extractExtention() {
@@ -40,6 +46,7 @@ void	File::extractExtention() {
 		nameLenght -= 1;
 	}
 	extention = filename.substr(dot, nameLenght - dot);
+	std::cout << "---------file extention is = " << extention << "---------" << std::endl;
 }
 
 void	File::separatePathInfo() {
@@ -62,7 +69,7 @@ bool	File::concatinateIndexFile() {
 
 bool	File::fileCgiSupport() {
 	if (!existing || (directory && !endWithSlash)) {
-		// std::cout << "*******dkhel l if ghalta f cgi support******* " << std::endl;
+		std::cout << "*******machi cgi ghit hitach makaynch oula directory bla slash******* " << std::endl;
 		return false;
 	}
 	return (loc->cgi_bin.first == extention);

@@ -74,6 +74,8 @@ struct Response
     void    buildResponseHeaders( void );
     void    getFileStructure(File *file);
     void    settingServerForCgi(const Server *server);
+    void    handlingRedirection(const Server &server, const Location *loc);
+    void    buildingRedirectHeaders(const std::string &RedirectionLocation);
 };
 
 #endif // RESPONSE_HPP

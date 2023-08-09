@@ -10,6 +10,38 @@ void    Response::settingServerForCgi(const Server *server) {
     srv = server;
 }
 
+void    Response::buildingRedirectHeaders(const std::string &RedirectionLocation) {
+    std::stringstream tmp;
+	_message += "HTTP/1.1 ";
+	tmp << statusCode;
+	_message += tmp.str();
+	_message += " ";
+	_message += statusMessage;
+	_message += "\r\nContent-Type: ";
+	_message += contentType;
+	_message += "\r\nConnection: Close\r\nContent-lenght: ";
+	tmp.str("");
+	tmp << contentLength;
+	_message += tmp.str();
+    _message += "\r\nLocation: ";
+    _message += RedirectionLocation;
+	_message += "\r\n\r\n";
+	_message_size = _message.length();
+}
+
+void    Response::handlingRedirection(const Server &server, const Location *loc) {
+    UNUSED(server);
+    std::stringstream tmp;
+    // if (loc->redirect.first >= 301 && loc->redirect.first <= 308) {
+        //kanakhod error code ou kanzid fel headers field dyal redirection = loc->redirect.second
+        setResponsefields(loc->redirect.first, "Coresponding Message");
+        buildingRedirectHeaders(loc->redirect.second);
+    // }
+    // else {
+    //     //kanakhod error code ou makanzidch loc fel header ms kanservi file fih dak link as plain/txt;
+    // }
+}
+
 size_t Response::extract()
 {
     size_t length = 0;
@@ -283,8 +315,14 @@ void    Response::generateIndexPage() {
 void Response::serving(const Server &server, const Location *loc, const std::string &loc_Path) {
 
     UNUSED(loc_Path);
-    if (request->_error) {
-        buildErrorResponse(server, this);
+    if (request->_error || loc->redirect.first) {
+        if (request->_error){
+            buildErrorResponse(server, this);
+        }
+        else {
+            std::cout << "------handling redirection------" <<std::endl;
+            handlingRedirection(server, loc);
+        }
     }
     else { //if request has no errors
         std::cout << "dkhel l else" << std::endl;
@@ -293,7 +331,6 @@ void Response::serving(const Server &server, const Location *loc, const std::str
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
             settingServerForCgi(&server);
-
             handleCGI(file);
             cgi_supervisor(file);
         }

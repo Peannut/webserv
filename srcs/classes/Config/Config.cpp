@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/01 15:17:11 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 11:14:57 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,9 +195,6 @@ void	Config::setupredirect(std::string line, Location& location)
 
 	
 	int status = std::atoi(redirect[0].data());
-	// idk status code range
-	if (status < 300 || status > 600)
-		throw std::runtime_error("Error: invalid redirect status");
 	location.redirect.first = status;
 	location.redirect.second = redirect[1];
 

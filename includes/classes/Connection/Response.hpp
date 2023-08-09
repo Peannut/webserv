@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/09 09:49:48 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 11:59:50 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 struct Response
 {
     Request *request;
+    const Server  *srv;
     Cgi     _cgi;
     int statusCode;
     std::string statusMessage;
@@ -56,7 +57,7 @@ struct Response
     void env_maker(File &file);
     int handleCGI(File &file);
     void cgiResponse(void);
-    void cgi_execve(const Location &loc, File &file);
+    void cgi_execve(File &file);
     void data_reader(void);
     void reqbodysend(void);
     void cgi_wait(void);
@@ -72,6 +73,7 @@ struct Response
     void    deleteAllDirContent(std::string path, const Server &server);
     void    buildResponseHeaders( void );
     void    getFileStructure(File *file);
+    void    settingServerForCgi(const Server *server);
 };
 
 #endif // RESPONSE_HPP

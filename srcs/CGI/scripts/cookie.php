@@ -21,6 +21,6 @@ if (isset($_COOKIE['testing_cookies'])) {
     echo "Content-Type: text/html\r\n";
     echo "Set-Cookie: testing_cookies=0\r\n\r\n";
     echo "No cookie found.";
-}li
+}
 
 ?>

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 10:24:08 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 11:52:29 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ struct 	Cgi
 	std::vector<char> body;
 	std::vector<char> cgi_buffer;
 	bool _isDone;
-	Server _srv;
-	Location loc;
 
 	Cgi(): pid(-1), env(NULL), _isDone() {}
 	~Cgi() {

@@ -117,6 +117,8 @@ void sending(WebServ & webserv, const size_t & index)
     const SOCKET_POLL & socket_client = conn.get_socket();
     Response & res = webserv.get_connection(index).get_res();
 
+    std::cout << "misageeeee" << res._message <<std::endl;
+
     size_t length = res.extract();
     int number_of_bytes = send(socket_client.fd, buffer, length, 0);
     res.seek_back(length - number_of_bytes);

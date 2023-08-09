@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 10:14:37 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/09 17:22:54 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,13 @@ int Response::handleCGI(File &file)
     {
         serveDefaultErrorPage();
         std::cout << "500 t catcha" << std::endl;
+        std::cout << "-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << std::endl;
         return (1);
-        // 500
-        // serveErrorPage(_cgi._srv, 404, "Not Found");
     }
     if (access(file.fullpath->c_str(), R_OK))
     {
         std::cout << file.fullpath->c_str() << std::endl;
-        serveErrorPage(_cgi._srv, 404, "Not Found");
+        serveErrorPage(*srv, 404, "Not Found");
         std::cout << "404 t catcha" << std::endl;
         return (1);
     }
@@ -139,20 +138,11 @@ void Response::reqbodysend()
 
         std::cout << "write_size: " << write_size << std::endl;
         bytes_written = write(_cgi.fd[1], _cgi.body.data(), write_size);
-    
+        std::cout << "cgi body: " << _cgi.body.data() << std::endl;
         if (bytes_written == -1)
-        {
-            // Handle write errors
-            // You can use perror("write") or other error handling here
             break;
-        }
         else if (bytes_written == 0)
-        {
-            // Handle write error when 0 bytes were written (unlikely)
-            // You can use perror("write") or other error handling here
             break;
-        }
-
         read_size += bytes_written;
 
         // Erase the written data from the buffer
@@ -162,13 +152,10 @@ void Response::reqbodysend()
     // Close the write end of the pipe, signaling the end of data
     close(_cgi.fd[1]);
     close(_cgi.fd2[1]);
-    std::cout << "writen: " << read_size << std::endl;
-    std::cout << "salam" << std::endl;
 }
 
-void Response::cgi_execve(const Location &loc, File &file)
+void Response::cgi_execve(File &file)
 {
-    UNUSED(loc);
     _cgi.pid = fork();
     
     if (_cgi.pid == -1) {
@@ -229,7 +216,7 @@ void Response::cgiResponse(void)
         if (status_pos != std::string::npos)
         {
             // Replace only the "Status" with "HTTP/1.1"
-            _message.replace(status_pos, 7, "HTTP/1.1 ");
+            _message.replace(status_pos, 8, "HTTP/1.1 ");
         }
         else
         {
@@ -244,9 +231,7 @@ void Response::cgiResponse(void)
         // If "\r\n\r\n" does not exist, add it after the last header
         size_t last_header_pos = _message.rfind("\r\n");
         if (last_header_pos != std::string::npos)
-        {
             _message.insert(last_header_pos + 2, "\r\n");
-        }
     }
 
     // Split message into headers and body
@@ -265,12 +250,6 @@ void Response::cgiResponse(void)
         size_t end_of_headers_pos = headers.find_last_not_of("\r\n");
         headers.insert(end_of_headers_pos + 1, "\r\nContent-length: " + std::to_string(calculated_content_length));
     }
-    // else
-    // {
-    //     // If "Content-length: " exists, update its value to the correct length
-    //     size_t end_of_content_length_pos = headers.find("\r\n", content_length_pos);
-    //     headers.replace(content_length_pos + 16, end_of_content_length_pos - (content_length_pos + 16), std::to_string(_message_body.length()));
-    // }
 
     // Update the modified CGI output (_message)
     _message = headers + _message_body;
@@ -286,7 +265,7 @@ void Response::cgi_supervisor(File &file)
 {
     std::cout << "supervisor" << std::endl;
 
-    cgi_execve(_cgi.loc, file);
+    cgi_execve(file);
     reqbodysend();
     cgi_wait();
 }
@@ -302,6 +281,7 @@ void Response::cgi_wait()
         serveDefaultErrorPage();
     else if (err == _cgi.pid)
     {
+        std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
         data_reader();
         cgiResponse(); 
     }
@@ -359,11 +339,6 @@ void Response::env_maker(File &file)
     for (int i = 0; i < sizo ; i++)
     {
         if (_cgi.env[i] != nullptr)
-        {
             std::cout << _cgi.env[i] << std::endl;
-        }
     }
-    // std::cout << "file pathaaaaa:" << _cgi.file_path << std::endl;
-    // std::cout << "path d zwina:" << request->_path << std::endl;
-    std::cout << "body jay mn zwina" <<request->_body << std::endl;
 }

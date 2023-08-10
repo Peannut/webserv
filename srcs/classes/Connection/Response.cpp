@@ -316,7 +316,7 @@ void    Response::generateIndexPage() {
         while ((entry = readdir(dir)) != NULL) {
             std::string name = entry->d_name;
             if (name != "." && name != "..") {
-                page += "<li><a href=\"" + name + "\">" + name + "</a></li>\n";
+                page += "<li><a href=\"" + fileinfo->uri + name + "\">" + name + "</a></li>\n";
             }
         }
         closedir(dir);

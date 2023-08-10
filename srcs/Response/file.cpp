@@ -76,8 +76,8 @@ bool	File::concatinateIndexFile() {
 }
 
 bool	File::fileCgiSupport() {
-	if (!existing || (directory && !endWithSlash)) {
-		std::cout << "*******machi cgi ghit hitach makaynch oula directory bla slash******* " << std::endl;
+	if (!existing || directory) { // need to ask if directory with cgi extention should be sent to cgi
+		std::cout << "*******machi cgi ghit hitach makaynch oula directory******* " << std::endl;
 		return false;
 	}
 	return (loc->cgi_bin.first == extention);
@@ -87,7 +87,11 @@ void	File::setFileInformation() {
 	existing = fileExists();
 	directory = isDirectory();
 	endWithSlash = nameHasSlash();
-	if (directory && endWithSlash) {
+	if (existing && directory && (!endWithSlash)) {
+		uri += "/";
+		*fullpath += "/";
+	}
+	if (directory) {
 		indexFound = concatinateIndexFile();
 	}
 	extractFileName();

@@ -29,7 +29,7 @@ void	buildErrorResponse(const Server &server, Response *response) {
 	response->serveDefaultErrorPage();
 }
 
-void servingFileGet(Response *response ,const Server &server, const Location *loc, const File &file) { 
+void servingFileGet(Response *response ,const Server &server, const Location *loc, File &file) { 
 	std::cout << "file existing: " << file.existing << " directory: " << file.directory << " with slash: " << file.endWithSlash <<std::endl;
 	if (file.existing) { //file does exists
 		if (!file.directory) { //resource is a file
@@ -38,28 +38,21 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 			response->buildResponseHeaders();
 		}
 		else { //file is a directory
-			if (file.endWithSlash) {
-				std::cout << "l9a repo ou fih slash felekher" << std::endl;
-				if (file.indexFound) { // check autoindex
-					response->fillBodyFile(server);
+			if (file.indexFound) { // check autoindex
+				response->fillBodyFile(server);
+				response->getbodySize();
+				response->buildResponseHeaders();
+			}
+			else { //no index should check autoindex here
+				if (!loc->autoindex) {
+					response->serveErrorPage(server, 403, "Forbidden");
+				}
+				else {// auto index
+					response->setResponsefields(200, "OK");
+					response->generateIndexPage();
 					response->getbodySize();
 					response->buildResponseHeaders();
 				}
-				else { //no index should check autoindex here
-					if (!loc->autoindex) {
-						response->serveErrorPage(server, 403, "Forbidden");
-					}
-					else {// auto index
-						response->setResponsefields(200, "OK");
-						response->generateIndexPage();
-						response->getbodySize();
-						response->buildResponseHeaders();
-					}
-				}
-			}
-			else { // uri with no slash at the end
-				response->serveErrorPage(server, 301, "Moved Permenantly");
-				//will add redirection to uri with / at the end.
 			}
 		}
 	}

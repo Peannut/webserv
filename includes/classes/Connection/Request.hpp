@@ -28,6 +28,7 @@ enum Modes {
 
 // enum Errors {
 //     400,     // Bad Request
+//     405,     // Method Not Allowed
 //     501,     // Not Implemented
 //     426,     // Upgrade Required
 //     505,     // HTTP Version Not Supported
@@ -66,7 +67,6 @@ struct Request
     std::string _body;
 
     private:
-    std::string _message; // REMOVE_THIS
     Modes _mode;
     Transfers _transfer;
     size_t _transfer_content_max_len;
@@ -75,10 +75,12 @@ struct Request
     std::string __tmp1;
     std::string __tmp2;
 
+    Connection & _conn;
+
     public:
-    Request();
+    Request(Connection & conn);
     bool concatenate(const std::string & buffer);
-    void serving(Connection & conn);
+    void print();
     const Methods & get_method();
     const std::string & get_uri();
     const std::string & get_path();
@@ -100,6 +102,8 @@ struct Request
     void field_key_mode(const char & c);
     void field_val_mode(const char & c);
     void field_last_CRLF_mode(const char & c);
+    void matchingServer();
+    void matchingLocation();
     size_t body_content_mode(const std::string & buffer, const size_t & i);
     void body_length_mode(const char & c);
     void body_length_CRLF_mode(const char & c);

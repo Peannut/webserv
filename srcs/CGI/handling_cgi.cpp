@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   handling_cgi.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 09:26:24 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 std::string CGIENV_FORMAT(const std::string& str)
@@ -108,7 +96,7 @@ void Response::reqbodysend()
     
     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT-LENGTH");
     if (it != request->_fields.end())
-        content_length = std::stoi(it->second);
+        content_length = std::atoi(it->second.c_str());
     else
         content_length = 0;
 
@@ -189,11 +177,11 @@ void Response::cgi_execve(const Location &loc, File &file)
 
         // Set up arguments for execve
         std::string filepath = *file.fullpath;
-        char * const av[3] = {
-            const_cast<char * const>(file.loc->cgi_bin.second.c_str()),
-            const_cast<char * const>(filepath.c_str()),
-            NULL
-        };
+        char * av[3];
+        av[0] = new char[file.loc->cgi_bin.second.length()];
+        av[1] = new char[filepath.length()];
+        std::strcpy(av[0], file.loc->cgi_bin.second.c_str());
+        std::strcpy(av[1], filepath.c_str());
         // Execute the CGI script
         if (execve(file.loc->cgi_bin.second.c_str(), av, _cgi.env) == -1) {
             perror("execve");
@@ -284,7 +272,9 @@ void Response::cgiResponse(void)
 
         // Append the "Content-length" header before the end of headers
         size_t end_of_headers_pos = headers.find_last_not_of("\r\n");
-        headers.insert(end_of_headers_pos + 1, "\r\nContent-length: " + std::to_string(calculated_content_length));
+        std::stringstream ss;
+        ss << calculated_content_length;
+        headers.insert(end_of_headers_pos + 1, "\r\nContent-length: " + ss.str());
     }
     // else
     // {
@@ -379,7 +369,7 @@ void Response::env_maker(File &file)
 
     for (int i = 0; i < sizo ; i++)
     {
-        if (_cgi.env[i] != nullptr)
+        if (_cgi.env[i] != NULL)
         {
             std::cout << _cgi.env[i] << std::endl;
         }

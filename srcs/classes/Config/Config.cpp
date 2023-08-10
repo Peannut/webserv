@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 14:32:13 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 Server &Config::get_server(const size_t & index)
@@ -385,6 +373,11 @@ void Config::removeDuplicateServers()
     }
 }
 
+void Config::fillConfig2()
+{
+	for (size_t i = 0; i < config.size(); ++i)
+		configMap[config[i].listen].push_back(&config[i]);
+}
 
 void	Config::setupconfig(const std::string& filename)
 {
@@ -408,14 +401,9 @@ void	Config::setupconfig(const std::string& filename)
 			throw std::runtime_error("Error: invalid directive");
 		
 	}
+	fillConfig2();
 	// print config size
 	// std::cout << "SIIIIIZE" << config.size() << std::endl;
 	// print config
 	file.close();
-}
-
-void Config::fillConfig2()
-{
-	for (size_t i = 0; i < config.size(); ++i)
-		configMap[config[i].listen].push_back(&config[i]);
 }

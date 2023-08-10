@@ -54,15 +54,6 @@ bool isTchar(const char & c)
         c == '|' \
     );
 }
-
-bool isMethodChar(const char & c)
-{
-    return (
-        c == 'G' || c == 'E' || c == 'T' || \
-        c == 'P' || c == 'O' || c == 'S' || \
-        c == 'D' || c == 'L' \
-    );
-}
 bool isPathChar(const char & c)
 {
     return (c == '/' || isUnreserved(c));

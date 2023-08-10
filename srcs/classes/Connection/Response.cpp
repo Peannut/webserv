@@ -276,14 +276,14 @@ void    Response::generateIndexPage() {
     bodyFile.open("indexpage.html");
 }
 
-void Response::serving(const Server &server, const Location &location)
-
+void Response::serving(const Server & server, const Location * location)
+{
     if (request->_error) {
         buildErrorResponse(server, this);
     }
     else { //if request has no errors
         std::cout << "dkhel l else" << std::endl;
-        File file(&(this->request->_path), this->request->_uri, loc);
+        File file(&(this->request->_path), this->request->_uri, location);
         getFileStructure(&file);
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
@@ -294,7 +294,7 @@ void Response::serving(const Server &server, const Location &location)
         else {
             std::cout << "mal9ahch cgi" << std::endl;
             if (this->request->_method == GET_method) { 
-                servingFileGet(this ,server, location, file);
+                servingFileGet(this, server, location, file);
             }
             else if (this->request->_method == POST_method) {
                 postFile(this, server, location, file);

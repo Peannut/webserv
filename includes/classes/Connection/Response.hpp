@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Response.hpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/09 15:07:40 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
@@ -49,7 +37,7 @@ struct Response
     size_t extract();
     void seek_back(const size_t & amount);
     bool is_done();
-    void serving(const Server &server, const Location &location);
+    void serving(const Server &server, const Location *location);
 
 
     //peanut functions

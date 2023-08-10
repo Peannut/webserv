@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/24 15:03:03 by zwina             #+#    #+#             */
-/*   Updated: 2023/08/09 14:38:08 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 // This global variable will hold all the return of the system call functions that will fail if they return -1
@@ -73,8 +61,8 @@ void start_multiplexing(WebServ & webserv)
             }
             else if (conn.can_write())
             {
-                if (conn.get_res()._cgi.pid != -1 && !conn.get_res()._cgi._isDone)
-                    conn.get_res().cgi_wait();
+                if ((*conn._res)._cgi.pid != -1 && !(*conn._res)._cgi._isDone)
+                    (*conn._res).cgi_wait();
                 else
                     sending(webserv, i);
             }

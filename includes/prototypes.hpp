@@ -1,17 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   prototypes.hpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 09:14:24 by zwina            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
-
 #ifndef PROTOTYPES_HPP
 #define PROTOTYPES_HPP
 
@@ -78,7 +64,6 @@ bool isOWS(const char & c);
 bool isHEXDIG(const char & c);
 bool isVchar(const char & c);
 bool isTchar(const char & c);
-bool isMethodChar(const char & c);
 bool isPathChar(const char & c);
 bool isQueryChar(const char & c);
 void toupperFieldKey(std::string & field_key);

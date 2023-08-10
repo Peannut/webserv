@@ -1,6 +1,6 @@
 #include "includes.hpp"
 
-Request::Request()
+Request::Request(Connection & conn)
 : _error()
 , _method(none_method)
 , _mode(method_m)
@@ -8,6 +8,7 @@ Request::Request()
 , _transfer_content_max_len()
 , _transfer_content_len()
 , _transfer_chunk_len()
+, _conn(conn)
 {}
 
 bool Request::concatenate(const std::string & buffer)
@@ -40,7 +41,6 @@ bool Request::concatenate(const std::string & buffer)
             case success_m:         break;
         }
         if (_mode == error_m) break;
-        _message.push_back(c);
     }
     if (_mode == success_m)
         return true;
@@ -49,32 +49,51 @@ bool Request::concatenate(const std::string & buffer)
     return false;
 }
 
-void Request::serving(Connection & conn)
+void Request::matchingServer()
+{
+    const std::string & host = _fields["HOST"];
+    const std::vector<Server*> & _srvs = _conn._srvs;
+    for (size_t i = 0; i < _srvs.size(); ++i)
+    {
+        const std::vector<std::string> _server_names = _srvs[i]->server_names;
+        for (size_t j = 0; j < _server_names.size(); ++j)
+        {
+            if (host == _server_names[j])
+            {
+                _conn._srv = _srvs[i];
+                return ;
+            }
+        }
+    }
+}
+
+void Request::matchingLocation()
 {
     typedef std::map<std::string, Location> map_locations_t;
 
-    if (_mode != error_m)
+    map_locations_t & locations = _conn._srv->locations;
+
+    size_t maxLenMatched = 0;
+
+    for (map_locations_t::iterator it = locations.begin(); it != locations.end(); ++it)
     {
-        const Server & srv = conn.get_srv();
-	    const map_locations_t & locations = srv.locations;
-
-        size_t maxLenMatched = 0;
-
-        for (map_locations_t::const_iterator it = locations.begin(); it != locations.end(); ++it)
+        size_t lenMatched = matching_location(this->_path, it->first);
+        if (lenMatched != 0 && maxLenMatched < lenMatched)
         {
-            size_t lenMatched = matching_location(this->_path, it->first);
-            if (lenMatched != 0 && maxLenMatched < lenMatched)
-            {
-                conn.set_loc(it->first, it->second);
-                maxLenMatched = lenMatched;
-            }
+            _conn._loc = &it->second;
+            maxLenMatched = lenMatched;
         }
-        if (maxLenMatched == 0) set_error(404);
-        else _path.assign(std::string(conn._loc_obj->root + _path).data());
     }
+    if (maxLenMatched == 0) { set_error(404); return; }
+    else _path.insert(_path.begin(), _conn._loc->root.begin(), _conn._loc->root.end());
 
+    std::string method = _method != GET_method ? (_method != POST_method ? "DELETE" : "POST") : "GET";
+    if (_conn._loc->methods.find(method) == _conn._loc->methods.end()) set_error(405);
+}
+
+void Request::print()
+{
     std::cout << "REQUEST = [" << std::endl;
-    std::cout << "message => |" << _message << '|' << std::endl;
     std::cout << "method =>\t\t|";
     if (_method == GET_method) std::cout << "GET";
     if (_method == POST_method) std::cout << "POST";

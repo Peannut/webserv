@@ -11,6 +11,11 @@ void Request::field_CRLF_mode(const char & c)
         {
             toupperFieldKey(__tmp1);
             trimFieldVal(__tmp2);
+            if (__tmp1 == "HOST")
+            {
+                matchingServer();
+                matchingLocation();
+            }
             if (__tmp1 == "CONTENT-LENGTH")
             {
                 _transfer_content_len = std::strtoull(__tmp2.data(), NULL, 10);

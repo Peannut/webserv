@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/10 18:56:10 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/10 22:15:00 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,18 +237,31 @@ void Response::cgi_execve(File &file)
 
         // Set up arguments for execve
         std::string filepath = *file.fullpath;
+        std::cerr << "filepath: " << filepath << std::endl;
         char * const av[3] = {
             const_cast<char * const>(file.loc->cgi_bin.second.c_str()),
             const_cast<char * const>(filepath.c_str()),
             NULL
         };
+        // char * const av[3] = {
+        // const_cast<char * const>("/usr/bin/php-cgi7.4"),
+        // const_cast<char * const>("/home/peanut/webserv/srcs/CGI/scripts/sm.php"),
+        // NULL
+        // };
+
         std::cerr << "-------------------------------------------------------------------------------" << std::endl;
         // Execute the CGI script
+        std::cerr << "filepath" << filepath.c_str() << std::endl;
         std::cerr << "execve: " << file.loc->cgi_bin.second.c_str() << std::endl;
-        if (execve(file.loc->cgi_bin.second.c_str(), av, _cgi.env) == -1) {
+        // if (execve(file.loc->cgi_bin.second.c_str(), av, _cgi.env) == -1) {
+        //     std::cerr << "errrrrrrrrror" << std::endl;
+        //     perror("execve");
+        //     std::cerr << "***********93333333333333333999999999999" << std::endl;
+        // }
+        if (execve(av[0], av, _cgi.env) == -1) {
             std::cerr << "errrrrrrrrror" << std::endl;
             perror("execve");
-            exit(1);
+            std::cerr << "***********93333333333333333999999999999" << std::endl;
         }
     } 
     // else { // Parent process
@@ -334,9 +347,10 @@ void Response::cgi_wait()
     err = waitpid(_cgi.pid, &status, WNOHANG);
     if (err == 0)
         return;
-    else if (err == -1 || (WIFEXITED(status) && WEXITSTATUS(status) > 0))
+    else if (err == -1)
     {
-        serveDefaultErrorPage();
+        if ((WIFEXITED(status) && WEXITSTATUS(status) == EXIT_FAILURE))
+            serveDefaultErrorPage();
         perror("waitpid");
         std::cout << "errrr " << err << "   /" << WEXITSTATUS(status)<< std::endl;
         std::cout << "((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))" << std::endl;
@@ -357,7 +371,7 @@ void Response::env_maker(File &file)
 	
     int size = request->_fields.size();
 	std::cout << "size cgiii" << size << std::endl;
-	_cgi.env = new char*[size+ 8]();
+	_cgi.env = new char*[size+ 9]();
 	
 	int i = 0;
     std::map<std::string, std::string>::iterator it = request->_fields.begin();
@@ -379,6 +393,8 @@ void Response::env_maker(File &file)
     _cgi.env[i++] = strdup(("PATH_INFO=" + fullpath).c_str());
     _cgi.env[i++] = strdup(("QUERY_STRING=" + request->_query).c_str());
     _cgi.env[i++] = strdup(("REQUEST_URI=" + file.uri).c_str());
+    _cgi.env[i++] = strdup("REDIRECT_STATUS=200");
+
 
     Methods method = request->get_method();
     std::string val;

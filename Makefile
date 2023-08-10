@@ -6,7 +6,7 @@
 #    By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
-#    Updated: 2023/08/09 09:54:30 by zoukaddo         ###   ########.fr        #
+#    Updated: 2023/08/10 20:05:16 by zoukaddo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ ANSI_YELLOW			:= \\033[33m
 # compilation
 DEBUG   := -fsanitize=address -g
 CCWI    := c++ -Iincludes 
-CCWI    := g++ -Wall -Wextra -Werror -Iincludes -std=c++98
+#CCWI    := g++ -Wall -Wextra -Werror -Iincludes -std=c++98
 
 # directories
 OBJSDIR 		:= objs

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/24 15:03:03 by zwina             #+#    #+#             */
-/*   Updated: 2023/08/08 19:47:36 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/10 11:00:21 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void start_multiplexing(WebServ & webserv)
             else if (conn.can_write())
             {
                 if (conn.get_res()._cgi.pid != -1 && !conn.get_res()._cgi._isDone)
-                    conn.get_res().cgi_wait();
+                    conn.get_res().cgi_wait(); 
                 else
                     sending(webserv, i);
             }

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 11:52:29 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/10 14:51:28 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include "prototypes.hpp"
 
-#define CGI_BUFFER 10
+#define CGI_BUFFER 1024
 
 struct 	Cgi
 {

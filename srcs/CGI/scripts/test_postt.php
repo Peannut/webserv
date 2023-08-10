@@ -1,3 +1,32 @@
+#!/usr/bin/php
+<?php
+// Read raw POST data
+$input = file_get_contents('php://input');
+parse_str($input, $postData);
+
+$hobby = isset($postData['hobby']) ? $postData['hobby'] : '';
+$time = isset($postData['time']) ? $postData['time'] : '';
+
+// Generate response headers
+$responseHeaders = [
+    "HTTP/1.1 200 OK",
+    "Content-Type: text/html",
+];
+
+// Calculate content length based on the actual content
+$contentLength = strlen($hobby) + strlen($time) + 287 + strlen($input);
+
+// Add content length to headers
+$responseHeaders[] = "Content-Length: " . $contentLength;
+
+// Output response headers
+foreach ($responseHeaders as $header) {
+    header($header);
+}
+echo "\r\n"; // Empty line after headers
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,20 +45,8 @@
 
     <?php
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Check if the form has been submitted
-     
-        $input = file_get_contents('php://input');
-        parse_str($input, $postData);
-        
-        $hobby = isset($postData['hobby']) ? $postData['hobby'] : '';
-        $time = isset($postData['time']) ? $postData['time'] : '';
-        echo '<p style="color: green;">The time of ' . $hobby .  ' is: ' . $time . '</p>';
+        echo '<p style="color: green;">The time of ' . htmlspecialchars($hobby) .  ' is: ' . htmlspecialchars($time) . '</p>';
     }
-  
-    // foreach ($_SERVER as $key => $value) {
-    //     echo "<p>$key: $value</p>";
-    // }
-
     ?>
 </body>
 </html>

@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 17:22:54 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/10 18:56:10 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int Response::handleCGI(File &file)
     {
         serveDefaultErrorPage();
         std::cout << "500 t catcha" << std::endl;
+        std::cout << file.loc->cgi_bin.second.c_str() << std::endl;
         std::cout << "-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << std::endl;
         return (1);
     }
@@ -49,7 +50,7 @@ int Response::handleCGI(File &file)
     }
     env_maker(file);
     pipe(_cgi.fd);
-    pipe(_cgi.fd2);
+    // pipe(_cgi.fd2);
     std::cout << "pipe done" << std::endl;
     return (0);
 }
@@ -60,7 +61,7 @@ void Response::data_reader()
     int bytes_read;
 
     // Read data from the CGI pipe until there's no more data
-    while ((bytes_read = read(_cgi.fd2[0], buffer, CGI_BUFFER)) > 0)
+    while ((bytes_read = read(_cgi.fd[0], buffer, CGI_BUFFER)) > 0)
     {
         // Null-terminate the buffer after reading data
         buffer[bytes_read] = '\0';
@@ -72,7 +73,7 @@ void Response::data_reader()
     if (bytes_read == 0)
     {
         // No more data to read, close the read end of the pipe
-        close(_cgi.fd2[0]);
+        close(_cgi.fd[0]);
 
         // Handle the CGI output or response here, e.g., store it in a member variable, print it, or process it further.
         // _cgi.cgi_buffer.push_back('\0'); // Null-terminate the buffer
@@ -109,54 +110,105 @@ std::string Response::env_grabber(const std::string& key)
 
 void Response::reqbodysend()
 {
-    size_t content_length;
-    
+    size_t content_length = 0;
+
     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT-LENGTH");
     if (it != request->_fields.end())
         content_length = std::stoi(it->second);
-    else
-        content_length = 0;
-
-        
-    std::cout << "content_length: from reqbody" << content_length << std::endl;
-
-    // copy request body to _cgi.body
-    for(size_t i = 0; i < request->_body.size(); i++)
-        _cgi.body.push_back(request->_body[i]);
-
+        // copy request body to _cgi.body
+        for(size_t i = 0; i < request->_body.size(); i++)
+            _cgi.body.push_back(request->_body[i]);
 
     size_t read_size = 0;
-    ssize_t bytes_written = 0;
+    size_t write_size = 0;
     while (read_size < content_length)
     {
-        size_t write_size;
+        // Calculate the remaining bytes to write
+        size_t remaining_bytes = content_length - read_size;
+
+        // Calculate the size to write in this iteration
         if (_cgi.body.size() > CGI_BUFFER)
-            write_size = std::min(static_cast<size_t>(CGI_BUFFER), content_length - read_size);
+            write_size = std::min(remaining_bytes, static_cast<size_t>(CGI_BUFFER));
         else
-            write_size = std::min(static_cast<size_t>(_cgi.body.size()), content_length - read_size);
+            write_size = std::min(remaining_bytes, static_cast<size_t>(_cgi.body.size()));
 
-
-        std::cout << "write_size: " << write_size << std::endl;
-        bytes_written = write(_cgi.fd[1], _cgi.body.data(), write_size);
-        std::cout << "cgi body: " << _cgi.body.data() << std::endl;
+        // Write data to the pipe
+        std::cout << "cgi body before write: " << std::string(_cgi.body.data(), _cgi.body.size()) << std::endl;
+        ssize_t bytes_written = write(_cgi.fd[1], _cgi.body.data(), write_size);
         if (bytes_written == -1)
             break;
         else if (bytes_written == 0)
             break;
-        read_size += bytes_written;
 
-        // Erase the written data from the buffer
         _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + bytes_written);
+         std::cout << "cgi body after write: " << std::string(_cgi.body.data(), _cgi.body.size()) << std::endl;
+        // Update the read size
+        read_size += bytes_written;
+        // Break if the read size reaches the content length
+        if (read_size >= content_length)
+            break;
     }
 
     // Close the write end of the pipe, signaling the end of data
     close(_cgi.fd[1]);
-    close(_cgi.fd2[1]);
 }
+
+// void Response::reqbodysend()
+// {
+//     size_t content_length;
+    
+//     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT-LENGTH");
+//     if (it != request->_fields.end())
+//         content_length = std::stoi(it->second);
+//     else
+//         content_length = 0;
+
+        
+//     std::cout << "content_length: from reqbody" << content_length << std::endl;
+
+//     // copy request body to _cgi.body
+//     for(size_t i = 0; i < request->_body.size(); i++)
+//         _cgi.body.push_back(request->_body[i]);
+
+    
+//     size_t read_size = 0;
+//     ssize_t bytes_written = 0;
+//     while (read_size < content_length)
+//     {
+//         size_t write_size;
+//         if (_cgi.body.size() > CGI_BUFFER)
+//             write_size = std::min(static_cast<size_t>(CGI_BUFFER), content_length - read_size);
+//         else
+//             write_size = std::min(static_cast<size_t>(_cgi.body.size()), content_length - read_size);
+
+
+//         std::cout << "cgi body before write: " << std::string(_cgi.body.data(), _cgi.body.size()) << std::endl;
+//         bytes_written = write(_cgi.fd[1], _cgi.body.data(), write_size);
+//         std::cerr << "write :>>" << std::endl;
+//         write(3, _cgi.body.data(), write_size);
+//         std::cout << "cgi body: " << _cgi.body.data() << std::endl;
+//         if (bytes_written == -1)
+//             break;
+//         else if (bytes_written == 0)
+//             break;
+//         read_size += bytes_written;
+
+//         // Erase the written data from the buffer
+//         _cgi.body.erase(_cgi.body.begin(), _cgi.body.begin() + write_size);
+//         std::cout << "cgi body after write: " << std::string(_cgi.body.data(), _cgi.body.size()) << std::endl;
+
+//     }
+
+//     // Close the write end of the pipe, signaling the end of data
+//     close(_cgi.fd[1]);
+//     // close(_cgi.fd2[1]);
+   
+// }
 
 void Response::cgi_execve(File &file)
 {
     _cgi.pid = fork();
+    std::cout << "leeee piiiid" << _cgi.pid << std::endl;
     
     if (_cgi.pid == -1) {
         perror("fork");
@@ -164,22 +216,24 @@ void Response::cgi_execve(File &file)
     }
     if (_cgi.pid == 0) { // Child process
         // Close unused file descriptors
-        close(_cgi.fd[1]); // Close write end of the pipe
-        close(_cgi.fd2[0]); // Close read end of the second pipe
-
+        // close(_cgi.fd[1]); // Close write end of the pipe
+        // close(_cgi.fd2[0]); // Close read end of the second pipe
+        std::cerr << "chiiiiiiiiiiiiiiild process" << std::endl;
         // Redirect standard input and standard output
-        if (dup2(_cgi.fd2[1], STDOUT_FILENO) == -1) {
-            perror("dup2");
-            exit(1);
-        }
         if (dup2(_cgi.fd[0], STDIN_FILENO) == -1) {
             perror("dup2");
             exit(1);
         }
+        std::cerr << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << std::endl;
+        if (dup2(_cgi.fd[1], STDOUT_FILENO) == -1) {
+            perror("dup2");
+            exit(1);
+        }
+        std::cerr << "chiiiiiiiiiiiiiiild process 22222" << std::endl;
 
         // Close the remaining file descriptors in the child process
-        close(_cgi.fd[0]);
-        close(_cgi.fd2[1]);
+        // close(_cgi.fd[0]);
+        // close(_cgi.fd2[1]);
 
         // Set up arguments for execve
         std::string filepath = *file.fullpath;
@@ -188,17 +242,20 @@ void Response::cgi_execve(File &file)
             const_cast<char * const>(filepath.c_str()),
             NULL
         };
+        std::cerr << "-------------------------------------------------------------------------------" << std::endl;
         // Execute the CGI script
+        std::cerr << "execve: " << file.loc->cgi_bin.second.c_str() << std::endl;
         if (execve(file.loc->cgi_bin.second.c_str(), av, _cgi.env) == -1) {
+            std::cerr << "errrrrrrrrror" << std::endl;
             perror("execve");
             exit(1);
         }
     } 
-    else { // Parent process
-        // Close the unused ends of the pipes in the parent process
-        close(_cgi.fd[0]);
-        close(_cgi.fd2[1]);
-    }
+    // else { // Parent process
+    //     // Close the unused ends of the pipes in the parent process
+    //     // close(_cgi.fd[0]);
+    //     close(_cgi.fd[1]);
+    // }
 }
 
 void Response::cgiResponse(void)
@@ -234,25 +291,25 @@ void Response::cgiResponse(void)
             _message.insert(last_header_pos + 2, "\r\n");
     }
 
-    // Split message into headers and body
-    size_t pos = _message.find("\r\n\r\n");
-    std::string _message_body = _message.substr(pos + 4);
-    std::string headers = _message.substr(0, pos + 4);
+    // // Split message into headers and body
+    // size_t pos = _message.find("\r\n\r\n");
+    // std::string _message_body = _message.substr(pos + 4);
+    // std::string headers = _message.substr(0, pos + 4);
 
-    // Check if "Content-length: " exists
-    size_t content_length_pos = headers.find("Content-length: ");
-    if (content_length_pos == std::string::npos)
-    {
-        // If "Content-length: " does not exist, calculate the content length dynamically
-        size_t calculated_content_length = _message_body.length();
+    // // Check if "Content-length: " exists
+    // size_t content_length_pos = headers.find("Content-length: ");
+    // if (content_length_pos == std::string::npos)
+    // {
+    //     // If "Content-length: " does not exist, calculate the content length dynamically
+    //     size_t calculated_content_length = _message_body.length();
 
-        // Append the "Content-length" header before the end of headers
-        size_t end_of_headers_pos = headers.find_last_not_of("\r\n");
-        headers.insert(end_of_headers_pos + 1, "\r\nContent-length: " + std::to_string(calculated_content_length));
-    }
+    //     // Append the "Content-length" header before the end of headers
+    //     size_t end_of_headers_pos = headers.find_last_not_of("\r\n");
+    //     headers.insert(end_of_headers_pos + 1, "\r\nContent-length: " + std::to_string(calculated_content_length));
+    // }
 
-    // Update the modified CGI output (_message)
-    _message = headers + _message_body;
+    // // Update the modified CGI output (_message)
+    // _message = headers + _message_body;
 
     // Print or store the modified CGI output
     std::cout << "Modified CGI Output:\n" << _message << std::endl;
@@ -277,8 +334,13 @@ void Response::cgi_wait()
     err = waitpid(_cgi.pid, &status, WNOHANG);
     if (err == 0)
         return;
-    else if (err == -1 || WEXITSTATUS(status) > 0)
+    else if (err == -1 || (WIFEXITED(status) && WEXITSTATUS(status) > 0))
+    {
         serveDefaultErrorPage();
+        perror("waitpid");
+        std::cout << "errrr " << err << "   /" << WEXITSTATUS(status)<< std::endl;
+        std::cout << "((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))" << std::endl;
+    }
     else if (err == _cgi.pid)
     {
         std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
@@ -295,7 +357,7 @@ void Response::env_maker(File &file)
 	
     int size = request->_fields.size();
 	std::cout << "size cgiii" << size << std::endl;
-	_cgi.env = new char*[size+ 7]();
+	_cgi.env = new char*[size+ 8]();
 	
 	int i = 0;
     std::map<std::string, std::string>::iterator it = request->_fields.begin();
@@ -313,6 +375,7 @@ void Response::env_maker(File &file)
     std::string fullpath = *file.fullpath;
     _cgi.env[i++] = strdup("SERVER_PROTOCOL=HTTP/1.1");
     _cgi.env[i++] = strdup(("SCRIPT_FILENAME=" + fullpath).c_str());
+    _cgi.env[i++] = strdup(("SCRIPT_NAME=" + fullpath).c_str());
     _cgi.env[i++] = strdup(("PATH_INFO=" + fullpath).c_str());
     _cgi.env[i++] = strdup(("QUERY_STRING=" + request->_query).c_str());
     _cgi.env[i++] = strdup(("REQUEST_URI=" + file.uri).c_str());

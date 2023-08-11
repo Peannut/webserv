@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/09 11:59:50 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/11 11:20:56 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ struct Response
 
 
     //peanut functions
-    void env_maker(File &file);
+    int env_maker(File &file);
     int handleCGI(File &file);
     void cgiResponse(void);
     void cgi_execve(File &file);

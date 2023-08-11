@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Response.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
+/*   Updated: 2023/08/11 15:50:49 by zwina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef RESPONSE_HPP
 #define RESPONSE_HPP
 
@@ -6,6 +18,7 @@
 struct Response
 {
     Request *request;
+    const Server  *srv;
     Cgi     _cgi;
     int statusCode;
     std::string statusMessage;
@@ -41,10 +54,10 @@ struct Response
 
 
     //peanut functions
-    void env_maker(File &file);
+    int env_maker(File &file);
     int handleCGI(File &file);
     void cgiResponse(void);
-    void cgi_execve(const Location &loc, File &file);
+    void cgi_execve(File &file);
     void data_reader(void);
     void reqbodysend(void);
     void cgi_wait(void);
@@ -60,6 +73,7 @@ struct Response
     void    deleteAllDirContent(std::string path, const Server &server);
     void    buildResponseHeaders( void );
     void    getFileStructure(File *file);
+    void    settingServerForCgi(const Server *server);
 };
 
 #endif // RESPONSE_HPP

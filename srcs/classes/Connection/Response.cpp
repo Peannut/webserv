@@ -6,6 +6,10 @@ Response::Response(Request *req)
 , _offset()
 {}
 
+void    Response::settingServerForCgi(const Server *server) {
+    srv = server;
+}
+
 size_t Response::extract()
 {
     size_t length = 0;
@@ -287,9 +291,15 @@ void Response::serving(const Server & server, const Location * location)
         getFileStructure(&file);
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
+<<<<<<< HEAD
             //////////////cgi//////////////
             handleCGI(file);
             cgi_supervisor(file);
+=======
+            settingServerForCgi(&server);
+            if (!handleCGI(file))
+                cgi_supervisor(file);
+>>>>>>> zoukaddo
         }
         else {
             std::cout << "mal9ahch cgi" << std::endl;
@@ -303,7 +313,6 @@ void Response::serving(const Server & server, const Location * location)
                 deletingFile(this, server, location, file);
             }
         }
-        // else{}
     }
     std::cout << "RESPONSE = [" << _message << ']' << std::endl;
 }

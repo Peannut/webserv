@@ -3,7 +3,7 @@
 
 #include "prototypes.hpp"
 
-#define CGI_BUFFER 10
+#define CGI_BUFFER 1024
 
 struct 	Cgi
 {
@@ -15,8 +15,6 @@ struct 	Cgi
 	std::vector<char> body;
 	std::vector<char> cgi_buffer;
 	bool _isDone;
-	Server _srv;
-	Location loc;
 
 	Cgi(): pid(-1), env(NULL), _isDone() {}
 	~Cgi() {
@@ -24,11 +22,8 @@ struct 	Cgi
 		{
 			int i = 0;
 			while (env[i])
-			{
-				std::cout << "deleted" << std::endl;
 				delete env[i++];
-			}
-			delete env;
+			delete[] env;
 		}
 	}
 };

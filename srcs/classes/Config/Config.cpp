@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+=======
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Config.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/08/11 15:05:03 by zoukaddo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+>>>>>>> zoukaddo
 #include "includes.hpp"
 
 Server &Config::get_server(const size_t & index)
@@ -183,9 +198,6 @@ void	Config::setupredirect(std::string line, Location& location)
 
 	
 	int status = std::atoi(redirect[0].data());
-	// idk status code range
-	if (status < 300 || status > 600)
-		throw std::runtime_error("Error: invalid redirect status");
 	location.redirect.first = status;
 	location.redirect.second = redirect[1];
 
@@ -344,6 +356,7 @@ void Config::setupServer(std::ifstream& file)
 	
 }
 
+<<<<<<< HEAD
 void Config::removeDuplicateServers()
 {
     size_t i = 1;
@@ -378,6 +391,8 @@ void Config::fillConfig2()
 	for (size_t i = 0; i < config.size(); ++i)
 		configMap[config[i].listen].push_back(&config[i]);
 }
+=======
+>>>>>>> zoukaddo
 
 void	Config::setupconfig(const std::string& filename)
 {

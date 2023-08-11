@@ -5,7 +5,7 @@ Request::Request(Connection & conn)
 , _method(none_method)
 , _mode(method_m)
 , _transfer(none_tr)
-, _transfer_content_max_len()
+, _transfer_content_max_len(conn._srv->client_max_body_size)
 , _transfer_content_len()
 , _transfer_chunk_len()
 , _conn(conn)
@@ -61,6 +61,7 @@ void Request::matchingServer()
             if (host == _server_names[j])
             {
                 _conn._srv = _srvs[i];
+                _transfer_content_max_len = _conn._srv->client_max_body_size;
                 return ;
             }
         }
@@ -109,7 +110,7 @@ void Request::print()
     std::cout << "number_of_fields => |" << _fields.size() << '|' << std::endl;
     for (std::map<std::string, std::string>::iterator it = _fields.begin(); it != _fields.end(); ++it)
         std::cout << "field =>\t\t|" << it->first << "|:|" << it->second << '|' << std::endl;
-    std::cout << "body =>\t\t\t|" << _body << '|' << std::endl;
+    // std::cout << "body =>\t\t\t|" << _body << '|' << std::endl;
     std::cout << ']';
     if (_mode == success_m)
     {

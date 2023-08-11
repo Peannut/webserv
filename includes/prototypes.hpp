@@ -23,7 +23,7 @@
 #define TIMEOUT (time_t)60 // the maximum number of second that we will wait if the client socket freezed
 #define POLL_TIME 0 // the time that poll() waits in milliseconds
 #define BACK_LOG 10 // one socket can handle BACK_LOG number of connection
-#define BUFFER_SIZE (size_t)8192 // the size of the receiving the sending buffer
+#define BUFFER_SIZE (size_t)180192 // the size of the receiving the sending buffer
 #define URI_LIMIT 8192 // the maximum size of the uri in the request
 
 #define ANSI_RESET      "\033[0m"
@@ -97,7 +97,7 @@ bool        pathSupportUpload(Response *response, const Location *loc);
 void        buildErrorResponse(const Server &server, Response *response);
 void        deletingFile(Response *res, const Server &server, const Location *loc, const File &file);
 void        postFile(Response	*response, const Server	&server, const Location	*loc, const File &file);
-void        servingFileGet(Response *response ,const Server &server, const Location *loc, const File &file);
+void        servingFileGet(Response *response ,const Server &server, const Location *loc, File &file);
 // void    buildResponseHeaders(Response &response);
 // std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path);
 

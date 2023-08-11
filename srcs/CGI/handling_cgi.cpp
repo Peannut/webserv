@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/11 16:00:00 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/11 16:45:40 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,7 @@ void Response::cgi_execve(File &file)
         char * av[3];
         av[0] = new char[file.loc->cgi_bin.second.length()];
         av[1] = new char[filepath.length()];
+        av[2] = NULL;
         std::strcpy(av[0], file.loc->cgi_bin.second.c_str());
         std::strcpy(av[1], filepath.c_str());
         // Execute the CGI script
@@ -349,7 +350,6 @@ int Response::env_maker(File &file)
     for (int i = 0; i < sizo ; i++)
     {
         if (_cgi.env[i] != NULL)
-        {
             std::cout << _cgi.env[i] << std::endl;
     }
     return (0);

@@ -66,7 +66,7 @@ void start_multiplexing(WebServ & webserv)
                 else
                     sending(webserv, i);
             }
-            else if (conn.is_error() || (!conn._isListen && conn.get_passed_time() > TIMEOUT))
+            else if (conn.is_error())
                 webserv.remove_connection(i);
         }
     }

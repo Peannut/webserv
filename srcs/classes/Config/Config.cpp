@@ -1,19 +1,5 @@
-<<<<<<< HEAD
-=======
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/11 15:05:03 by zoukaddo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
->>>>>>> zoukaddo
 #include "includes.hpp"
+#include <vector>
 
 Server &Config::get_server(const size_t & index)
 {
@@ -88,10 +74,9 @@ void Config::setupErrorPage(std::string& line, Server& server)
 	std::string val = line.substr(12, line.size() - 12);
 	if (line_empty(val))
 		throw std::runtime_error("Error: error_page does not have a value");
-	std::vector<std::string> error = split(val, ':');
+	std::vector<std::string> error = split(val, ' ');
 	if (error.size() != 2)
 		throw std::runtime_error("Error: invalid error_page value");
-
 	std::pair<short, std::string> page;
 	page.first = std::atoi(error[0].data());
 	if (page.first < 100 || page.first > 599)
@@ -356,43 +341,11 @@ void Config::setupServer(std::ifstream& file)
 	
 }
 
-<<<<<<< HEAD
-void Config::removeDuplicateServers()
-{
-    size_t i = 1;
-    while (i < config.size())
-    {
-        const Server& currentServer = config[i];
-        const Server& previousServer = config[i - 1];
-
-        if (currentServer.listen == previousServer.listen)
-        {
-            if (!currentServer.server_names.empty() && !previousServer.server_names.empty() && currentServer.server_names[0] == previousServer.server_names[0])
-            {
-                // If same listen and server_name, keep the previous server and remove the current one
-                config.erase(config.begin() + i);
-            }
-            else
-            {
-                // If same listen but different server_name, keep both servers
-                i++;
-            }
-        }
-        else
-        {
-            // If different listen values, keep the current server
-            i++;
-        }
-    }
-}
-
 void Config::fillConfig2()
 {
 	for (size_t i = 0; i < config.size(); ++i)
 		configMap[config[i].listen].push_back(&config[i]);
 }
-=======
->>>>>>> zoukaddo
 
 void	Config::setupconfig(const std::string& filename)
 {

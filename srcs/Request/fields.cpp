@@ -16,7 +16,7 @@ void Request::field_CRLF_mode(const char & c)
                 matchingServer();
                 matchingLocation();
             }
-            if (__tmp1 == "CONTENT-LENGTH")
+            else if (__tmp1 == "CONTENT-LENGTH")
             {
                 _transfer_content_len = std::strtoull(__tmp2.data(), NULL, 10);
                 if (!isContentLengthValValid(__tmp2)) set_error(400);

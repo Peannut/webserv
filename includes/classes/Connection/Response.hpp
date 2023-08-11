@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/11 15:50:49 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/11 16:08:20 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,15 @@ struct Response
     void    nameUploadFile();
     void    setFileName( const std::string & );
     std::string generateRandomName();
-    void    uploadContent(const Server  &server);
+    void    uploadContent(const Server  &server, const Location *loc);
     void    setPathInformation(const Location *);
     void    generateIndexPage();
     void    deleteAllDirContent(std::string path, const Server &server);
     void    buildResponseHeaders( void );
     void    getFileStructure(File *file);
     void    settingServerForCgi(const Server *server);
+    void    handlingRedirection(const Server &server, const Location *loc);
+    void    buildingRedirectHeaders(const std::string &RedirectionLocation);
 };
 
 #endif // RESPONSE_HPP

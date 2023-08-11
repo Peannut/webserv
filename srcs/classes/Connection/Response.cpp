@@ -4,10 +4,43 @@ Response::Response(Request *req)
 : request(req)
 , _message_size()
 , _offset()
+, contentLength()
 {}
 
 void    Response::settingServerForCgi(const Server *server) {
     srv = server;
+}
+
+void    Response::buildingRedirectHeaders(const std::string &RedirectionLocation) {
+    std::stringstream tmp;
+	_message += "HTTP/1.1 ";
+	tmp << statusCode;
+	_message += tmp.str();
+	_message += " ";
+	_message += statusMessage;
+	_message += "\r\nContent-Type: ";
+	_message += contentType;
+	_message += "\r\nConnection: Close\r\nContent-lenght: ";
+	tmp.str("");
+	tmp << contentLength;
+	_message += tmp.str();
+    _message += "\r\nLocation: ";
+    _message += RedirectionLocation;
+	_message += "\r\n\r\n";
+	_message_size = _message.length();
+}
+
+void    Response::handlingRedirection(const Server &server, const Location *loc) {
+    UNUSED(server);
+    std::stringstream tmp;
+    // if (loc->redirect.first >= 301 && loc->redirect.first <= 308) {
+        //kanakhod error code ou kanzid fel headers field dyal redirection = loc->redirect.second
+        setResponsefields(loc->redirect.first, "Coresponding Message");
+        buildingRedirectHeaders(loc->redirect.second);
+    // }
+    // else {
+    //     //kanakhod error code ou makanzidch loc fel header ms kanservi file fih dak link as plain/txt;
+    // }
 }
 
 size_t Response::extract()
@@ -32,8 +65,14 @@ size_t Response::extract()
 
 void Response::seek_back(const size_t & amount)
 {
-    if (bodyFile.is_open() && amount && _offset >= _message_size)
+    if (bodyFile.is_open()) {
+        std::cout << "----------file opened----------" << std::endl;
+    }
+    if (bodyFile.is_open() && amount && _offset >= _message_size) {
+        std::cout << "----------printina chi haja----------" << std::endl;
         bodyFile.seekg(amount, bodyFile.cur); // We have to update this line
+    }
+    std::cout << "amount = " << amount<< std::endl;
     _offset -= amount;
 }
 
@@ -176,7 +215,7 @@ void    Response::buildResponseHeaders() {
 	_message += statusMessage;
 	_message += "\r\nContent-Type: ";
 	_message += contentType;
-	_message += "\r\nConnection: Close\r\nContent-lenght: ";
+	_message += "\r\nConnection: Close\r\nContent-length: ";
 	tmp.str("");
 	tmp << contentLength;
 	_message += tmp.str();
@@ -244,11 +283,20 @@ void    Response::nameUploadFile() {
     fileName = generateRandomName();
 }
 
-void    Response::uploadContent(const Server &server) {
-    std::ofstream fileName;
-
-    serveErrorPage(server, 201, "Created");
-    fileName << request->_body;
+void    Response::uploadContent(const Server &server, const Location *loc) {
+    UNUSED(server);
+    std::ofstream outfile((loc->upload_pass + "/" + fileName).c_str());
+    outfile << request->_body;
+    outfile.close();
+    setResponsefields(201, "Created");
+    buildResponseHeaders();
+    // if (bodyFile.is_open()) {
+    //     char buff[100];
+    //     bodyFile.getline(buff, 100);
+    //     std::cout << "upload path is : "<< loc->upload_pass + "/" + fileName << std::endl;
+    std::cout << "body: " << request->_body.size() << std::endl;
+    //     std::cout << "first character inside of the file :"<< buff << std::endl;
+    // }
 }
 
 void    Response::setPathInformation(const Location *loc) {
@@ -268,7 +316,7 @@ void    Response::generateIndexPage() {
         while ((entry = readdir(dir)) != NULL) {
             std::string name = entry->d_name;
             if (name != "." && name != "..") {
-                page += "<li><a href=\"" + name + "\">" + name + "</a></li>\n";
+                page += "<li><a href=\"" + fileinfo->uri + name + "\">" + name + "</a></li>\n";
             }
         }
         closedir(dir);
@@ -280,37 +328,37 @@ void    Response::generateIndexPage() {
     bodyFile.open("indexpage.html");
 }
 
-void Response::serving(const Server & server, const Location * location)
-{
-    if (request->_error) {
-        buildErrorResponse(server, this);
+void Response::serving(const Server & server, const Location * loc) {
+    std::cout << "body size before anything = " << request->_body.size() << std::endl;
+    if (request->_error || loc->redirect.first) {
+        if (request->_error){
+            buildErrorResponse(server, this);
+        }
+        else {
+            std::cout << "------handling redirection------" <<std::endl;
+            handlingRedirection(server, loc);
+        }
     }
     else { //if request has no errors
         std::cout << "dkhel l else" << std::endl;
-        File file(&(this->request->_path), this->request->_uri, location);
+        File file(&(this->request->_path), this->request->_uri, loc);
         getFileStructure(&file);
         if (file.cgi) {
             std::cout << "dkhel l cgi" << std::endl;
-<<<<<<< HEAD
-            //////////////cgi//////////////
-            handleCGI(file);
-            cgi_supervisor(file);
-=======
             settingServerForCgi(&server);
             if (!handleCGI(file))
                 cgi_supervisor(file);
->>>>>>> zoukaddo
         }
         else {
             std::cout << "mal9ahch cgi" << std::endl;
             if (this->request->_method == GET_method) { 
-                servingFileGet(this, server, location, file);
+                servingFileGet(this, server, loc, file);
             }
             else if (this->request->_method == POST_method) {
-                postFile(this, server, location, file);
+                postFile(this, server, loc, file);
             }
             else if (this->request->_method == DELETE_method) {
-                deletingFile(this, server, location, file);
+                deletingFile(this, server, loc, file);
             }
         }
     }

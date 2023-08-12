@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/11 14:05:31 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/12 23:29:46 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void Response::reqbodysend()
 
     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT-LENGTH");
     if (it != request->_fields.end())
-        content_length = std::stoi(it->second);
+        content_length = std::atoi(it->second.c_str());
         // copy request body to _cgi.body
     std::cout << "upload file sizeeee" << request->_body.size() << std::endl;
         for(size_t i = 0; i < request->_body.size(); i++)
@@ -112,10 +112,13 @@ void Response::reqbodysend()
         size_t remaining_bytes = content_length - read_size;
 
         // Calculate the size to write in this iteration
-        if (_cgi.body.size() > CGI_BUFFER)
-            write_size = std::min(remaining_bytes, static_cast<size_t>(CGI_BUFFER));
-        else
-            write_size = std::min(remaining_bytes, static_cast<size_t>(_cgi.body.size()));
+        if (_cgi.body.size() > CGI_BUFFER) write_size = remaining_bytes < CGI_BUFFER ? remaining_bytes : CGI_BUFFER;
+        else write_size = remaining_bytes < _cgi.body.size() ? remaining_bytes : _cgi.body.size();
+
+        // if (_cgi.body.size() > CGI_BUFFER)
+        //     write_size = std::min(remaining_bytes, static_cast<size_t>(CGI_BUFFER));
+        // else
+        //     write_size = std::min(remaining_bytes, static_cast<size_t>(_cgi.body.size()));
 
         // Write data to the pipe
         // std::cout << "cgi body before write: " << std::string(_cgi.body.data(), _cgi.body.size()) << std::endl;
@@ -172,18 +175,15 @@ void Response::cgi_execve(File &file)
         // close(_cgi.fd2[1]);
 
         // Set up arguments for execve
+     // Set up arguments for execve
         std::string filepath = *file.fullpath;
-        std::cerr << "filepath: " << filepath << std::endl;
-        char * const av[3] = {
-            const_cast<char * const>(file.loc->cgi_bin.second.c_str()),
-            const_cast<char * const>(filepath.c_str()),
-            NULL
-        };
-
-        std::cerr << "-------------------------------------------------------------------------------" << std::endl;
+        char * av[3];
+        av[0] = new char[file.loc->cgi_bin.second.length()];
+        av[1] = new char[filepath.length()];
+        av[2] = NULL;
+        std::strcpy(av[0], file.loc->cgi_bin.second.c_str());
+        std::strcpy(av[1], filepath.c_str());
         // Execute the CGI script
-        std::cerr << "filepath" << filepath.c_str() << std::endl;
-        std::cerr << "execve: " << file.loc->cgi_bin.second.c_str() << std::endl;
         if (execve(av[0], av, _cgi.env) == -1) {
             std::cerr << "errrrrrrrrror" << std::endl;
             perror("execve");
@@ -345,7 +345,7 @@ int Response::env_maker(File &file)
 
     for (int i = 0; i < sizo ; i++)
     {
-        if (_cgi.env[i] != nullptr)
+        if (_cgi.env[i] != NULL)
             std::cout << _cgi.env[i] << std::endl;
     }
     return (0);

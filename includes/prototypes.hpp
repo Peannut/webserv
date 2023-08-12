@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 09:49:27 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/11 16:00:07 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ bool isOWS(const char & c);
 bool isHEXDIG(const char & c);
 bool isVchar(const char & c);
 bool isTchar(const char & c);
-bool isMethodChar(const char & c);
 bool isPathChar(const char & c);
 bool isQueryChar(const char & c);
 void toupperFieldKey(std::string & field_key);

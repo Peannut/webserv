@@ -49,7 +49,7 @@ struct Response
     size_t extract();
     void seek_back(const size_t & amount);
     bool is_done();
-    void serving(const Server &server, const Location *loc, const std::string &loc_Path);
+    void serving(const Server &server, const Location *location);
 
 
     //peanut functions

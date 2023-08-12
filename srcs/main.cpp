@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/24 15:03:03 by zwina             #+#    #+#             */
-/*   Updated: 2023/08/10 11:00:21 by zoukaddo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
 
 // This global variable will hold all the return of the system call functions that will fail if they return -1
@@ -23,15 +11,15 @@ void setup_webserv(WebServ & webserv)
     struct addrinfo *records;
     SOCKET_FD fdsock_server;
 
-    for (size_t sz = config.config.size(), i = 0; i < sz; ++i)
+    for (std::map<std::pair<int, short>, std::vector<Server*> >::iterator it = config.configMap.begin(); it != config.configMap.end(); ++it)
     {
-        Server & server = config.get_server(i);
+        std::vector<Server *> & servers = it->second;
         try
         {
-            records = our_getaddrinfo(server.get_host().data(), server.get_port().data());
+            records = our_getaddrinfo(servers[0]->get_host().data(), servers[0]->get_port().data());
             fdsock_server = our_bind(records);
             our_listen(fdsock_server);
-            webserv.add_connection(LISTEN_ENABLE, fdsock_server, server);
+            webserv.add_connection(LISTEN_ENABLE, fdsock_server, servers);
             freeaddrinfo(records);
         }
         catch (const int & n) {
@@ -73,12 +61,12 @@ void start_multiplexing(WebServ & webserv)
             }
             else if (conn.can_write())
             {
-                if (conn.get_res()._cgi.pid != -1 && !conn.get_res()._cgi._isDone)
-                    conn.get_res().cgi_wait(); 
+                if ((*conn._res)._cgi.pid != -1 && !(*conn._res)._cgi._isDone)
+                    (*conn._res).cgi_wait();
                 else
                     sending(webserv, i);
             }
-            else if (conn.is_error() || (!conn._isListen && conn.get_passed_time() > TIMEOUT))
+            else if (conn.is_error())
                 webserv.remove_connection(i);
         }
     }

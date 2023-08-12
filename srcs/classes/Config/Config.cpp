@@ -1,16 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/12 14:02:41 by zoukaddo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "includes.hpp"
+#include <vector>
 
 Server &Config::get_server(const size_t & index)
 {
@@ -90,7 +79,6 @@ void Config::setupErrorPage(std::string& line, Server& server)
 	std::vector<std::string> error = split(val, ' ');
 	if (error.size() != 2)
 		throw std::runtime_error("Error: invalid error_page value");
-
 	std::pair<short, std::string> page;
 	page.first = std::atoi(error[0].data());
 	if (page.first < 100 || page.first > 599)
@@ -356,6 +344,11 @@ void Config::setupServer(std::ifstream& file)
 	
 }
 
+void Config::fillConfig2()
+{
+	for (size_t i = 0; i < config.size(); ++i)
+		configMap[config[i].listen].push_back(&config[i]);
+}
 
 void	Config::setupconfig(const std::string& filename)
 {
@@ -379,5 +372,9 @@ void	Config::setupconfig(const std::string& filename)
 			throw std::runtime_error("Error: invalid directive");
 		
 	}
+	fillConfig2();
+	// print config size
+	// std::cout << "SIIIIIZE" << config.size() << std::endl;
+	// print config
 	file.close();
 }

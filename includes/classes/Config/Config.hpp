@@ -1,17 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/10 20:11:14 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/11 15:05:07 by zoukaddo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
-
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
@@ -20,6 +6,7 @@
 struct Config
 {
 	std::vector<Server> config;
+	std::map<std::pair<int, short>, std::vector<Server*> > configMap;
 
 	Server &get_server(const size_t & index);
 	void setupconfig(const std::string& filename);
@@ -37,6 +24,7 @@ struct Config
 	void setupautoindex(std::string line, Location& location);
 	void setupcgibin(std::string line, Location& location);
 	void setupuploadpass(std::string line, Location& location);
+	void fillConfig2();
 };
 
 #endif // CONFIG_HPP

@@ -13,7 +13,7 @@ void Request::method_mode(const char & c)
     }
     else
     {
-        if (!isMethodChar(c) || __tmp1.size() > 6) set_error(400);
+        if (!isUnreserved(c) || __tmp1.size() > 10) set_error(400);
         else __tmp1.push_back(c);
     }
 }

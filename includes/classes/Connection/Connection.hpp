@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Connection.hpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/23 17:44:20 by zwina             #+#    #+#             */
-/*   Updated: 2023/07/23 15:20:03 by zoukaddo         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef CONNECTION_HPP
 #define CONNECTION_HPP
 
@@ -20,33 +8,23 @@ struct Connection
     bool _isListen;
     const time_t _startTime;
     SOCKET_POLL *_socket;
-    const Server *_srv;
-    const std::string * _loc_path;
-    const Location * _loc_obj;
+    std::vector<Server*> & _srvs;
+    Server * _srv;
+    Location * _loc;
     Request *_req;
     Response *_res;
 
-    Connection(const bool & isListen, SOCKET_POLL & socket);
+    Connection(const bool & isListen, SOCKET_POLL & socket, std::vector<Server*> & servers);
     ~Connection();
 
     time_t get_passed_time();
     SOCKET_POLL & get_socket();
     SOCKET_FD & get_fdsock();
-    const Server & get_srv(void);
-    const std::string & get_loc_path(void);
-    const Location & get_loc_obj(void);
-    Request & get_req(void);
-    Response & get_res(void);
-
-    void set_srv(const Server & srv);
-    void set_loc(const std::string & loc_path, const Location & loc_obj);
 
     bool can_read();
     bool can_write();
     bool is_error();
-    void flip_flag(const short & flag);
-
-    void serving();
+    void flip_read_to_write();
 };
 
 #endif // CONNECTION_HPP

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handling_cgi.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/11 14:05:31 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/11 16:45:40 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int Response::handleCGI(File &file)
 {   
     if (access(file.loc->cgi_bin.second.c_str(), X_OK))
     {
-        serveDefaultErrorPage();
+        serveErrorPage(*srv, 500, "Internal Server Error");
         std::cout << "500 t catcha" << std::endl;
         std::cout << file.loc->cgi_bin.second.c_str() << std::endl;
         std::cout << "-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << std::endl;
@@ -99,10 +99,16 @@ void Response::reqbodysend()
     std::map<std::string, std::string>::iterator it = request->_fields.find("CONTENT-LENGTH");
     if (it != request->_fields.end())
         content_length = std::atoi(it->second.c_str());
-        // copy request body to _cgi.body
-    std::cout << "upload file sizeeee" << request->_body.size() << std::endl;
-        for(size_t i = 0; i < request->_body.size(); i++)
-            _cgi.body.push_back(request->_body[i]);
+    else
+        content_length = 0;
+
+        
+    std::cout << "content_length: from reqbody" << content_length << std::endl;
+
+    // copy request body to _cgi.body
+    for(size_t i = 0; i < request->_body.size(); i++)
+        _cgi.body.push_back(request->_body[i]);
+
 
     size_t read_size = 0;
     size_t write_size = 0;
@@ -173,14 +179,12 @@ void Response::cgi_execve(File &file)
 
         // Set up arguments for execve
         std::string filepath = *file.fullpath;
-        std::cerr << "filepath: " << filepath << std::endl;
-        char * const av[3] = {
-            const_cast<char * const>(file.loc->cgi_bin.second.c_str()),
-            const_cast<char * const>(filepath.c_str()),
-            NULL
-        };
-
-        std::cerr << "-------------------------------------------------------------------------------" << std::endl;
+        char * av[3];
+        av[0] = new char[file.loc->cgi_bin.second.length()];
+        av[1] = new char[filepath.length()];
+        av[2] = NULL;
+        std::strcpy(av[0], file.loc->cgi_bin.second.c_str());
+        std::strcpy(av[1], filepath.c_str());
         // Execute the CGI script
         std::cerr << "filepath" << filepath.c_str() << std::endl;
         std::cerr << "execve: " << file.loc->cgi_bin.second.c_str() << std::endl;
@@ -272,7 +276,7 @@ void Response::cgi_wait()
     else if (err == -1)
     {
         if ((WIFEXITED(status) && WEXITSTATUS(status) == EXIT_FAILURE))
-            serveDefaultErrorPage();
+            serveErrorPage(*srv, 500, "Internal Server");
         perror("waitpid");
         std::cout << "errrr " << err << "   /" << WEXITSTATUS(status)<< std::endl;
         std::cout << "((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))" << std::endl;
@@ -345,7 +349,7 @@ int Response::env_maker(File &file)
 
     for (int i = 0; i < sizo ; i++)
     {
-        if (_cgi.env[i] != nullptr)
+        if (_cgi.env[i] != NULL)
             std::cout << _cgi.env[i] << std::endl;
     }
     return (0);

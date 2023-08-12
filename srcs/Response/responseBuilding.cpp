@@ -29,7 +29,7 @@ void	buildErrorResponse(const Server &server, Response *response) {
 	response->errorPageHtml();
 }
 
-void servingFileGet(Response *response ,const Server &server, const Location *loc, File &file) { 
+void servingFileGet(Response *response ,const Server &server, const Location *loc, File &file) {
 	std::cout << "file existing: " << file.existing << " directory: " << file.directory << " with slash: " << file.endWithSlash <<std::endl;
 	if (file.existing) { //file does exists
 		if (!file.directory) { //resource is a file
@@ -55,7 +55,23 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 				}
 			}
 		}
-	}
+			if (file.indexFound) { // check autoindex
+				response->fillBodyFile(server);
+				response->getbodySize();
+				response->buildResponseHeaders();
+			}
+			else { //no index should check autoindex here
+				if (!loc->autoindex) {
+					response->serveErrorPage(server, 403, "Forbidden");
+				}
+				else {// auto index
+					response->setResponsefields(200, "OK");
+					response->generateIndexPage();
+					response->getbodySize();
+					response->buildResponseHeaders();
+				}
+			}
+		}
 	else {
 		response->serveErrorPage(server, 404, "Not Found");
 	}

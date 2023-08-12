@@ -88,7 +88,7 @@ void accepting(WebServ & webserv, const size_t & index)
     err = setsockopt(fdsock_client, SOL_SOCKET, SO_REUSEADDR, &err, sizeof(err));
     if (err == -1) { close(fdsock_client); return; }
 
-    webserv.add_connection(!LISTEN_ENABLE, fdsock_client, conn.get_srv());
+    webserv.add_connection(!LISTEN_ENABLE, fdsock_client, conn._srvs);
 }
 
 void receiving(WebServ & webserv, const size_t & index)
@@ -99,7 +99,7 @@ void receiving(WebServ & webserv, const size_t & index)
 
     Connection & conn = webserv.get_connection(index);
     const SOCKET_POLL & socket_client = conn.get_socket();
-    Request & req = webserv.get_connection(index).get_req();
+    Request & req = *conn._req;
 
     int number_of_bytes = recv(socket_client.fd, buffer, BUFFER_SIZE, 0);
     if (number_of_bytes == 0) webserv.remove_connection(index);
@@ -115,7 +115,8 @@ void sending(WebServ & webserv, const size_t & index)
 
     Connection & conn = webserv.get_connection(index);
     const SOCKET_POLL & socket_client = conn.get_socket();
-    Response & res = webserv.get_connection(index).get_res();
+    Response & res = *conn._res;
+
     size_t length = res.extract();
     int number_of_bytes = send(socket_client.fd, buffer, length, 0);
     res.seek_back(length - number_of_bytes);
@@ -130,8 +131,8 @@ void serving(WebServ & webserv, const size_t & index)
 
     Connection & conn = webserv.get_connection(index);
 
-    conn.serving();
+    conn._req->print();
+    conn._res->serving(*conn._srv, conn._loc);
 
-    conn.flip_flag(POLLIN);
-    conn.flip_flag(POLLOUT);
+    conn.flip_read_to_write();
 }

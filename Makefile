@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/06/23 17:44:55 by zwina             #+#    #+#              #
-#    Updated: 2023/08/11 15:00:43 by zoukaddo         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # styles
 ANSI_RESET          := \\033[0m
 ANSI_BOLD           := \\033[1m
@@ -24,9 +12,7 @@ ANSI_YELLOW			:= \\033[33m
 
 # compilation
 DEBUG   := -fsanitize=address -g
-CCWI    := c++ -Iincludes 
 CCWI    := g++ -Wall -Wextra -Werror -Iincludes -std=c++98
-
 # directories
 OBJSDIR 		:= objs
 SRCSDIR 		:= srcs
@@ -45,6 +31,7 @@ CFILES  :=\
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Request.cpp \
 	$(CLASSESDIR)/$(CONNECTIONDIR)/Response.cpp \
 	$(CLASSESDIR)/WebServ.cpp \
+	$(CGIDIR)/handling_cgi.cpp \
 	$(CONFIGDIR)/utils.cpp \
 	$(REQUESTDIR)/body.cpp \
 	$(REQUESTDIR)/fields.cpp \
@@ -52,7 +39,6 @@ CFILES  :=\
 	$(REQUESTDIR)/utils.cpp \
 	$(RESPONSEDIR)/responseBuilding.cpp \
 	$(RESPONSEDIR)/utils.cpp \
-	$(CGIDIR)/handling_cgi.cpp \
 	$(RESPONSEDIR)/file.cpp \
 	main.cpp \
 	multiplexing.cpp
@@ -91,11 +77,11 @@ $(OBJSDIR) :
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(CLASSESDIR)/$(CONNECTIONDIR)
+	@mkdir $(OBJSDIR)/$(CGIDIR)
 	@mkdir $(OBJSDIR)/$(CONFIGDIR)
 	@mkdir $(OBJSDIR)/$(REQUESTDIR)
 	@mkdir $(OBJSDIR)/$(RESPONSEDIR)
-	@mkdir $(OBJSDIR)/$(CGIDIR)
-	
+
 $(OBJS) : $(OBJSDIR)/%.o : $(SRCSDIR)/%.cpp
 	@printf "$(ANSI_YELLOW)$(ANSI_BOLD)\n"
 	@printf "Compiling $(notdir $<) ... "

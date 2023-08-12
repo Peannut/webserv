@@ -14,7 +14,6 @@
 #define RESPONSE_HPP
 
 #include "prototypes.hpp"
-
 struct Response
 {
     Request *request;
@@ -42,7 +41,7 @@ struct Response
     void setResponsefields(const int &sc, const std::string &sm);
     void fillBodyFile( const Server &server );
     void    serveErrorPage(const Server &srv, const short &errCode, const std::string &statMessage);
-    void    serveDefaultErrorPage( void );
+    // void    serveDefaultErrorPage(const short &, const std::string &);
     void getbodySize( void );
     std::string getContentType( void );
     bool hasIndexFile(const Location *loc);
@@ -76,6 +75,7 @@ struct Response
     void    settingServerForCgi(const Server *server);
     void    handlingRedirection(const Server &server, const Location *loc);
     void    buildingRedirectHeaders(const std::string &RedirectionLocation);
+    void    errorPageHtml();
 };
 
 #endif // RESPONSE_HPP

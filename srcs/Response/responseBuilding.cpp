@@ -26,7 +26,7 @@ void	buildErrorResponse(const Server &server, Response *response) {
 		response->serveErrorPage(server, it->first, it->second);
 		return;
 	}
-	response->serveDefaultErrorPage();
+	response->errorPageHtml();
 }
 
 void servingFileGet(Response *response ,const Server &server, const Location *loc, File &file) { 
@@ -56,7 +56,7 @@ void servingFileGet(Response *response ,const Server &server, const Location *lo
 			}
 		}
 	}
-	else { //file not found serve the not found page 404;
+	else {
 		response->serveErrorPage(server, 404, "Not Found");
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/09 09:09:29 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/10 14:51:28 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 #include "prototypes.hpp"
 
-#define CGI_BUFFER 10
+#define CGI_BUFFER 1024
 
 struct 	Cgi
 {
@@ -27,8 +27,6 @@ struct 	Cgi
 	std::vector<char> body;
 	std::vector<char> cgi_buffer;
 	bool _isDone;
-	Server _srv;
-	Location loc;
 
 	Cgi(): pid(-1), env(NULL), _isDone() {}
 	~Cgi() {
@@ -36,10 +34,7 @@ struct 	Cgi
 		{
 			int i = 0;
 			while (env[i])
-			{
-				std::cout << "deleted" << std::endl;
 				delete env[i++];
-			}
 			delete env;
 		}
 	}

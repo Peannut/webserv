@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/01 15:17:11 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/12 14:02:41 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,9 @@ void Config::setup_servername(std::string& line, Server& server)
 		throw std::runtime_error("Error: server_name already set");
 	std::vector<std::string> names = split(val, ' ');
 	server.server_names = names;
-	std::cout << "server name: " << server.server_names[0] << std::endl;
+	// print server_names
+	for (size_t i = 0; i < server.server_names.size(); i++)
+		std::cout << server.server_names[i] << " " << std::endl;
 }
 
 void Config::setupClientbodySize(std::string& line, Server& server)
@@ -85,7 +87,7 @@ void Config::setupErrorPage(std::string& line, Server& server)
 	std::string val = line.substr(12, line.size() - 12);
 	if (line_empty(val))
 		throw std::runtime_error("Error: error_page does not have a value");
-	std::vector<std::string> error = split(val, ':');
+	std::vector<std::string> error = split(val, ' ');
 	if (error.size() != 2)
 		throw std::runtime_error("Error: invalid error_page value");
 
@@ -195,9 +197,6 @@ void	Config::setupredirect(std::string line, Location& location)
 
 	
 	int status = std::atoi(redirect[0].data());
-	// idk status code range
-	if (status < 300 || status > 600)
-		throw std::runtime_error("Error: invalid redirect status");
 	location.redirect.first = status;
 	location.redirect.second = redirect[1];
 
@@ -268,7 +267,6 @@ void Config::setupLocation(std::ifstream& file, std::string& line, Server& serve
 		throw std::runtime_error("Error: invalid location uri");
 	std::pair<std::string, Location> location;
 	location.first = uri[0];
-	// std::string linee;
 	while (std::getline(file, line))
 	{
 		if (line_empty(line))
@@ -289,6 +287,12 @@ void Config::setupLocation(std::ifstream& file, std::string& line, Server& serve
 			setupredirect(line, location.second);
 		else if (!line.compare(0, 6, "\tclose"))
 		{
+			if (location.second.methods.empty())
+			{
+				location.second.methods.insert("GET");
+				location.second.methods.insert("POST");
+				location.second.methods.insert("DELETE");
+			}
 			server.locations.insert(location);
 			break ;
 		}
@@ -339,11 +343,7 @@ void Config::setupServer(std::ifstream& file)
 		}
 		else if (line == "close")
 		{
-			 if (!hasRootInServer && location_exist)
-            {
-                throw std::runtime_error("Error: No location with root set in the server");
-            }
-			 if (!hasRootInServer && location_exist)
+			if (!hasRootInServer && location_exist)
             {
                 throw std::runtime_error("Error: No location with root set in the server");
             }
@@ -354,35 +354,6 @@ void Config::setupServer(std::ifstream& file)
 			throw std::runtime_error("Error: invalid server directive hna");
 	}
 	
-}
-
-void Config::removeDuplicateServers()
-{
-    size_t i = 1;
-    while (i < config.size())
-    {
-        const Server& currentServer = config[i];
-        const Server& previousServer = config[i - 1];
-
-        if (currentServer.listen == previousServer.listen)
-        {
-            if (!currentServer.server_names.empty() && !previousServer.server_names.empty() && currentServer.server_names[0] == previousServer.server_names[0])
-            {
-                // If same listen and server_name, keep the previous server and remove the current one
-                config.erase(config.begin() + i);
-            }
-            else
-            {
-                // If same listen but different server_name, keep both servers
-                i++;
-            }
-        }
-        else
-        {
-            // If different listen values, keep the current server
-            i++;
-        }
-    }
 }
 
 
@@ -408,8 +379,5 @@ void	Config::setupconfig(const std::string& filename)
 			throw std::runtime_error("Error: invalid directive");
 		
 	}
-	// print config size
-	// std::cout << "SIIIIIZE" << config.size() << std::endl;
-	// print config
 	file.close();
 }

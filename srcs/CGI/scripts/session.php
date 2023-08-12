@@ -42,10 +42,5 @@ $sessionData = serialize($sessionVars);
 file_put_contents("{$PATH_INFO}/$sessionId", $sessionData);
 
 
-// Output the session data
-echo "Status: 200 OK\r\n";
-echo "Content-Type: text/html\r\n";
-echo "Set-Cookie: PHPSESSID=" . $sessionId . "\r\n\r\n";
-echo "Session ID: $sessionId<br>";
 echo "Number: {$sessionVars['number']}<br>";
 ?>

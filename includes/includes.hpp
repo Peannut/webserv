@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/08/09 09:17:21 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/09 09:49:16 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,15 +59,8 @@
 #include "classes/Connection/File.hpp"
 #include "classes/Connection/Response.hpp"
 #include "classes/Connection/Connection.hpp"
-#include "classes/Config/Location.hpp"
-#include "classes/Config/Server.hpp"
-#include "classes/Config/Config.hpp"
-#include "classes/Connection/Cgi.hpp"
-#include "classes/Connection/Request.hpp"
-#include "classes/Connection/File.hpp"
-#include "classes/Connection/Response.hpp"
-#include "classes/Connection/Connection.hpp"
 #include "classes/Connection/File.hpp"
 #include "classes/WebServ.hpp"
+#include "classes/Connection/File.hpp"
 
 #endif // HEADER_HPP

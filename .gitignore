@@ -1,7 +1,4 @@
-.DS_Store
 .vscode/
-PDFs/
-objs/
-*.conf
+.DS_Store
 webserv
-.gitignore
+objs/

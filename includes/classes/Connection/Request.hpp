@@ -64,7 +64,7 @@ struct Request
     std::string _version;
     std::map<std::string, std::string> _fields;
     std::string _body;
-
+    
     private:
     std::string _message; // REMOVE_THIS
     Modes _mode;

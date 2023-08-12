@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/09 09:16:45 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/11 11:20:56 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ struct Response
 
 
     //peanut functions
-    void env_maker(File &file);
+    int env_maker(File &file);
     int handleCGI(File &file);
     void cgiResponse(void);
-    void cgi_execve(const Location &loc, File &file);
+    void cgi_execve(File &file);
     void data_reader(void);
     void reqbodysend(void);
     void cgi_wait(void);

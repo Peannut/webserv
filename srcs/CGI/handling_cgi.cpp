@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/13 11:29:35 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/13 15:32:14 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ void Response::reqbodysend()
             write_size = remaining_bytes < CGI_BUFFER ? remaining_bytes : CGI_BUFFER;
         else
             write_size = remaining_bytes < _cgi.body.size() ? remaining_bytes : _cgi.body.size();
-
         ssize_t bytes_written = write(_cgi.fd[1], _cgi.body.data(), write_size);
         if (bytes_written == -1)
             break;
@@ -116,7 +115,6 @@ void Response::reqbodysend()
 int Response::cgi_execve(File &file)
 {
     _cgi.pid = fork();
-    std::cout << "leeee piiiid" << _cgi.pid << std::endl;
     
     if (_cgi.pid == -1) {
         serveErrorPage(*srv, 500, "Internal Server Error");
@@ -171,7 +169,6 @@ void Response::cgiResponse(void)
         if (last_header_pos != std::string::npos)
             _message.insert(last_header_pos + 2, "\r\n");
     }
-    std::cout << "Modified CGI Output:\n" << _message << std::endl;
     _message_size = _message.length();
 }
 
@@ -200,7 +197,6 @@ void Response::cgi_wait()
     }
     else if (err == _cgi.pid)
     {
-        std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
         data_reader();
         cgiResponse(); 
     }
@@ -210,7 +206,6 @@ void Response::cgi_wait()
 // make function to setup the cgi environment
 int Response::env_maker(File &file)
 {
-    std::cout << "hello env_maker" << std::endl;
 	
     Methods method = request->get_method();
     std::string val;

@@ -6,11 +6,9 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/13 11:14:32 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/13 15:25:13 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #ifndef PROTOTYPES_HPP
 #define PROTOTYPES_HPP
@@ -96,9 +94,6 @@ void        buildErrorResponse(const Server &server, Response *response);
 void        deletingFile(Response *res, const Server &server, const Location *loc, const File &file);
 void        postFile(Response	*response, const Server	&server, const Location	*loc, const File &file);
 void        servingFileGet(Response *response ,const Server &server, const Location *loc, File &file);
-// void    buildResponseHeaders(Response &response);
-// std::string getResponseHeaders(const Response &response, const Server &srv, const Location *loc, const std::string &loc_Path);
-
 
 /*
     Thing To Do At The End :

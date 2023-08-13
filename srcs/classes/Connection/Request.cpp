@@ -49,9 +49,8 @@ bool Request::concatenate(const std::string & buffer)
     return false;
 }
 
-void Request::matchingServer()
+void Request::matchingServer(const std::string & host)
 {
-    const std::string & host = _fields["HOST"];
     const std::vector<Server*> & _srvs = _conn._srvs;
     for (size_t i = 0; i < _srvs.size(); ++i)
     {

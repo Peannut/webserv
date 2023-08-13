@@ -13,7 +13,7 @@ void Request::field_CRLF_mode(const char & c)
             trimFieldVal(__tmp2);
             if (__tmp1 == "HOST")
             {
-                matchingServer();
+                matchingServer(__tmp2);
                 matchingLocation();
             }
             else if (__tmp1 == "CONTENT-LENGTH")

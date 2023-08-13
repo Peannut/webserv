@@ -88,10 +88,8 @@ size_t matching_location(const std::string & path, const std::string & location_
 // </--Response/utils.cpp-->
 std::string readResource(const std::string &path);
 std::string findErrorPage(const Response &response,const Server &srv);
-bool        isDirectory(const std::string &path);
 bool        hasSlashEnd(const std::string &path);
 bool        resourceExists (const std::string &path);
-bool        fileCgi(std::string fullpath, const Location *loc);
 bool        outilsHasIndex(std::string *path, const Location    *loc);
 bool        pathSupportUpload(Response *response, const Location *loc);
 void        buildErrorResponse(const Server &server, Response *response);

@@ -2,3 +2,5 @@
 .DS_Store
 webserv
 objs/
+error.html
+indexpage.html

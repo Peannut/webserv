@@ -40,7 +40,6 @@ void	File::extractFileName() {
 		lastSlash = tmp.find_last_of('/', newDelim);
 	}
 	filename = tmp.substr(lastSlash + 1, tmp.length() - lastSlash);
-	std::cout << "*********file name is = " << filename << "*********" << std::endl;
 }
 
 void	File::extractExtention() {
@@ -54,7 +53,6 @@ void	File::extractExtention() {
 		nameLenght -= 1;
 	}
 	extention = filename.substr(dot, nameLenght - dot);
-	std::cout << "---------file extention is = " << extention << "---------" << std::endl;
 }
 
 void	File::separatePathInfo() {
@@ -65,7 +63,6 @@ void	File::separatePathInfo() {
 bool	File::concatinateIndexFile() {
     for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); ++it) {
         std::string path = (*fullpath) +  *it;
-		// std::cout << " ----------path after concatinating is: " << path << "------------" << std::endl;
         if (!access(path.c_str(), F_OK)) {
             (*fullpath) += *it;
 			uri += *it;
@@ -77,7 +74,6 @@ bool	File::concatinateIndexFile() {
 
 bool	File::fileCgiSupport() {
 	if (!existing || directory) { // need to ask if directory with cgi extention should be sent to cgi
-		std::cout << "*******machi cgi ghit hitach makaynch oula directory******* " << std::endl;
 		return false;
 	}
 	return (loc->cgi_bin.first == extention);
@@ -98,8 +94,4 @@ void	File::setFileInformation() {
 	extractExtention();
 	cgi = fileCgiSupport();
 	separatePathInfo();
-	/*std::cout << "--file existance: " << existing << "--is resource directory: " << directory << std::endl << \
-	 "--does path has slash at the end: " << endWithSlash << "--file fullpath :"  \
-	 << *fullpath << std::endl <<  "--file uri: " << uri << \
-	 "--file extention: "<< extention <<"--file supports CGI: " << cgi << std::endl;*/
 }

@@ -56,10 +56,6 @@ void our_listen(const SOCKET_FD & fdsock)
 
 void accepting(WebServ & webserv, const size_t & index)
 {
-    std::cout << ANSI_GREEN;
-    std::cout << "... accepting ..." << std::endl;
-    std::cout << ANSI_RESET;
-
     Connection & conn = webserv.get_connection(index);
     const SOCKET_POLL & socket_server = conn.get_socket();
 
@@ -77,10 +73,6 @@ void accepting(WebServ & webserv, const size_t & index)
 
 void receiving(WebServ & webserv, const size_t & index)
 {
-    std::cout << ANSI_GREEN;
-    std::cout << "... receiving ..." << std::endl;
-    std::cout << ANSI_RESET;
-
     Connection & conn = webserv.get_connection(index);
     const SOCKET_POLL & socket_client = conn.get_socket();
     Request & req = *conn._req;
@@ -93,10 +85,6 @@ void receiving(WebServ & webserv, const size_t & index)
 
 void sending(WebServ & webserv, const size_t & index)
 {
-    std::cout << ANSI_GREEN;
-    std::cout << "... sending ..." << std::endl;
-    std::cout << ANSI_RESET;
-
     Connection & conn = webserv.get_connection(index);
     const SOCKET_POLL & socket_client = conn.get_socket();
     Response & res = *conn._res;
@@ -110,14 +98,8 @@ void sending(WebServ & webserv, const size_t & index)
 
 void serving(WebServ & webserv, const size_t & index)
 {
-    std::cout << ANSI_GREEN;
-    std::cout << "... serving ..." << std::endl;
-    std::cout << ANSI_RESET;
-
     Connection & conn = webserv.get_connection(index);
 
-    conn._req->print();
     conn._res->serving(*conn._srv, conn._loc);
-
     conn.flip_read_to_write();
 }

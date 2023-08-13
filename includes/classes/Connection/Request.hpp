@@ -4,41 +4,27 @@
 #include "prototypes.hpp"
 
 enum Modes {
-    method_m,           // 0
-    path_m,             // 1
-    encoding_m,         // 2
-    query_key_m,        // 3
-    query_val_m,        // 4
-    version_m,          // 5
+    method_m,
+    path_m,
+    encoding_m,
+    query_key_m,
+    query_val_m,
+    version_m,
 
-    field_CRLF_m,       // 6
-    field_key_m,        // 7
-    field_val_m,        // 8
-    field_last_CRLF_m,  // 9
+    field_CRLF_m,
+    field_key_m,
+    field_val_m,
+    field_last_CRLF_m,
 
-    body_content_m,     // 10
-    body_length_m,      // 11
-    body_length_CRLF_m, // 12
-    body_chunk_m,       // 13
-    body_chunk_CRLF_m,  // 14
+    body_content_m,
+    body_length_m,
+    body_length_CRLF_m,
+    body_chunk_m,
+    body_chunk_CRLF_m,
 
-    error_m,            // 15
-    success_m,          // 16
+    error_m,
+    success_m,
 };
-
-// enum Errors {
-//     400,     // Bad Request
-//     405,     // Method Not Allowed
-//     501,     // Not Implemented
-//     426,     // Upgrade Required
-//     505,     // HTTP Version Not Supported
-//     411,     // Length Required
-//     415,     // Unsupported Media Type
-//     413,     // Content Too Large
-//     414,     // URI Too Large
-//     404,     // Not Found
-//     0,       // NO ERROR
-// };
 
 enum Transfers {
     content_tr,
@@ -80,7 +66,6 @@ struct Request
     public:
     Request(Connection & conn);
     bool concatenate(const std::string & buffer);
-    void print();
     const Methods & get_method();
     const std::string & get_uri();
     const std::string & get_path();

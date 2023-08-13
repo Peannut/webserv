@@ -91,40 +91,6 @@ void Request::matchingLocation()
     if (_conn._loc->methods.find(method) == _conn._loc->methods.end()) set_error(405);
 }
 
-void Request::print()
-{
-    std::cout << "REQUEST = [" << std::endl;
-    std::cout << "method =>\t\t|";
-    if (_method == GET_method) std::cout << "GET";
-    if (_method == POST_method) std::cout << "POST";
-    if (_method == DELETE_method) std::cout << "DELETE";
-    std::cout << '|' << std::endl;
-    std::cout << "uri =>\t\t\t|" << _uri << '|' << std::endl;
-    std::cout << "path =>\t\t\t|" << _path << '|' << std::endl;
-    std::cout << "query =>\t\t|" << _query << '|' << std::endl;
-    std::cout << "number_of_queries => |" << _queries.size() << '|' << std::endl;
-    for (size_t sz = _queries.size(), i = 0; i < sz; ++i)
-        std::cout << "query =>\t\t|" << _queries[i].first << "->" << _queries[i].second << '|' << std::endl;
-    std::cout << "version =>\t\t|" << _version << '|' << std::endl;
-    std::cout << "number_of_fields => |" << _fields.size() << '|' << std::endl;
-    for (std::map<std::string, std::string>::iterator it = _fields.begin(); it != _fields.end(); ++it)
-        std::cout << "field =>\t\t|" << it->first << "|:|" << it->second << '|' << std::endl;
-    // std::cout << "body =>\t\t\t|" << _body << '|' << std::endl;
-    std::cout << ']';
-    if (_mode == success_m)
-    {
-        std::cout << ANSI_BOLD;
-        std::cout << "==>success_m<==" << std::endl;
-        std::cout << ANSI_RESET;
-    }
-    else if (_mode == error_m)
-    {
-        std::cout << ANSI_BOLD;
-        std::cout << "==>error_m<== n:" << _error << std::endl;
-        std::cout << ANSI_RESET;
-    }
-}
-
 void Request::set_transfer(const Transfers & tr)
 {
     if (_transfer == tr)

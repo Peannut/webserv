@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Cgi.hpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/08/13 10:58:46 by zwina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CGI_HPP
 #define CGI_HPP
 
@@ -11,7 +23,6 @@ struct 	Cgi
 	char **env;
 	std::string pathinfo;
 	int	fd[2];
-	int fd2[2];
 	std::vector<char> body;
 	std::vector<char> cgi_buffer;
 	bool _isDone;

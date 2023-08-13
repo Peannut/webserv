@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/11 11:20:56 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/13 10:59:06 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ struct Response
     int env_maker(File &file);
     int handleCGI(File &file);
     void cgiResponse(void);
-    void cgi_execve(File &file);
+    int  cgi_execve(File &file);
     void data_reader(void);
     void reqbodysend(void);
     void cgi_wait(void);

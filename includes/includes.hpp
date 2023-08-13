@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 17:44:35 by zwina             #+#    #+#             */
-/*   Updated: 2023/08/11 16:09:26 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/13 11:00:08 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,7 @@
 #include <fcntl.h>
 #include <poll.h>
 
-#include <ctime>
-
 #include "prototypes.hpp"
-
-#include <dirent.h>
 
 // Classes Definitions
 #include "classes/Config/Location.hpp"
@@ -56,11 +52,9 @@
 #include "classes/Config/Config.hpp"
 #include "classes/Connection/Cgi.hpp"
 #include "classes/Connection/Request.hpp"
-#include "classes/Connection/File.hpp"
 #include "classes/Connection/Response.hpp"
 #include "classes/Connection/Connection.hpp"
 #include "classes/Connection/File.hpp"
 #include "classes/WebServ.hpp"
-#include "classes/Connection/File.hpp"
 
 #endif // HEADER_HPP

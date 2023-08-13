@@ -1,5 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Config.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
+/*   Updated: 2023/08/13 11:29:13 by zwina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes.hpp"
-#include <vector>
 
 Server &Config::get_server(const size_t & index)
 {
@@ -40,7 +51,6 @@ void Config::setup_listen(std::string& line, Server& server)
 	setup_host(hostport[0], server);
 	size_t port = std::atoi(hostport[1].data());
 	server.listen.second = port;
-	std::cout << "port function" << convertPortToString(server.listen.second) <<std::endl;
 }
 
 void Config::setup_servername(std::string& line, Server& server)
@@ -52,9 +62,6 @@ void Config::setup_servername(std::string& line, Server& server)
 		throw std::runtime_error("Error: server_name already set");
 	std::vector<std::string> names = split(val, ' ');
 	server.server_names = names;
-	// print server_names
-	for (size_t i = 0; i < server.server_names.size(); i++)
-		std::cout << server.server_names[i] << " " << std::endl;
 }
 
 void Config::setupClientbodySize(std::string& line, Server& server)
@@ -81,24 +88,13 @@ void Config::setupErrorPage(std::string& line, Server& server)
 		throw std::runtime_error("Error: invalid error_page value");
 	std::pair<short, std::string> page;
 	page.first = std::atoi(error[0].data());
-	if (page.first < 100 || page.first > 599)
+	if (page.first < 200 || page.first > 505)
 		throw std::runtime_error("Error: invalid error_page status");
 	else if (server.error_pages.find(page.first) != server.error_pages.end())
 		throw std::runtime_error("Error: error_page status already set");
 	
 	page.second = error[1];
 	server.error_pages.insert(page);
-
-
-	// print size of error pages
-	std::cout << "size of error pages: " << server.error_pages.size() << std::endl;
-	// print error pages
-	std::map<short, std::string>::iterator it = server.error_pages.begin();
-	while (it != server.error_pages.end())
-	{
-		std::cout << it->first << " here =>" << it->second << std::endl;
-		it++;
-	}
 	
 }
 
@@ -121,9 +117,6 @@ void Config::setuproot(std::string line, Location& location)
     }
 
     location.root = root[0];
-
-    // print root
-    std::cout << "root: " << location.root << std::endl;
 }
 
 void Config::setupindex(std::string line, Location& location)
@@ -135,13 +128,6 @@ void Config::setupindex(std::string line, Location& location)
 		throw std::runtime_error("Error: index does not have a value");
 	std::vector<std::string> index = split(val, ' ');
 	location.index = index;
-	// print index
-	std::cout << "index: ";
-	for (size_t i = 0; i < location.index.size(); i++)
-		std::cout << location.index[i] << " ";
-	std::cout << std::endl;
-	std::cout << "index size: " << location.index.size() << std::endl;
-
 }
 
 void Config::setupmethods(std::string line, Location& location)
@@ -163,15 +149,6 @@ void Config::setupmethods(std::string line, Location& location)
 		else
 			throw std::runtime_error("Error: invalid method");
 	}
-	// print methods
-	std::cout << "methods: ";
-	std::set<std::string>::iterator it = location.methods.begin();
-	while (it != location.methods.end())
-	{
-		std::cout << *it << " ";
-		it++;
-	}
-	std::cout << std::endl;
 }
 
 void	Config::setupredirect(std::string line, Location& location)
@@ -187,9 +164,6 @@ void	Config::setupredirect(std::string line, Location& location)
 	int status = std::atoi(redirect[0].data());
 	location.redirect.first = status;
 	location.redirect.second = redirect[1];
-
-	// print location.redirection.first << std::endl;
-	std::cout << "redirect: " << location.redirect.first << " " << location.redirect.second << std::endl;
 }
 
 void Config::setupautoindex(std::string line, Location& location)
@@ -206,8 +180,6 @@ void Config::setupautoindex(std::string line, Location& location)
 		location.autoindex = false;
 	else
 		throw std::runtime_error("Error: invalid autoindex value");
-	// print autoindex
-	std::cout << "autoindex: " << std::boolalpha <<location.autoindex << std::endl;
 
 }
 
@@ -225,8 +197,6 @@ void Config::setupcgibin(std::string line, Location& location)
 	location.cgi_bin.second = cgi_bin[1];
 	if (location.cgi_bin.first != ".php" && location.cgi_bin.first != ".py")
 		throw std::runtime_error("Error: invalid cgi_bin extension");
-	// print cgi_bin
-	std::cout << "cgi_bin: " << location.cgi_bin.first << " " << location.cgi_bin.second << std::endl;
 }
 
 void Config::setupuploadpass(std::string line, Location& location)
@@ -240,8 +210,6 @@ void Config::setupuploadpass(std::string line, Location& location)
 	if(!location.upload_pass.empty())
 		throw std::runtime_error("Error: upload_pass already set");
 	location.upload_pass = upload_pass[0];
-	// print upload_pass
-	std::cout << "upload_pass: " << location.upload_pass << std::endl;
 
 }
 
@@ -373,8 +341,5 @@ void	Config::setupconfig(const std::string& filename)
 		
 	}
 	fillConfig2();
-	// print config size
-	// std::cout << "SIIIIIZE" << config.size() << std::endl;
-	// print config
 	file.close();
 }

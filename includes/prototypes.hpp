@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prototypes.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/11 16:00:07 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/13 11:14:32 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #define LISTEN_ENABLE true // the type of connection, is it a server socket (aka. listen) or a client socket
 #define TIMEOUT (time_t)60 // the maximum number of second that we will wait if the client socket freezed
 #define POLL_TIME 0 // the time that poll() waits in milliseconds
-#define BACK_LOG 10 // one socket can handle BACK_LOG number of connection
+#define BACK_LOG SOMAXCONN // one socket can handle BACK_LOG number of connection
 #define BUFFER_SIZE (size_t)180192 // the size of the receiving the sending buffer
 #define URI_LIMIT 8192 // the maximum size of the uri in the request
 

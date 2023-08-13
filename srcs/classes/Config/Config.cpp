@@ -6,7 +6,7 @@
 /*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:12:12 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/13 10:33:52 by zoukaddo         ###   ########.fr       */
+/*   Updated: 2023/08/13 14:36:12 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void Config::setupErrorPage(std::string& line, Server& server)
 
 	std::pair<short, std::string> page;
 	page.first = std::atoi(error[0].data());
-	if (page.first < 100 || page.first > 599)
+	if (page.first < 200 || page.first > 505)
 		throw std::runtime_error("Error: invalid error_page status");
 	else if (server.error_pages.find(page.first) != server.error_pages.end())
 		throw std::runtime_error("Error: error_page status already set");

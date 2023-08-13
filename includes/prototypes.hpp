@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/13 15:25:13 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/13 16:10:50 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 // This is the declaration, the definition is in the main.cpp file
 extern int err;
 extern char buffer[BUFFER_SIZE];
+extern std::map<short, const char*> statusCodeMap;
 
 // The declarations of the structs
 struct WebServ;
@@ -50,6 +51,7 @@ struct Cgi;
 // The declarations of the functions
 
 // <-- main.cpp -->
+void init_statusCodeMap();
 void setup_webserv(WebServ & webserv);
 void start_multiplexing(WebServ & webserv);
 // <-- multiplexing.cpp -->

@@ -5,6 +5,50 @@ int err;
 // This is the buffer that will be passed to recv function to receive data from the client
 char buffer[BUFFER_SIZE];
 
+std::map<short, const char*> statusCodeMap;
+void init_statusCodeMap()
+{
+    statusCodeMap[200] = "OK";
+    statusCodeMap[201] = "Created";
+    statusCodeMap[202] = "Accepted";
+    statusCodeMap[203] = "Non-Authoritative Information";
+    statusCodeMap[204] = "No Content";
+    statusCodeMap[205] = "Reset Content";
+    statusCodeMap[206] = "Partial Content";
+    statusCodeMap[300] = "Multiple Choices";
+    statusCodeMap[301] = "Moved Permanently";
+    statusCodeMap[302] = "Found";
+    statusCodeMap[303] = "See Other";
+    statusCodeMap[304] = "Not Modified";
+    statusCodeMap[307] = "Temporary Redirect";
+    statusCodeMap[308] = "Permanent Redirect";
+    statusCodeMap[400] = "Bad Request";
+    statusCodeMap[401] = "Unauthorized";
+    statusCodeMap[402] = "Payment Required";
+    statusCodeMap[403] = "Forbidden";
+    statusCodeMap[404] = "Not Found";
+    statusCodeMap[405] = "Method Not Allowed";
+    statusCodeMap[406] = "Not Acceptable";
+    statusCodeMap[407] = "Proxy Authentication Required";
+    statusCodeMap[408] = "Request Timeout";
+    statusCodeMap[409] = "Conflict";
+    statusCodeMap[410] = "Gone";
+    statusCodeMap[411] = "Length Required";
+    statusCodeMap[412] = "Precondition Failed";
+    statusCodeMap[413] = "Request Too Large";
+    statusCodeMap[414] = "Request-URI Too Long";
+    statusCodeMap[415] = "Unsupported Media Type";
+    statusCodeMap[416] = "Range Not Satisfiable";
+    statusCodeMap[417] = "Expectation Failed";
+    statusCodeMap[426] = "Upgrade Required";
+    statusCodeMap[500] = "Internal Server Error";
+    statusCodeMap[501] = "Not Implemented";
+    statusCodeMap[502] = "Bad Gateway";
+    statusCodeMap[503] = "Service Unavailable";
+    statusCodeMap[504] = "Gateway Timeout";
+    statusCodeMap[505] = "HTTP Version Not Supported";
+}
+
 void setup_webserv(WebServ & webserv)
 {
     Config & config = webserv._conf;
@@ -76,6 +120,7 @@ int main(int ac, char **av, char **envp)
 {
     UNUSED(envp);
 
+    init_statusCodeMap();
     WebServ webserv;
 
     try {

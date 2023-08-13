@@ -6,7 +6,7 @@
 /*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 12:24:22 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/13 15:32:14 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/13 16:19:52 by zwina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ int Response::handleCGI(File &file)
 {   
     if (access(file.loc->cgi_bin.second.c_str(), X_OK))
     {
-        serveErrorPage(*srv, 500, "Internal Server Error");
+        serveErrorPage(*srv, 500, statusCodeMap[500]);
         return (1);
     }
     if (access(file.fullpath->c_str(), R_OK))
     {
-        serveErrorPage(*srv, 404, "Not Found");
+        serveErrorPage(*srv, 404, statusCodeMap[404]);
         return (1);
     }
 
@@ -117,7 +117,7 @@ int Response::cgi_execve(File &file)
     _cgi.pid = fork();
     
     if (_cgi.pid == -1) {
-        serveErrorPage(*srv, 500, "Internal Server Error");
+        serveErrorPage(*srv, 500, statusCodeMap[500]);
         return 1;
     }
     if (_cgi.pid == 0) {
@@ -193,7 +193,7 @@ void Response::cgi_wait()
     else if (err == -1)
     {
         if ((WIFEXITED(status) && WEXITSTATUS(status) == EXIT_FAILURE))
-            serveErrorPage(*srv, 500, "Internal Server Error");
+            serveErrorPage(*srv, 500, statusCodeMap[500]);
     }
     else if (err == _cgi.pid)
     {
@@ -224,7 +224,7 @@ int Response::env_maker(File &file)
     }
     if (val == "DELETE")
     {
-        serveErrorPage(*srv, 501, "Not Implemented");
+        serveErrorPage(*srv, 501, statusCodeMap[501]);
         return (1);
     }
 

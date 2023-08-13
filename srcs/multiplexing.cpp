@@ -13,19 +13,6 @@ struct addrinfo *our_getaddrinfo(const char *hostname, const char *servname)
     err = getaddrinfo(hostname, servname, &hints, &records);
     if (err) throw (err);
 
-    for (struct addrinfo * tmp = records; tmp; tmp = tmp->ai_next)
-    {
-        std::cout << "=> record:" << std::endl;
-        std::cout << "\t-> port:\t" << \
-        (((unsigned int)(unsigned char)tmp->ai_addr->sa_data[0] << 8) | (unsigned int)(unsigned char)tmp->ai_addr->sa_data[1]) << std::endl;
-        std::cout << "\t-> address:\t";
-        for (sa_family_t i = 2; i < 14; ++i) {
-            if (i != 2) std::cout << '.';
-            std::cout << (unsigned int)(unsigned char)tmp->ai_addr->sa_data[i];
-        }
-        std::cout << std::endl;
-    }
-
     return records;
 }
 
@@ -39,10 +26,7 @@ SOCKET_FD our_bind(struct addrinfo *records)
 
         err = bind(fdsock, tmp->ai_addr, tmp->ai_addrlen);
         if (err != -1) break;
-
-        std::cerr << "\tbind() => " << strerror(errno) << std::endl;
         close(fdsock);
-
         tmp = tmp->ai_next;
     } while (tmp);
     if (err == -1) throw ("bind");
@@ -102,7 +86,7 @@ void receiving(WebServ & webserv, const size_t & index)
     Request & req = *conn._req;
 
     int number_of_bytes = recv(socket_client.fd, buffer, BUFFER_SIZE, 0);
-    if (number_of_bytes == 0) webserv.remove_connection(index);
+    if (number_of_bytes == 0 || number_of_bytes == -1) webserv.remove_connection(index);
     else if (req.concatenate(std::string(buffer, number_of_bytes)))
         serving(webserv, index);
 }
@@ -119,6 +103,7 @@ void sending(WebServ & webserv, const size_t & index)
 
     size_t length = res.extract();
     int number_of_bytes = send(socket_client.fd, buffer, length, 0);
+    if (number_of_bytes == -1) webserv.remove_connection(index);
     res.seek_back(length - number_of_bytes);
     if (res.is_done()) webserv.remove_connection(index);
 }

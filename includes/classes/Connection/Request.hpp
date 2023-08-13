@@ -65,7 +65,7 @@ struct Request
     std::string _version;
     std::map<std::string, std::string> _fields;
     std::string _body;
-
+    
     private:
     Modes _mode;
     Transfers _transfer;

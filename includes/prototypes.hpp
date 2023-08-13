@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   prototypes.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:19:56 by zoukaddo          #+#    #+#             */
 /*   Updated: 2023/08/11 16:00:07 by zwina            ###   ########.fr       */

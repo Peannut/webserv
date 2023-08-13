@@ -11,6 +11,29 @@ void    Response::settingServerForCgi(const Server *server) {
     srv = server;
 }
 
+void Response::errorPageHtml() {
+    std::string page = "<!DOCTYPE html>\n"
+    "<html>\n"
+    "<head>\n"
+    "<title>ERROR</title>\n"
+    "<style>\n"
+    "body {background-color: black;text-align: center;}\n"
+    "h1   {color: red;font-size: 3rem}\n"
+    "p    {color: white;}\n"
+    "</style>\n"
+    "</head>\n"
+    "<body>\n"
+    "\n"
+    "<h1>Error Occurred</h1>\n"
+    "<p>There Was An Error While Trying To Solve Your Request</p>\n"
+    "\n"
+    "</body>\n"
+    "</html>";
+    std::ofstream outfile("error.html");
+    outfile << page;
+    bodyFile.open("error.html");
+}
+
 void    Response::buildingRedirectHeaders(const std::string &RedirectionLocation) {
     std::stringstream tmp;
 	_message += "HTTP/1.1 ";
@@ -42,6 +65,42 @@ void    Response::handlingRedirection(const Server &server, const Location *loc)
     //     //kanakhod error code ou makanzidch loc fel header ms kanservi file fih dak link as plain/txt;
     // }
 }
+
+// void    Response::settingServerForCgi(const Server *server) {
+//     srv = server;
+// }
+
+// void    Response::buildingRedirectHeaders(const std::string &RedirectionLocation) {
+//     std::stringstream tmp;
+// 	_message += "HTTP/1.1 ";
+// 	tmp << statusCode;
+// 	_message += tmp.str();
+// 	_message += " ";
+// 	_message += statusMessage;
+// 	_message += "\r\nContent-Type: ";
+// 	_message += contentType;
+// 	_message += "\r\nConnection: Close\r\nContent-lenght: ";
+// 	tmp.str("");
+// 	tmp << contentLength;
+// 	_message += tmp.str();
+//     _message += "\r\nLocation: ";
+//     _message += RedirectionLocation;
+// 	_message += "\r\n\r\n";
+// 	_message_size = _message.length();
+// }
+
+// void    Response::handlingRedirection(const Server &server, const Location *loc) {
+//     UNUSED(server);
+//     std::stringstream tmp;
+//     // if (loc->redirect.first >= 301 && loc->redirect.first <= 308) {
+//         //kanakhod error code ou kanzid fel headers field dyal redirection = loc->redirect.second
+//         setResponsefields(loc->redirect.first, "Coresponding Message");
+//         buildingRedirectHeaders(loc->redirect.second);
+//     // }
+//     // else {
+//     //     //kanakhod error code ou makanzidch loc fel header ms kanservi file fih dak link as plain/txt;
+//     // }
+// }
 
 size_t Response::extract()
 {
@@ -156,14 +215,14 @@ void Response::setResponsefields(const int &sc, const std::string &sm) {
     setContentType(ct);
 }
 
-void    Response::serveDefaultErrorPage() {
-    bodyFile.open("srcs/Response/DefaultError/index.html");
-    setResponsefields(500, "Internal Server Error");
-    getbodySize();
-    buildResponseHeaders();
-    getContentType();
-    //kansetti ou makanktebch f message + khasni nbda npasi l file object bach nbda nkhdem bih blast getContent type ect;
-}
+// void    Response::serveDefaultErrorPage(const short &code, const std::string &message) {
+//     bodyFile.open("srcs/Response/DefaultError/index.html");
+//     setResponsefields(code, message);
+//     getbodySize();
+//     buildResponseHeaders();
+//     getContentType();
+//     //kansetti ou makanktebch f message + khasni nbda npasi l file object bach nbda nkhdem bih blast getContent type ect;
+// }
 
 std::string Response::generateRandomName() {
     time_t timestamp = std::time(NULL);
@@ -173,28 +232,30 @@ std::string Response::generateRandomName() {
 
 void	Response::serveErrorPage(const Server &srv, const short &errCode, const std::string &statMessage) {
 	std::map<short, std::string>::const_iterator it = srv.error_pages.find(errCode);
-        if(it == srv.error_pages.end()) {
-            std::cout << "mal9ach l error page li bgha!" << std::endl;
-            serveDefaultErrorPage();
-            return;
-        }
-        bodyFile.open(it->second.data());
-        setResponsefields(errCode, statMessage);
-        getbodySize();
-        buildResponseHeaders();
+    setResponsefields(errCode, statMessage);
+    if(it == srv.error_pages.end()) {
+        std::cout << "mal9ach l error page li bgha!" << std::endl;
+        errorPageHtml();
+        return;
+    }
+    bodyFile.open(it->second.data());
+    getbodySize();
+    buildResponseHeaders();
 }
 
 void Response::fillBodyFile( const Server &server ) { //khas server maydouzch liya const
     bodyFile.open(request->_path.data());
 
     if (!bodyFile.is_open()) {
-        std::map<short, std::string>::const_iterator it = server.error_pages.find(500);
-        if(it == server.error_pages.end()) {
-            serveDefaultErrorPage();
-            return;
+        if (errno == EACCES) {
+            setResponsefields(403, "Forbidden");
+            std::map<short, std::string>::const_iterator it = server.error_pages.find(403);
+            if(it == server.error_pages.end()) {
+                    errorPageHtml();
+                return;
+            }
+            bodyFile.open(it->second.data());
         }
-        bodyFile.open(it->second.data());
-        setResponsefields(500, "Internal Server Error");
     }
     setResponsefields(200, "OK");
 }
@@ -237,7 +298,7 @@ bool Response::hasIndexFile( const Location *loc) {
 
 void Response::removeFile(const Server &server) {
     if (std::remove(request->_path.c_str())){
-        serveDefaultErrorPage();
+        serveErrorPage(server, 500, "Internal Server Error");
         return ;
     }
     serveErrorPage(server, 203, "No Content");
@@ -253,7 +314,7 @@ void    Response::deleteAllDirContent(std::string path, const Server &server) {
                 std::string fullPath = path + "/" + name;
                 struct stat pathinfo;
                 if (stat(fullPath.c_str(), &pathinfo)) {
-                    serveDefaultErrorPage();
+                    serveErrorPage(server, 500, "Internal Server Error");
                 }
                 else {
                     if (isDirectory(fullPath)) {

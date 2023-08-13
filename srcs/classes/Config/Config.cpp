@@ -52,7 +52,9 @@ void Config::setup_servername(std::string& line, Server& server)
 		throw std::runtime_error("Error: server_name already set");
 	std::vector<std::string> names = split(val, ' ');
 	server.server_names = names;
-	std::cout << "server name: " << server.server_names[0] << std::endl;
+	// print server_names
+	for (size_t i = 0; i < server.server_names.size(); i++)
+		std::cout << server.server_names[i] << " " << std::endl;
 }
 
 void Config::setupClientbodySize(std::string& line, Server& server)
@@ -253,7 +255,6 @@ void Config::setupLocation(std::ifstream& file, std::string& line, Server& serve
 		throw std::runtime_error("Error: invalid location uri");
 	std::pair<std::string, Location> location;
 	location.first = uri[0];
-	// std::string linee;
 	while (std::getline(file, line))
 	{
 		if (line_empty(line))
@@ -274,6 +275,12 @@ void Config::setupLocation(std::ifstream& file, std::string& line, Server& serve
 			setupredirect(line, location.second);
 		else if (!line.compare(0, 6, "\tclose"))
 		{
+			if (location.second.methods.empty())
+			{
+				location.second.methods.insert("GET");
+				location.second.methods.insert("POST");
+				location.second.methods.insert("DELETE");
+			}
 			server.locations.insert(location);
 			break ;
 		}
@@ -324,11 +331,7 @@ void Config::setupServer(std::ifstream& file)
 		}
 		else if (line == "close")
 		{
-			 if (!hasRootInServer && location_exist)
-            {
-                throw std::runtime_error("Error: No location with root set in the server");
-            }
-			 if (!hasRootInServer && location_exist)
+			if (!hasRootInServer && location_exist)
             {
                 throw std::runtime_error("Error: No location with root set in the server");
             }

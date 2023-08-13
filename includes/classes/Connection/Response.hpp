@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 11:05:22 by ynuiga            #+#    #+#             */
-/*   Updated: 2023/08/11 16:08:20 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/11 11:20:56 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #define RESPONSE_HPP
 
 #include "prototypes.hpp"
-
 struct Response
 {
     Request *request;
@@ -42,7 +41,7 @@ struct Response
     void setResponsefields(const int &sc, const std::string &sm);
     void fillBodyFile( const Server &server );
     void    serveErrorPage(const Server &srv, const short &errCode, const std::string &statMessage);
-    void    serveDefaultErrorPage( void );
+    // void    serveDefaultErrorPage(const short &, const std::string &);
     void getbodySize( void );
     std::string getContentType( void );
     bool hasIndexFile(const Location *loc);
@@ -76,6 +75,7 @@ struct Response
     void    settingServerForCgi(const Server *server);
     void    handlingRedirection(const Server &server, const Location *loc);
     void    buildingRedirectHeaders(const std::string &RedirectionLocation);
+    void    errorPageHtml();
 };
 
 #endif // RESPONSE_HPP

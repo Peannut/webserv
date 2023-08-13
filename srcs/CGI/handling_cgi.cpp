@@ -35,7 +35,7 @@ int Response::handleCGI(File &file)
 {   
     if (access(file.loc->cgi_bin.second.c_str(), X_OK))
     {
-        serveDefaultErrorPage();
+        serveErrorPage(*srv, 500, "Internal Server Error");
         std::cout << "500 t catcha" << std::endl;
         std::cout << file.loc->cgi_bin.second.c_str() << std::endl;
         std::cout << "-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << std::endl;
@@ -276,7 +276,7 @@ void Response::cgi_wait()
     else if (err == -1)
     {
         if ((WIFEXITED(status) && WEXITSTATUS(status) == EXIT_FAILURE))
-            serveDefaultErrorPage();
+            serveErrorPage(*srv, 500, "Internal Server");
         perror("waitpid");
         std::cout << "errrr " << err << "   /" << WEXITSTATUS(status)<< std::endl;
         std::cout << "((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))" << std::endl;

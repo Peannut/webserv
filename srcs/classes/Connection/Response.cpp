@@ -124,14 +124,9 @@ size_t Response::extract()
 
 void Response::seek_back(const size_t & amount)
 {
-    if (bodyFile.is_open()) {
-        std::cout << "----------file opened----------" << std::endl;
-    }
     if (bodyFile.is_open() && amount && _offset >= _message_size) {
-        std::cout << "----------printina chi haja----------" << std::endl;
         bodyFile.seekg(amount, bodyFile.cur); // We have to update this line
     }
-    std::cout << "amount = " << amount<< std::endl;
     _offset -= amount;
 }
 
@@ -234,8 +229,9 @@ void	Response::serveErrorPage(const Server &srv, const short &errCode, const std
 	std::map<short, std::string>::const_iterator it = srv.error_pages.find(errCode);
     setResponsefields(errCode, statMessage);
     if(it == srv.error_pages.end()) {
-        std::cout << "mal9ach l error page li bgha!" << std::endl;
         errorPageHtml();
+        getbodySize();
+        buildResponseHeaders();
         return;
     }
     bodyFile.open(it->second.data());
@@ -297,11 +293,15 @@ bool Response::hasIndexFile( const Location *loc) {
 }
 
 void Response::removeFile(const Server &server) {
-    if (std::remove(request->_path.c_str())){
+    if (access(request->_path.c_str(), W_OK)) {
+        serveErrorPage(server, 403, "Forbidden");
+        return ;
+    }
+    if (std::remove(request->_path.c_str())) {
         serveErrorPage(server, 500, "Internal Server Error");
         return ;
     }
-    serveErrorPage(server, 203, "No Content");
+    serveErrorPage(server, 204, "No Content");
 }
 
 void    Response::deleteAllDirContent(std::string path, const Server &server) {
@@ -311,21 +311,25 @@ void    Response::deleteAllDirContent(std::string path, const Server &server) {
         while ((entry = readdir(dir)) != NULL) {
             std::string name = entry->d_name;
             if (name != "." && name != "..") {
-                std::string fullPath = path + "/" + name;
+                std::string fullPath = path + name;
                 struct stat pathinfo;
                 if (stat(fullPath.c_str(), &pathinfo)) {
-                    serveErrorPage(server, 500, "Internal Server Error");
+                    setResponsefields(500, "Internal Server Error");
                 }
                 else {
-                    if (isDirectory(fullPath)) {
+                    if (S_ISDIR(pathinfo.st_mode)) {
+                        fullPath.push_back('/');
                         deleteAllDirContent(fullPath, server);
-                        rmdir(fullPath.c_str());
                     } else if (S_ISREG(pathinfo.st_mode)) {
                         if (access(fullPath.c_str(), W_OK) == 0) {
-                            remove(fullPath.c_str());
-                            serveErrorPage(server, 204, "No Content");
+                            if (std::remove(fullPath.c_str())) {
+                                setResponsefields(500, "Internal Server Error");
+                            }
+                            else {
+                                setResponsefields(204, "No Content");
+                            }
                         } else {
-                        serveErrorPage(server, 403, "Forbidden");
+                        setResponsefields(403, "Forbidden");
                         }
                     }
                 }
@@ -351,19 +355,11 @@ void    Response::uploadContent(const Server &server, const Location *loc) {
     outfile.close();
     setResponsefields(201, "Created");
     buildResponseHeaders();
-    // if (bodyFile.is_open()) {
-    //     char buff[100];
-    //     bodyFile.getline(buff, 100);
-    //     std::cout << "upload path is : "<< loc->upload_pass + "/" + fileName << std::endl;
-    std::cout << "body: " << request->_body.size() << std::endl;
-    //     std::cout << "first character inside of the file :"<< buff << std::endl;
-    // }
 }
 
 void    Response::setPathInformation(const Location *loc) {
     size_t cgiExtentionIndex = this->request->_path.find(loc->cgi_bin.first, 0) + loc->cgi_bin.first.length();
     pathinformation = this->request->_path.substr(cgiExtentionIndex, this->request->_path.length() - cgiExtentionIndex);
-    std::cout << pathinformation << std::endl;
 }
 
 void    Response::generateIndexPage() {
@@ -390,28 +386,23 @@ void    Response::generateIndexPage() {
 }
 
 void Response::serving(const Server & server, const Location * loc) {
-    std::cout << "body size before anything = " << request->_body.size() << std::endl;
     if (request->_error || loc->redirect.first) {
-        if (request->_error){
-            buildErrorResponse(server, this);
+        if (request->_error) {
+            serveErrorPage(server, this->request->_error, "request error");
         }
         else {
-            std::cout << "------handling redirection------" <<std::endl;
             handlingRedirection(server, loc);
         }
     }
     else { //if request has no errors
-        std::cout << "dkhel l else" << std::endl;
         File file(&(this->request->_path), this->request->_uri, loc);
         getFileStructure(&file);
         if (file.cgi) {
-            std::cout << "dkhel l cgi" << std::endl;
             settingServerForCgi(&server);
             if (!handleCGI(file))
                 cgi_supervisor(file);
         }
         else {
-            std::cout << "mal9ahch cgi" << std::endl;
             if (this->request->_method == GET_method) { 
                 servingFileGet(this, server, loc, file);
             }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwina <zwina@student.1337.ma>              +#+  +:+       +#+        */
+/*   By: zoukaddo <zoukaddo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 13:33:27 by zoukaddo          #+#    #+#             */
-/*   Updated: 2023/08/13 15:24:14 by zwina            ###   ########.fr       */
+/*   Updated: 2023/08/14 12:49:15 by zoukaddo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ struct 	Cgi
 
 	Cgi(): pid(-1), env(NULL), _isDone() {}
 	~Cgi() {
+		if (pid != -1)
+			kill(pid, SIGKILL);
 		if (env)
 		{
 			int i = 0;
